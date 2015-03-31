@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:id="@+id/view"
+    android:background="@android:color/white">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFF">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Successfully Reported an offence"
+        android:textColor="#00FF00"
+        android:id="@+id/textView1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp"
+        android:textSize="18sp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:id="@+id/view_strip_one"
+            android:layout_below="@id/textView1"
+            android:layout_marginTop="4dp"
+            android:background="@color/stroke"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:textColor="@android:color/black"
+        android:layout_height="wrap_content"
+        android:text="Report Summary"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:textSize="20sp"
+        android:id="@+id/summary"
+        android:gravity="center"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/view_strip_one" />
+
+    <TextView
+        android:layout_marginTop="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:text="Licence number:"
+        android:layout_marginLeft="16dp"
+        android:id="@+id/license_number_title"
+        android:layout_below="@+id/summary"
+        android:layout_alignParentLeft="true"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:layout_marginTop="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/licence"
+        android:layout_toRightOf="@id/license_number_title"
+        android:layout_marginLeft="16dp"
+        android:textColor="@color/card_grid_text"
+        android:layout_below="@+id/summary"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="plate Number:"
+        android:textColor="#000000"
+        android:id="@+id/plate_no_title"
+        android:layout_below="@+id/license_number_title"
+        android:textSize="16sp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/plateNumber"
+        android:textColor="@color/card_grid_text"
+        android:layout_below="@+id/license_number_title"
+        android:layout_toRightOf="@id/plate_no_title"
+        android:layout_marginTop="8dp"
+        android:textSize="16sp"
+        android:layout_marginLeft="16dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Offence done:"
+        android:textColor="#000000"
+        android:id="@+id/offense_title"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_below="@+id/plate_no_title"
+        android:layout_alignParentLeft="true"
+        android:textSize="16sp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/offence"
+        android:text=""
+        android:textColor="@color/card_grid_text"
+        android:layout_below="@+id/plate_no_title"
+        android:layout_toRightOf="@id/offense_title"
+        android:layout_marginTop="8dp"
+        android:textSize="16sp"
+        android:layout_marginLeft="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total amount:"
+            android:textColor="#000000"
+            android:id="@+id/amount_title"
+            android:layout_marginLeft="16dp"
+            android:layout_below="@+id/offence"
+            android:layout_alignParentLeft="true"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/amount"
+            android:text=""
+            android:textColor="@color/card_grid_text"
+            android:layout_below="@+id/offence"
+            android:layout_toRightOf="@id/offense_title"
+            android:textSize="16sp"
+            android:layout_marginLeft="16dp"/>
+
+
+        <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Admission of offence:"
+        android:textColor="#000000"
+        android:id="@+id/commit_title"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_below="@+id/amount_title"
+        android:textSize="16sp"
+        android:textIsSelectable="false"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/commit"
+        android:layout_marginLeft="16dp"
+        android:text=""
+        android:textColor="@color/card_grid_text"
+        android:layout_below="@+id/amount_title"
+        android:layout_toRightOf="@id/commit_title"
+        android:layout_marginTop="8dp"
+        android:textSize="16sp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reported at:"
+        android:id="@+id/registered_title"
+        android:textColor="#000000"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_below="@+id/commit_title"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/regat"
+        android:textColor="@color/card_grid_text"
+        android:layout_marginTop="8dp"
+        android:layout_below="@+id/commit_title"
+        android:layout_toRightOf="@id/registered_title"
+        android:layout_marginLeft="16dp"
+        android:textSize="16sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rank No of issuer:"
+            android:id="@+id/issuer_name"
+            android:textColor="#000000"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_below="@+id/registered_title"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/issuer"
+            android:text=""
+            android:textColor="@color/card_grid_text"
+            android:layout_marginTop="8dp"
+            android:layout_below="@+id/registered_title"
+            android:layout_toRightOf="@id/issuer_name"
+            android:layout_marginLeft="16dp"
+            android:textSize="16sp"/>
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button"
+        android:text="OK"
+        android:id="@+id/ok"
+        android:layout_marginTop="16dp"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:layout_below="@+id/issuer_name"
+        android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+
+</RelativeLayout>
+
+</ScrollView>

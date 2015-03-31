@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="ns_menu_items">
+        <item>ns_menu_snippet1</item>
+        <item>ns_menu_snippet2</item>
+    </string-array>
+
+    <array name="ns_menu_items_icon">
+        <item>a</item>
+        <item>b</item>
+        <item>action_add</item>
+        <item>ic_launcher_</item>
+        <item>action_add</item>
+        <item>ic_action_settings</item>
+        <item>ic_launcher_</item>
+    </array>
+
+    <string-array name="cat_one_images">
+        <item>@drawable/p_112</item>
+        <item>@drawable/p_113</item>
+        <item>@drawable/p_121</item>
+        <item>@drawable/p_122</item>
+        <item>@drawable/p_123</item>
+        <item>@drawable/p_131</item>
+        <item>@drawable/p_141</item>
+        <item>@drawable/p_151</item>
+        <item>@drawable/p_161</item>
+        <item>@drawable/p_172</item>
+        <item>@drawable/p_181</item>
+    </string-array>
+
+    <string-array name="cat_two_images">
+        <item>@drawable/p_212</item>
+        <item>@drawable/p_221</item>
+        <item>@drawable/p_222</item>
+        <item>@drawable/p_223</item>
+        <item>@drawable/p_224</item>
+        <item>@drawable/p_231</item>
+        <item>@drawable/p_232</item>
+        <item>@drawable/p_233</item>
+        <item>@drawable/p_241</item>
+        <item>@drawable/p_261</item>
+        <item>@drawable/p_271</item>
+        <item>@drawable/p_281</item>
+        <item>@drawable/p_282</item>
+    </string-array>
+
+    <string-array name="cat_three_images">
+        <item>@drawable/p_312</item>
+        <item>@drawable/p_313</item>
+        <item>@drawable/p_321</item>
+        <item>@drawable/p_322</item>
+        <item>@drawable/p_323</item>
+        <item>@drawable/p_324</item>
+        <item>@drawable/p_325</item>
+        <item>@drawable/p_331</item>
+        <item>@drawable/p_341</item>
+        <item>@drawable/p_342</item>
+        <item>@drawable/p_361</item>
+        <item>@drawable/p_362</item>
+        <item>@drawable/p_363</item>
+    </string-array>
+
+    <string-array name="cat_four_images">
+        <item>@drawable/p_412</item>
+        <item>@drawable/p_413</item>
+        <item>@drawable/p_421</item>
+        <item>@drawable/p_422</item>
+        <item>@drawable/p_423</item>
+        <item>@drawable/p_431</item>
+        <item>@drawable/p_451</item>
+        <item>@drawable/p_452</item>
+        <item>@drawable/p_453</item>
+        <item>@drawable/p_461</item>
+        <item>@drawable/p_471</item>
+    </string-array>
+
+    <string-array name="cat_five_images">
+        <item>@drawable/p_521</item>
+        <item>@drawable/p_522</item>
+        <item>@drawable/p_531</item>
+        <item>@drawable/p_532</item>
+        <item>@drawable/p_541</item>
+        <item>@drawable/p_542</item>
+        <item>@drawable/p_551</item>
+    </string-array>
+
+    <string-array name="cat_six_images">
+        <item>@drawable/p_621</item>
+        <item>@drawable/p_641</item>
+        <item>@drawable/p_642</item>
+
+    </string-array>
+
+    <string-array name="cat_seven_images">
+        <item>@drawable/p_712</item>
+        <item>@drawable/p_713</item>
+        <item>@drawable/p_721</item>
+        <item>@drawable/p_723</item>
+        <item>@drawable/p_724</item>
+        <item>@drawable/p_741</item>
+        <item>@drawable/p_742</item>
+        <item>@drawable/p_761</item>
+        <item>@drawable/p_762</item>
+        <item>@drawable/p_772</item>
+        <item>@drawable/p_773</item>
+        <item>@drawable/p_774</item>
+        <item>@drawable/p_775</item>
+        <item>@drawable/p_776</item>
+        <item>@drawable/p_777</item>
+        <item>@drawable/p_778</item>
+        <item>@drawable/p_779</item>
+        <item>@drawable/p_781</item>
+        <item>@drawable/p_791</item>
+    </string-array>
+
+</resources>

@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/layout"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:paddingTop="8dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:id="@+id/head"
+            android:background="@color/light_blue_a700">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DETAILS"
+                android:textSize="18sp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="8dp"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/okay_button"
+                android:text="Okay"
+                android:textColor="@android:color/white"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="8dp"
+                android:textSize="18sp"
+                android:layout_centerVertical="true"
+                android:background="@drawable/button2"/>
+
+            </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/content_header"
+            android:text="License Information"
+            android:layout_below="@id/head"
+            android:layout_centerHorizontal="true"
+            android:textSize="18sp"
+            android:textColor="@color/card_grid_text"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:id="@+id/content_header_strip"
+            android:layout_below="@id/content_header"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/stroke"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:id="@+id/name_title"
+            android:textColor="@color/card_text"
+            android:layout_below="@id/content_header_strip"
+            android:layout_marginLeft="8dp"
+            android:text="Name : "
+            android:textSize="18sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/name"
+            android:textColor="@color/card_text"
+            android:layout_below="@id/content_header_strip"
+            android:layout_marginTop="8dp"
+            android:layout_toRightOf="@id/name_title"
+            android:textSize="18sp"
+            android:layout_marginLeft="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/address_title"
+            android:textColor="@color/card_text"
+            android:layout_below="@id/name"
+            android:layout_marginTop="8dp"
+            android:textSize="18sp"
+            android:layout_marginLeft="8dp"
+            android:text="Address : "
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/address"
+            android:textColor="@color/card_text"
+            android:layout_below="@id/name"
+            android:layout_marginTop="8dp"
+            android:textSize="18sp"
+            android:layout_toRightOf="@id/address_title"
+            android:layout_marginLeft="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/class_title"
+            android:textColor="@color/card_text"
+            android:layout_below="@id/address"
+            android:layout_marginTop="8dp"
+            android:textSize="18sp"
+            android:layout_marginLeft="8dp"
+            android:text="Class : "
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/licence_class"
+            android:textColor="@color/card_text"
+            android:layout_below="@id/address"
+            android:layout_marginTop="8dp"
+            android:textSize="18sp"
+            android:text=""
+            android:layout_toRightOf="@id/class_title"
+            android:layout_marginLeft="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/expiry_date"
+            android:textColor="@color/card_text"
+            android:layout_below="@id/class_title"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:textSize="18sp"
+            android:text="Expiry Date : "/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/date"
+            android:textColor="@color/card_text"
+            android:layout_below="@id/class_title"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@id/expiry_date"
+            android:textSize="18sp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/status_title"
+            android:textColor="@color/card_text"
+            android:layout_below="@id/date"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            android:text="Status : "
+            android:textSize="18sp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/status"
+            android:layout_below="@id/expiry_date"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@id/status_title"
+            android:textSize="18sp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/car_info_title"
+            android:textColor="@color/card_grid_text"
+            android:layout_below="@id/status"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="32dp"
+            android:layout_marginLeft="8dp"
+            android:textSize="18sp"
+            android:text="Vehicle/Bicycle Information"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:id="@+id/car_info_strip"
+            android:layout_below="@id/car_info_title"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/stroke"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/make_title"
+            android:textColor="@color/card_text"
+            android:layout_below="@id/car_info_strip"
+            android:layout_marginLeft="8dp"
+            android:textSize="18sp"
+            android:text="Car Make : "
+            android:layout_marginTop="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/make"
+            android:textColor="@color/card_text"
+            android:layout_below="@id/car_info_strip"
+            android:layout_marginTop="16dp"
+            android:textSize="18sp"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@id/make_title"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/car_type_title"
+            android:textColor="@color/card_text"
+            android:layout_below="@id/make_title"
+            android:textSize="18sp"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            android:text="Car Type : "/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/car_type"
+            android:textColor="@color/card_text"
+            android:layout_below="@id/make"
+            android:layout_marginTop="8dp"
+            android:textSize="18sp"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@id/car_type_title"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/car_color_title"
+            android:textColor="@color/card_text"
+            android:layout_below="@id/car_type_title"
+            android:textSize="18sp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Color : "/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/car_type"
+            android:textColor="@color/card_text"
+            android:id="@+id/color"
+            android:layout_marginTop="8dp"
+            android:textSize="18sp"
+            android:layout_toRightOf="@id/car_color_title"
+            android:layout_marginLeft="8dp"/>
+
+        </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp">
+    <TextView
+        android:id="@+id/date"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_centerHorizontal="true"
+        android:textColor="#e5e5e5"
+        android:textSize="20sp"
+        android:layout_marginTop="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="30/09/2014"/>
+    <TextView
+        android:id="@+id/plate_number_title"
+        android:layout_marginLeft="16dp"
+        android:textColor="@color/yellow_500"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp"
+        android:layout_below="@id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Vehacle Plate Number"/>
+    <TextView
+        android:layout_below="@id/plate_number_title"
+        android:id="@+id/plate_number"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:textColor="#e5e5e5"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="T6780 AWG"/>
+    <TextView
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/yellow_500"
+        android:textSize="16sp"
+        android:layout_below="@id/plate_number"
+        android:id="@+id/offense_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Offense Name"/>
+    <TextView
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:textColor="#e5e5e5"
+        android:textSize="16sp"
+        android:id="@+id/offense"
+        android:layout_below="@id/offense_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="- Over Speeding\n- Running the Red Light"/>
+
+    <TextView
+        android:id="@+id/place_title"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:textColor="@color/yellow_500"
+        android:textSize="15sp"
+        android:layout_below="@id/offense"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Offence Location"/>
+    <TextView
+        android:layout_below="@id/place_title"
+        android:id="@+id/place"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:textColor="#e5e5e5"
+        android:textSize="15sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Kinondoni"/>
+
+    <View
+        android:layout_margin="16dp"
+        android:layout_below="@id/place"
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="#a5a5a5"/>
+</RelativeLayout>

@@ -1,0 +1,40 @@
+   <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       android:layout_margin="4dp"
+        android:layout_centerHorizontal="true"
+       android:paddingRight="16dp"
+       android:layout_marginBottom="8dp"
+       android:background="@drawable/card_bg">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/number"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            android:textColor="@android:color/black"
+            android:text="122"
+            android:textSize="12sp"/>
+
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/cat_description"
+           android:layout_marginTop="8dp"
+           android:layout_toRightOf="@id/number"
+           android:layout_marginLeft="16dp"
+           android:textColor="@android:color/black"
+           android:maxWidth="140dp"
+           android:text="Leave Road to left in left corner"/>
+
+       <ImageView
+           android:layout_width="140dp"
+           android:layout_height="100dp"
+           android:id="@+id/cat_image"
+           android:scaleType="center"
+           android:layout_toRightOf="@id/number"
+           android:layout_below="@id/cat_description"/>
+
+        </RelativeLayout>

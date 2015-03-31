@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_marginTop="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="24dp"
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:fontFamily="@string/font_fontFamily_drawer_item"
+        android:text="PAYMENT CONFIRMATION"/>
+    <LinearLayout
+        android:id="@+id/countries"
+        android:layout_below="@id/title"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="24dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/name_title"
+            android:textColor="@color/blue_500"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Drivers Name"/>
+        <TextView
+            android:id="@+id/name"
+            android:textSize="15sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ilakoze Jumanne"/>
+        <TextView
+            android:id="@+id/licence_number_title"
+            android:textColor="@color/blue_500"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Licence Number"/>
+        <TextView
+            android:id="@+id/licence_number"
+            android:textSize="15sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="12345677"/>
+        <TextView
+            android:id="@+id/plate_number_title"
+            android:textColor="@color/blue_500"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Plate Number"/>
+        <TextView
+            android:id="@+id/plate_number"
+            android:textSize="15sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="T4567 ABB"/>
+        <TextView
+            android:id="@+id/cost_title"
+            android:textColor="@color/blue_500"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total Cost"/>
+        <TextView
+            android:id="@+id/place"
+            android:textSize="15sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tsh 90000"/>
+        <TextView
+            android:id="@+id/payment_method_title"
+            android:textColor="@color/blue_500"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Payment Method"/>
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="-2dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/payment_method_title"
+            android:id="@+id/payment_method_spinner">
+        </Spinner>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/receipt_title"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/blue_500"
+            android:textSize="18sp"
+            android:text="Receipt"/>
+        <EditText
+            android:layout_marginRight="16dp"
+            android:id="@+id/receipt"
+            android:background="@color/transparent"
+            android:hint="Enter Receipt Number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <TextView
+        android:id="@+id/ok_button"
+        android:layout_marginBottom="12dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/countries"
+        android:layout_width="64dp"
+        android:textColor="@color/blue_500"
+        android:layout_height="36dp"
+        android:textSize="16sp"
+        android:text="OK"
+        android:background="@drawable/selectable_background_styles"
+        android:textStyle="bold"
+        android:fontFamily="@string/font_fontFamily_drawer_item"
+        android:gravity="center"/>
+    <TextView
+        android:id="@+id/cancel_button"
+        android:layout_marginBottom="12dp"
+        android:layout_toLeftOf="@id/ok_button"
+        android:layout_below="@id/countries"
+        android:layout_width="80dp"
+        android:layout_height="36dp"
+        android:textColor="#000"
+        android:textSize="16sp"
+        android:fontFamily="@string/font_fontFamily_drawer_item"
+        android:text="CANCEL"
+        android:textStyle="bold"
+        android:background="@drawable/selectable_background_styles"
+        android:gravity="center"/>
+
+</RelativeLayout>

@@ -1,0 +1,599 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="24dp"
+    android:background="#e5e5e5">
+    <android.support.v7.widget.CardView
+        android:id="@+id/title"
+        android:layout_marginTop="-4dp"
+        android:layout_marginLeft="-3dp"
+        android:layout_marginRight="-3dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <android.support.v7.widget.Toolbar
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorPrimaryDark"
+                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+            </android.support.v7.widget.Toolbar>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="?attr/colorPrimaryDark"
+                android:textSize="22sp"
+                android:fontFamily="@string/font_fontFamily_drawer_item"
+                android:paddingLeft="16dp"
+                android:id="@+id/drawer_title"
+                android:gravity="center_vertical"
+                android:text="Report Offence"
+                android:textColor="@color/card_white"/>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+    <ScrollView
+        android:layout_below="@id/title"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <RelativeLayout
+                android:visibility="gone"
+                android:id="@+id/summary"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/card_white">
+                <TextView
+                    android:layout_marginTop="32dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:layout_marginLeft="16dp"
+                    android:id="@+id/driver_info_head"
+                    android:text="DRIVER INFORMATION"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/driver_name"
+                    android:layout_marginTop="32dp"
+                    android:textColor="@color/blue_500"
+                    android:layout_below="@+id/driver_info_head"
+                    android:layout_marginLeft="16dp"
+                    android:textSize="16sp"
+                    android:text="Name"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/driver_name"
+                    android:layout_marginTop="8dp"
+                    android:textColor="#777777"
+                    android:id="@+id/name"
+                    android:textSize="16sp"
+                    android:layout_marginLeft="16dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/driver_license"
+                    android:textColor="@color/blue_500"
+                    android:layout_below="@id/name"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="32dp"
+                    android:textSize="16sp"
+                    android:text="License Number"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/license"
+                    android:textSize="16sp"
+                    android:textColor="#777777"
+                    android:layout_below="@id/driver_license"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="16dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/plate_no_title_"
+                    android:layout_below="@id/license"
+                    android:layout_marginLeft="16dp"
+                    android:textColor="@color/blue_500"
+                    android:layout_marginTop="32dp"
+                    android:text="Plate Number "
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/plate_no_"
+                    android:layout_marginTop="8dp"
+                    android:textSize="16sp"
+                    android:text="T3445 AAB"
+                    android:textColor="#777777"
+                    android:layout_below="@id/plate_no_title_"
+                    android:layout_marginLeft="16dp"/>
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginBottom="32dp"
+                    android:layout_below="@id/plate_no_"
+                    android:background="#666666"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:layout_below="@id/divider"
+                    android:layout_marginLeft="16dp"
+                    android:id="@+id/offences_info_head"
+                    android:text="OFFENCE INFORMATION"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/offences_committed_title"
+                    android:layout_marginTop="32dp"
+                    android:textColor="@color/blue_500"
+                    android:layout_below="@id/offences_info_head"
+                    android:layout_marginLeft="16dp"
+                    android:textSize="16sp"
+                    android:text="Offences Committed"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/offences_committed"
+                    android:layout_marginTop="8dp"
+                    android:textSize="16sp"
+                    android:textColor="#777777"
+                    android:layout_marginRight="16dp"
+                    android:layout_below="@id/offences_committed_title"
+                    android:layout_marginLeft="16dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/offences_cost_title"
+                    android:layout_marginTop="32dp"
+                    android:textColor="@color/blue_500"
+                    android:layout_below="@id/offences_committed"
+                    android:layout_marginLeft="16dp"
+                    android:textSize="16sp"
+                    android:text="Charges Cost"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/costs"
+                    android:layout_marginTop="8dp"
+                    android:textSize="16sp"
+                    android:text="Tsh 90,000/="
+                    android:textColor="#777777"
+                    android:layout_marginRight="16dp"
+                    android:layout_below="@id/offences_cost_title"
+                    android:layout_marginLeft="16dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/charges_acceptance_title"
+                    android:layout_marginTop="32dp"
+                    android:textColor="@color/blue_500"
+                    android:layout_below="@id/costs"
+                    android:layout_marginLeft="16dp"
+                    android:textSize="16sp"
+                    android:text="Charges Acceptance"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/charges_acceptance"
+                    android:layout_marginTop="8dp"
+                    android:textSize="16sp"
+                    android:text="Charges Accepted"
+                    android:textColor="#777777"
+                    android:layout_marginRight="16dp"
+                    android:layout_below="@id/charges_acceptance_title"
+                    android:layout_marginLeft="16dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/payment_title"
+                    android:layout_marginTop="32dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/blue_500"
+                    android:layout_below="@id/charges_acceptance"
+                    android:layout_marginRight="16dp"
+                    android:text="Are the costs paid by the offender?"
+                    android:layout_marginLeft="16dp"/>
+
+                <RadioGroup
+                    android:id="@+id/payment_radio_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/payment_title"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:layout_width="0dp"
+                        android:layout_weight="0.5"
+                        android:layout_height="wrap_content"
+                        android:text="Costs Paid"
+                        android:id="@+id/paid"
+                        android:textColor="#777777"
+                        android:paddingRight="8dp"/>
+
+                    <RadioButton
+                        android:layout_width="0dp"
+                        android:layout_weight="0.5"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/not_paid"
+                        android:layout_marginLeft="16dp"
+                        android:text="Not Paid"
+                        android:textColor="#777777"
+                        android:paddingRight="8dp"/>
+
+                </RadioGroup>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/payment_method_title"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone"
+                    android:textColor="@color/blue_500"
+                    android:layout_below="@id/payment_radio_group"
+                    android:layout_marginLeft="16dp"
+                    android:textSize="18sp"
+                    android:text="Payment Method"/>
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:visibility="gone"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_below="@id/payment_method_title"
+                    android:id="@+id/payment_method_spinner">
+                    </Spinner>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/receipt_title"
+                    android:visibility="gone"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@color/blue_500"
+                    android:layout_below="@id/payment_method_spinner"
+                    android:layout_marginLeft="16dp"
+                    android:textSize="18sp"
+                    android:text="Receipt"/>
+                <EditText
+                    android:layout_below="@id/receipt_title"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:id="@+id/receipt"
+                    android:visibility="gone"
+                    android:background="@color/transparent"
+                    android:hint="Enter Receipt Number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <View
+                    android:id="@+id/divider2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_below="@id/receipt"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginBottom="32dp"
+                    android:background="#666666"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:layout_below="@id/divider2"
+                    android:layout_marginLeft="16dp"
+                    android:text="ISSUER INFORMATION"
+                    android:id="@+id/issuer_info_head"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/issuer_name"
+                    android:text="Name"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@color/blue_500"
+                    android:layout_below="@id/issuer_info_head"
+                    android:layout_marginLeft="16dp"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/issuer_name_text"
+                    android:textSize="16sp"
+                    android:text="Mwita Marwa"
+                    android:textColor="#777777"
+                    android:layout_marginTop="8dp"
+                    android:layout_below="@id/issuer_name"
+                    android:layout_marginLeft="16dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/rank_no"
+                    android:textSize="16sp"
+                    android:layout_below="@id/issuer_name_text"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="32dp"
+                    android:textColor="@color/blue_500"
+                    android:text="Rank No."
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/rank_no_text"
+                    android:textSize="16sp"
+                    android:text="B8943"
+                    android:layout_marginTop="8dp"
+                    android:layout_below="@id/rank_no"
+                    android:layout_marginLeft="16dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/date"
+                    android:textSize="16sp"
+                    android:textColor="@color/blue_500"
+                    android:layout_below="@id/rank_no_text"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="32dp"
+                    android:text="Date"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/date_text"
+                    android:textSize="16sp"
+                    android:text="12/7/2013"
+                    android:layout_marginTop="8dp"
+                    android:layout_below="@id/date"
+                    android:layout_marginLeft="16dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/date_text"
+                    android:layout_marginLeft="16dp"
+                    android:id="@+id/location_title"
+                    android:textColor="@color/blue_500"
+                    android:layout_marginTop="32dp"
+                    android:text="Location"
+                    android:textSize="16sp"/>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_below="@id/location_title"
+                    android:textSize="16sp"
+                    android:text="Kindoni, Sayansi"
+                    android:layout_marginBottom="32dp"
+                    android:layout_marginLeft="16dp"
+                    android:id="@+id/location"/>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/submit_layout"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginBottom="32dp"
+                    android:layout_below="@id/location"
+                    android:background="@drawable/button4"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="16dp">
+
+                    <TextView
+
+                        android:layout_width="80dp"
+                        android:layout_height="30dp"
+                        android:text="SUBMIT"
+                        android:textColor="@android:color/white"
+                        android:id="@+id/submit_text"
+                        android:textSize="18sp"
+                        android:gravity="center"
+                        android:layout_centerInParent="true"/>
+
+                    <ProgressBar
+                        android:visibility="gone"
+                        android:layout_width="80dp"
+                        android:layout_height="30dp"
+                        android:layout_centerInParent="true"
+                        android:layout_alignBottom="@id/submit_text"
+                        android:id="@+id/pbar_report"
+                        android:scrollbarStyle="insideInset"/>
+
+                </RelativeLayout>
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/report"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:textColor="@color/blue_500"
+                    android:text="Offense Details"
+                    android:id="@+id/offence_details_title"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginLeft="16dp"
+                    android:textStyle="bold"/>
+
+                <RelativeLayout
+                    android:layout_below="@id/offence_details_title"
+                    android:layout_width="match_parent"
+                    android:id="@+id/inputs"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/plate_number_edit_text"
+                        android:hint="Enter Plate Number"/>
+                    <EditText
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/licence_number_edit_text"
+                        android:hint="Enter Licence Number"/>
+                    </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/offense_type"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="13dp"
+                    android:layout_marginRight="13dp"
+                    android:background="@drawable/card_bg"
+                    android:layout_marginTop="8dp"
+                    android:layout_below="@id/inputs">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:textSize="18sp"
+                        android:gravity="center"
+                        android:layout_centerInParent="true"
+                        android:id="@+id/offense_type_text"
+                        android:text="Select Offense Type"
+                        android:typeface="serif"
+                        android:textStyle="bold"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"/>
+
+                </RelativeLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/offence_list"
+                    android:layout_marginTop="16dp"
+                    android:textSize="18sp"
+                    android:textColor="@color/red_500"
+                    android:visibility="gone"
+                    android:layout_below="@id/offense_type"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginLeft="16dp"/>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/accept_charges_title"
+                    android:layout_marginTop="16dp"
+                    android:textSize="18sp"
+                    android:textColor="@color/blue_500"
+                    android:layout_below="@id/offence_list"
+                    android:layout_marginRight="16dp"
+                    android:text="Are the charges accepted by the offender?"
+                    android:layout_marginLeft="16dp"/>
+
+                <RadioGroup
+                    android:id="@+id/accept_charges_radio_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/accept_charges_title"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:layout_width="0dp"
+                        android:layout_weight="0.5"
+                        android:layout_height="wrap_content"
+                        android:text="Charges Accepted"
+                        android:id="@+id/guilty"
+                        android:textColor="#777777"
+                        android:paddingRight="8dp"/>
+
+                    <RadioButton
+                        android:layout_width="0dp"
+                        android:layout_weight="0.5"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/court"
+                        android:layout_marginLeft="16dp"
+                        android:text="Heading to Court"
+                        android:textColor="#777777"
+                        android:paddingRight="8dp"/>
+
+
+                </RadioGroup>
+
+
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:id="@+id/submit_layout1"
+                    android:layout_marginTop="32dp"
+                    android:layout_below="@id/accept_charges_radio_group"
+                    android:background="@drawable/button4"
+                    android:layout_alignParentRight="true">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:text="CONFIRM"
+                        android:textColor="@android:color/white"
+                        android:id="@+id/submit_text1"
+                        android:textSize="18sp"
+                        android:gravity="center"
+                        android:layout_centerInParent="true"/>
+
+                    <ProgressBar
+                        android:visibility="gone"
+                        android:layout_width="80dp"
+                        android:layout_height="30dp"
+                        android:layout_centerInParent="true"
+                        android:id="@+id/pbar_report1"
+                        android:scrollbarStyle="insideInset"/>
+
+                </RelativeLayout>
+
+                </RelativeLayout>
+            </RelativeLayout>
+
+        </ScrollView>
+    </RelativeLayout>

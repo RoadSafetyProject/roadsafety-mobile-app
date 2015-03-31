@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@+id/police_sign_strip"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/stroke"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="32dp"
+        android:id="@+id/driveraname"
+        android:layout_below="@id/police_sign_strip"
+        android:text="Driver"/>
+
+
+    <customViews.TouchFeedbackEnabledRelativeLayout
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:background="@drawable/card"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/police_sign_strip"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
+        android:id="@+id/img_dr_a_sign">
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="100dp"
+            android:layout_alignParentRight="true"
+            android:scaleType="fitXY"
+            android:layout_below="@id/signature_strip"
+            android:id="@+id/img_driver"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/driverA_hint"
+            android:layout_centerInParent="true"
+            android:text="Tap to Sign"
+            android:textColor="@color/second_grey"/>
+
+
+    </customViews.TouchFeedbackEnabledRelativeLayout>
+
+
+</RelativeLayout>

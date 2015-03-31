@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="8dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:background="@drawable/card_bg"
+        android:layout_margin="4dp"
+        android:layout_marginTop="16dp"
+        android:paddingTop="16dp"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/passenger_top_title"
+            android:textColor="@color/teal_700"
+            android:textStyle="bold"
+            android:text="Passenger"
+            android:layout_marginLeft="8dp"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/name"
+            android:text="Name :"
+            android:layout_below="@id/passenger_top_title"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="8dp"/>
+
+        <EditText
+            android:layout_width="128dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/name_edit"
+            android:textSize="12sp"
+            android:layout_below="@id/passenger_top_title"
+            android:layout_marginLeft="128dp"/>
+
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/gender"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/name_edit"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Male"
+                android:textSize="16sp"
+                android:checked="true"
+                android:id="@+id/male"/>
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Female"
+                android:layout_marginLeft="32dp"
+                android:textSize="16sp"
+                android:id="@+id/female"/>
+
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/dob"
+            android:text="Date Of Birth "
+            android:layout_below="@id/gender"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="16dp"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/dob_one"
+            android:minWidth="128dp"
+            android:editable="false"
+            android:layout_below="@id/gender"
+            android:layout_marginLeft="128dp"
+            android:layout_marginTop="4dp"
+            android:textSize="12sp"/>
+
+
+        <Button
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="8dp"
+            android:id="@+id/date_picker"
+            android:layout_below="@id/gender"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="8dp"
+            android:text="Pick"
+            android:textSize="14sp"
+            android:background="@drawable/button"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/physical_address"
+            android:text="Physical Address"
+            android:layout_below="@id/dob_one"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="16dp"/>
+
+        <EditText
+            android:layout_width="128dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/physical_address_one"
+            android:layout_below="@id/dob_one"
+            android:layout_marginLeft="128dp"
+            android:textSize="12sp"
+            android:layout_marginTop="4dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Adress "
+            android:id="@+id/address_box"
+            android:layout_below="@id/physical_address_one"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="16dp"/>
+
+        <EditText
+            android:layout_width="128dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/address_box_one"
+            android:layout_below="@id/physical_address_one"
+            android:layout_marginLeft="128dp"
+            android:textSize="12sp"
+            android:layout_marginTop="4dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/national_id"
+            android:text="National Id "
+            android:layout_below="@id/address_box_one"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="16dp"/>
+
+        <EditText
+            android:layout_width="128dp"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:layout_marginTop="4dp"
+            android:layout_below="@id/address_box_one"
+            android:layout_marginLeft="128dp"
+            android:id="@+id/national_id_one"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/phone_no"
+            android:text="Phone No "
+            android:layout_below="@id/national_id_one"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="16dp"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:minWidth="128dp"
+            android:layout_marginTop="4dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/phone_no_one"
+            android:layout_below="@id/national_id_one"
+            android:layout_marginLeft="128dp"
+            android:textSize="12sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/nationality"
+            android:text="Drugs/Alcohol % "
+            android:layout_below="@id/phone_no_one"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="8dp"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/alcohol_percentage"
+            android:textSize="12sp"
+            android:layout_marginTop="4dp"
+            android:minWidth="128dp"
+            android:layout_marginLeft="128dp"
+            android:inputType="number"
+            android:layout_below="@id/phone_no_one"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/license"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="16dp"
+            android:text="Seatbelt/Helmet "
+            android:layout_below="@id/alcohol_percentage"/>
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/seat_belt_check"
+            android:layout_toRightOf="@id/license"
+            android:layout_below="@id/alcohol_percentage"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/occupation"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="16dp"
+            android:text="Casualty "
+            android:layout_below="@id/seat_belt_check"/>
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/casualty"
+            android:layout_toRightOf="@id/occupation"
+            android:layout_below="@id/seat_belt_check"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            android:layout_marginRight="8dp">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fatal"
+                android:textSize="16sp"
+                android:checked="true"
+                android:id="@+id/fatal"/>
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="severe"
+                android:layout_marginLeft="4dp"
+                android:textSize="16sp"
+                android:id="@+id/severe"/>
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Light"
+                android:layout_marginLeft="4dp"
+                android:id="@+id/light"/>
+        </RadioGroup>
+    </RelativeLayout>
+    </LinearLayout>
+
+

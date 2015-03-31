@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="32dp"
+        android:id="@+id/driveraname"
+        android:text="Driver A"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/d_a_name"
+        android:layout_below="@id/driveraname"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="John Doe"
+        android:textColor="@color/card_grid_text"/>
+
+    <customViews.TouchFeedbackEnabledRelativeLayout
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:background="@drawable/card"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
+        android:id="@+id/img_dr_a_sign">
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="100dp"
+            android:layout_alignParentRight="true"
+            android:scaleType="fitXY"
+            android:layout_below="@id/signature_strip"
+            android:id="@+id/img_driverA"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/driverA_hint"
+            android:layout_centerInParent="true"
+            android:text="Tap to Sign"
+            android:textColor="@color/second_grey"/>
+
+
+    </customViews.TouchFeedbackEnabledRelativeLayout>
+</RelativeLayout>

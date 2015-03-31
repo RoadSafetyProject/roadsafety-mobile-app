@@ -1,0 +1,665 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="24dp"
+    android:background="#e5e5e5">
+    <android.support.v7.widget.CardView
+        android:id="@+id/title"
+        android:layout_marginTop="-4dp"
+        android:layout_marginLeft="-3dp"
+        android:layout_marginRight="-3dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <android.support.v7.widget.Toolbar
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorPrimaryDark"
+                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+            </android.support.v7.widget.Toolbar>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="?attr/colorPrimaryDark"
+                android:textSize="22sp"
+                android:fontFamily="@string/font_fontFamily_drawer_item"
+                android:paddingLeft="16dp"
+                android:id="@+id/drawer_title"
+                android:gravity="center_vertical"
+                android:text="Accident Classification"
+                android:textColor="@color/card_white"/>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+    <ScrollView
+        android:layout_below="@id/title"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <RelativeLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="16dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/atc_wrapper"
+                android:paddingBottom="16dp"
+                android:background="@drawable/card"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/atc_title"
+                    android:text="Accident Type classification"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:textColor="@color/deep_orange_a400"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    android:textSize="16sp"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:id="@+id/atc_strip"
+                    android:layout_below="@id/atc_title"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:visibility="gone"
+                    android:layout_marginRight="8dp"
+                    android:background="@color/deep_orange_a100"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/accident_type_heading"
+                    android:layout_marginLeft="8dp"
+                    android:visibility="gone"
+                    android:layout_marginTop="16dp"
+                    android:layout_below="@id/atc_strip"
+                    android:text="Accident Type"/>
+
+                <Spinner
+                    android:id="@+id/atc_spinner"
+                    android:layout_width="60dp"
+                    android:layout_height="35dp"
+                    android:minWidth="100dp"
+                    android:visibility="gone"
+                    android:layout_toRightOf="@id/accident_type_heading"
+                    android:layout_below="@id/atc_strip"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_alignRight="@+id/atc_title"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:background="@drawable/button"
+                    android:text="Select"
+                    android:visibility="gone"
+                    android:layout_marginTop="8dp"
+                    android:id="@+id/accident_type_select_button"
+                    android:layout_below="@id/atc_strip"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="8dp"/>
+
+                <TextView
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/selected_atc"
+                    android:layout_below="@id/accident_type_select_button"
+                    android:layout_marginRight="8dp"
+                    android:layout_alignParentRight="true"
+                    android:text="Something Selected"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/junction_type_title"
+                    android:layout_marginLeft="8dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/deep_orange_a400"
+                    android:layout_marginTop="16dp"
+                    android:layout_below="@id/selected_atc"
+                    android:text="Junction Type"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@id/junction_type_title"
+                    android:id="@+id/junction_type_strip"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/deep_orange_a100"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/junction_structure_title"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_below="@id/junction_type_strip"
+                    android:text="Junction Structure"/>
+
+                <Spinner
+                    android:id="@+id/junction_structure_spinner"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/junction_type_strip"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/junction_control_title"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_below="@id/junction_structure_spinner"
+                    android:text="Junction Control"/>
+
+
+                <Spinner
+                    android:id="@+id/junction_control_spinner"
+                    android:layout_width="150dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/junction_structure_spinner"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="16dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/road_type_title"
+                    android:layout_below="@id/junction_control_spinner"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="8dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/deep_orange_a400"
+                    android:text="Road Type"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@id/road_type_title"
+                    android:id="@+id/road_type_strip"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/deep_orange_a100"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/road_class_title"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_below="@id/road_type_strip"
+                    android:text="Road Type"/>
+
+                <Spinner
+                    android:id="@+id/road_type_spinner"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/road_type_strip"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/surface_type_title"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_below="@id/road_type_spinner"
+                    android:text="Surface Type"/>
+
+
+                <Spinner
+                    android:id="@+id/surface_type_spinner"
+                    android:layout_width="150dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/road_type_spinner"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="16dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/road_structure_title"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_below="@id/surface_type_spinner"
+                    android:text="Road Structure"/>
+
+                <Spinner
+                    android:id="@+id/road_structure_spinner"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/surface_type_spinner"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/road_status_title"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_below="@id/road_structure_spinner"
+                    android:text="Surface Status"/>
+
+
+                <Spinner
+                    android:id="@+id/road_status_spinner"
+                    android:layout_width="150dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/road_structure_spinner"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="16dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/street_condition"
+                    android:layout_below="@id/road_status_spinner"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="8dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/deep_orange_a400"
+                    android:text="Street Condition"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@id/street_condition"
+                    android:id="@+id/street_condition_strip"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/deep_orange_a100"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/road_surface_title"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_below="@id/street_condition_strip"
+                    android:text="Road Surface"/>
+
+                <Spinner
+                    android:id="@+id/road_surface_spinner"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/street_condition_strip"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/light_title"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_below="@id/road_surface_spinner"
+                    android:text="Light"/>
+
+
+                <Spinner
+                    android:id="@+id/light_spinner"
+                    android:layout_width="150dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/road_surface_spinner"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="16dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/wheather_title"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_below="@id/light_spinner"
+                    android:text="Weather"/>
+
+                <Spinner
+                    android:id="@+id/wheather_spinner"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/light_spinner"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/control_title"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_below="@id/wheather_spinner"
+                    android:text="Control"/>
+
+
+                <Spinner
+                    android:id="@+id/control_spinner"
+                    android:layout_width="150dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/wheather_spinner"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="16dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/violation_title"
+                    android:layout_below="@id/control_spinner"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="8dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/deep_orange_a400"
+                    android:text="Violations"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@id/violation_title"
+                    android:id="@+id/violation_strip"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/deep_orange_a100"/>
+                <LinearLayout
+                    android:id="@+id/violations_layouts"
+                    android:layout_width="match_parent"
+                    android:layout_below="@id/violation_strip"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                </LinearLayout>
+
+
+
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/defects_title"
+                    android:layout_below="@id/violations_layouts"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="8dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/deep_orange_a400"
+                    android:text="Defects"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@id/defects_title"
+                    android:id="@+id/defects_strip"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/deep_orange_a100"/>
+
+                <LinearLayout
+                    android:id="@+id/defects_layouts"
+                    android:layout_width="match_parent"
+                    android:layout_below="@id/defects_strip"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                </LinearLayout>
+
+
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_below="@id/atc_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:paddingBottom="16dp"
+                android:id="@+id/accident_description_wrapper"
+                android:background="@drawable/card">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/description_title"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="8dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/deep_orange_a400"
+                    android:text="Accident Description"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@id/description_title"
+                    android:id="@+id/description_strip"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/deep_orange_a100"/>
+
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:id="@+id/sketch"
+                    android:scaleType="centerCrop"
+                    android:layout_below="@id/description_strip"
+                    android:src="@drawable/site_sketch"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="8dp"/>
+
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:src="@drawable/cross_direction"
+                    android:id="@+id/cross_direction"
+                    android:layout_below="@id/description_strip"
+                    android:layout_toRightOf="@id/sketch"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"/>
+
+
+                <customViews.TouchFeedbackEnabledRelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:id="@+id/acc_description"
+                    android:layout_below="@id/cross_direction"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@drawable/card">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/sign_capture"
+                        android:layout_margin="8dp"
+                        android:scaleType="fitXY"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/sketch_hint"
+                        android:layout_centerInParent="true"
+                        android:text="Tap to draw description"
+                        android:textColor="@color/card_grid_text"/>
+
+
+                </customViews.TouchFeedbackEnabledRelativeLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/signature_layout"
+                android:layout_below="@id/accident_description_wrapper"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:paddingBottom="16dp"
+                android:background="@drawable/card">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/signature_title"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="8dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/deep_orange_a400"
+                    android:text="Signatures"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@id/signature_title"
+                    android:id="@+id/signature_strip"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/deep_orange_a100"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="32dp"
+                    android:id="@+id/policename"
+                    android:layout_below="@id/signature_strip"
+                    android:text="Police"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/p_name"
+                    android:layout_below="@id/policename"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Kelvin Mbwilo"
+                    android:textColor="@color/card_grid_text"/>
+
+                <customViews.TouchFeedbackEnabledRelativeLayout
+                    android:layout_width="200dp"
+                    android:layout_height="100dp"
+                    android:background="@drawable/card"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/signature_strip"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="8dp"
+                    android:id="@+id/img_police_sign">
+
+                    <ImageView
+                        android:layout_width="200dp"
+                        android:layout_height="100dp"
+                        android:layout_alignParentRight="true"
+                        android:scaleType="fitXY"
+                        android:layout_below="@id/signature_strip"
+                        android:id="@+id/img_police"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/police_hint"
+                        android:layout_centerInParent="true"
+                        android:text="Tap to Sign"
+                        android:textColor="@color/second_grey"/>
+
+
+                </customViews.TouchFeedbackEnabledRelativeLayout>
+
+
+
+
+
+
+                <LinearLayout
+                    android:layout_below="@id/img_police_sign"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/drivers_signatures_layouts"></LinearLayout>
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_below="@id/drivers_signatures_layouts"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/witnessses_signatures_layouts"></LinearLayout>
+
+
+            </RelativeLayout>
+
+            <Button
+                android:layout_below="@id/signature_layout"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
+                android:textColor="@android:color/white"
+                android:layout_marginLeft="16dp"
+                android:text="finish"
+                android:background="@drawable/button2"
+                android:id="@+id/finish_button"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"/>
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignBottom="@id/finish_button"
+                android:layout_alignLeft="@id/finish_button"
+                android:layout_alignRight="@id/finish_button"
+                android:layout_alignTop="@id/finish_button"
+                android:scrollbarStyle="insideInset"/>
+
+
+        </RelativeLayout>
+
+
+    </ScrollView>
+</RelativeLayout>

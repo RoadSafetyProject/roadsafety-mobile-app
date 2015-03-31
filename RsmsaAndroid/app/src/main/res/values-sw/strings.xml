@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DVS</string>
+    <string name="toast_Sending_order_failed">Imeshindikana kutuma Order</string>
+    <string name="feedback_reply_title">Kutoka kwa madeveloper wa DVS</string>
+    <string name="feedback_toast">Ahsante sana!</string>
+    <string name="toast_fill_all_fields">Tafadhali jaza nafasi zote</string>
+    <string name="verify">Hakiki</string>
+    <string name="verification_hint">Ingiza number za msuguo</string>
+    <string name="settings_password">Neno la siri</string>
+    <string name="cancel_button">Sitisha</string>
+    <string name="change_password_comfirm_new_password">Hakiki neno la siri jipya</string>
+    <string name="change_password_current_password">Ingiza neno la siri la sasa</string>
+    <string name="change_password_new_password">Ingiza neno la siri jipya</string>
+    <string name="contents_email">Barua pepe</string>
+    <string name="contents_password">Neno la siri</string>
+    <string name="dialogue_title_change_password">Badili neno la siri</string>
+    <string name="dialogue_title_language_chooser">Chagua lugha</string>
+    <string name="feedback_close_button">Funga</string>
+    <string name="feedback_comments">Andika maoni yako</string>
+    <string name="fragment_order_requests_send_button_text">Tuma</string>
+    <string name="log_in_text">Ingia</string>
+    <string name="settings_password_description">Badili neno la siri</string>
+    <string name="toast_enter_the_code">Ingiza number iliyopo kwenye dawa</string>
+    <string name="toast_log_in_to_change_password">Tafadhali ingia kwanza</string>
+</resources>

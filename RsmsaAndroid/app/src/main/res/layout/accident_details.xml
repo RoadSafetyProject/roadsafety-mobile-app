@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:scrollbars="none"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tabs_wrapper"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:paddingBottom="8dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/fake_tabs"
+            android:background="@drawable/button4"
+            android:padding="4dp">
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_below="@id/fake_tabs"
+            android:id="@+id/summary"
+            android:paddingTop="8dp"
+            android:paddingBottom="16dp"
+            android:background="@drawable/card_bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fatal"
+                android:layout_marginTop="8dp"
+                android:textSize="16sp"
+                android:id="@+id/fatal_text"
+                android:layout_marginLeft="8dp"/>
+
+            <EditText
+                android:layout_width="56dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/fatal_edit"
+                android:inputType="numberDecimal"
+                android:layout_toRightOf="@id/fatal_text"
+                android:textSize="15sp"
+                android:layout_marginLeft="16dp"/>
+
+            <EditText
+                android:layout_width="56dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/injury_edit"
+                android:inputType="numberDecimal"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="8dp"
+                android:textSize="16sp"
+                android:layout_marginLeft="8dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/injury_text"
+                android:layout_marginTop="8dp"
+                android:layout_toLeftOf="@id/injury_edit"
+                android:text="severe injuries"
+                android:textSize="16sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:text="Simple"
+                android:id="@+id/simple_text"
+                android:layout_below="@id/fatal_edit"
+                android:textSize="16sp"
+                android:layout_marginTop="8dp"/>
+
+            <EditText
+                android:layout_width="56dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/simple_edit"
+                android:inputType="numberDecimal"
+                android:layout_below="@id/fatal_edit"
+                android:layout_toRightOf="@id/simple_text"
+                android:textSize="15sp"
+                android:layout_marginLeft="8dp"/>
+
+            <EditText
+                android:layout_width="56dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:inputType="numberDecimal"
+                android:layout_below="@id/injury_edit"
+                android:textSize="16sp"
+                android:layout_marginRight="8dp"
+                android:id="@+id/not_injured_edit"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/not_injured_text"
+                android:layout_below="@id/injury_text"
+                android:layout_toLeftOf="@id/not_injured_edit"
+                android:text="Not injured"
+                android:textSize="16sp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="8dp"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/driver_details"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/card_bg"
+            android:padding="8dp"
+            android:layout_below="@id/summary"
+            android:paddingBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:text="Driver Details"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:id="@+id/driver_details_title"
+                android:textColor="@color/light_blue_a400"
+                android:layout_marginTop="8dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:id="@+id/strip_one"
+                android:layout_below="@id/driver_details_title"
+                android:background="@color/card_separator"
+                android:layout_marginTop="16dp"/>
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/license"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="16dp"
+                android:text="Driver License ID "
+                android:layout_below="@id/strip_one"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
+                android:id="@+id/license_one"
+                android:layout_marginLeft="16dp"
+                android:minWidth="120dp"
+                android:layout_toRightOf="@id/license"
+                android:layout_below="@id/strip_one"
+                android:textSize="16sp"/>
+
+            <RelativeLayout
+                android:layout_below="@id/license"
+                android:layout_marginTop="8dp"
+                android:id="@+id/test"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Drug"
+                    android:textSize="16sp"
+                    android:id="@+id/drug_title"
+                    android:layout_marginLeft="8dp"/>
+
+
+                <CheckBox
+                    android:layout_width="25dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/drug_edit"
+                    android:visibility="visible"
+                    android:layout_below="@id/drug_edit"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="88dp"
+                    />
+
+                <EditText
+                    android:layout_width="72dp"
+                    android:layout_height="24dp"
+                    android:id="@+id/alcohol_edit"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="8dp"
+                    android:inputType="numberDecimal"
+                    android:textSize="15sp"
+                    android:layout_marginLeft="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/alcohol_text"
+                    android:layout_toLeftOf="@id/alcohol_edit"
+                    android:text="Alcohol %"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:text="Phone Use  "
+                    android:id="@+id/phone_text"
+                    android:layout_below="@id/drug_edit"
+                    android:textSize="16sp"
+                    android:layout_marginTop="8dp"/>
+
+                <CheckBox
+                    android:layout_width="25dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/phone_edit"
+                    android:layout_below="@id/drug_edit"
+                    android:layout_toRightOf="@id/phone_text"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="8dp"
+                    />
+
+
+                <CheckBox
+                    android:layout_width="25dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/seat_belt_edit"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/alcohol_edit"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="8dp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/seat_belt_text"
+                    android:layout_below="@id/alcohol_edit"
+                    android:layout_toLeftOf="@id/seat_belt_edit"
+                    android:text="Seat Belt/Helmet"
+                    android:textSize="16sp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="8dp"/>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/vehicle_details"
+            android:layout_below="@id/driver_details"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/card_bg"
+            android:paddingBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/vehicle_one_details_title"
+                android:text="Vehicle Details"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textColor="@color/light_blue_a400"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="8dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:id="@+id/strip_two"
+                android:layout_below="@id/vehicle_one_details_title"
+                android:background="@color/card_separator"
+                android:layout_marginTop="16dp"/>
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/registration_number"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="32dp"
+                android:text="Plate Number : "
+                android:layout_below="@id/strip_two"/>
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/registration_number_one"
+                android:layout_marginLeft="146dp"
+                android:textSize="12sp"
+                android:minWidth="100dp"
+                android:layout_marginTop="16dp"
+                android:layout_below="@id/strip_two"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/repair_amount"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="16dp"
+                android:text="Estimated Repair TSH : "
+                android:layout_below="@id/registration_number"
+                />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/repair_amount_one"
+                android:layout_marginLeft="146dp"
+                android:layout_marginTop="4dp"
+                android:minWidth="100dp"
+                android:layout_below="@id/registration_number_one"
+                android:textSize="12sp"/>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="16dp"
+            android:id="@+id/damage_layout"
+            android:background="@drawable/card_bg"
+            android:layout_below="@id/vehicle_details">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/damage_title"
+                android:text="Damage"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textColor="@color/light_blue_a400"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="8dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:id="@+id/damage_strip"
+                android:layout_below="@id/damage_title"
+                android:background="@color/card_separator"
+                android:layout_marginTop="16dp"/>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:src="@drawable/car"
+                android:layout_marginTop="16dp"
+                android:layout_below="@id/damage_strip"
+                android:id="@+id/car_image"
+                android:scaleType="centerCrop"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Vehicle"
+                android:layout_marginTop="16sp"
+                android:layout_below="@id/car_image"
+                android:id="@+id/vehicle_title"
+                android:layout_marginLeft="8dp"/>
+
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="56dp"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"
+                android:inputType="numberDecimal"
+                android:id="@+id/vehicle_title_edit"
+                android:layout_below="@id/car_image"
+                android:layout_marginLeft="40dp"
+                android:layout_toRightOf="@id/vehicle_title"/>
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/vehicle_total_edit"
+                android:layout_below="@id/car_image"
+                android:inputType="numberDecimal"
+                android:layout_marginTop="4dp"
+                android:minWidth="80dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="8dp"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/vehicle_total"
+                android:layout_below="@id/car_image"
+                android:layout_toLeftOf="@id/vehicle_total_edit"
+                android:text="Vehicle Total"
+                android:layout_marginTop="16dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:text="Infastructure : "
+                android:id="@+id/infastructure"
+                android:layout_below="@id/vehicle_title_edit"
+                android:layout_marginTop="16dp"/>
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/infrastructure_edit"
+                android:layout_below="@id/vehicle_title_edit"
+                android:layout_toRightOf="@id/infastructure"
+                android:layout_marginTop="4dp"
+                android:textSize="12sp"
+                android:inputType="numberDecimal"
+                android:minWidth="56dp"/>
+
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/rescue_cost_edit"
+                android:textSize="12sp"
+                android:minWidth="80dp"
+                android:inputType="numberDecimal"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/vehicle_total_edit"
+                android:layout_marginTop="4dp"
+                android:layout_marginRight="8dp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/rescue_cost"
+                android:layout_below="@id/vehicle_total_edit"
+                android:layout_toLeftOf="@id/rescue_cost_edit"
+                android:text="Cost"
+                android:layout_marginTop="16dp"/>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/passengers_layout"
+            android:orientation="vertical"
+            android:layout_below="@id/damage_layout"
+            android:animateLayoutChanges="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"></LinearLayout>
+
+        <Button
+            android:layout_width="122dp"
+            android:layout_height="48dp"
+            android:id="@+id/next"
+            android:layout_marginTop="16dp"
+            android:text="NEXT"
+            android:visibility="gone"
+            android:textColor="@android:color/white"
+            android:layout_below="@id/passengers_layout"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/button2"
+            android:textSize="16sp"/>
+
+        <Button
+            android:layout_width="122dp"
+            android:layout_height="48dp"
+            android:id="@+id/add_witness"
+            android:layout_marginTop="16dp"
+            android:text="ADD PASSENGER"
+            android:layout_toLeftOf="@id/next"
+            android:textColor="@android:color/white"
+            android:layout_below="@id/passengers_layout"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/button2"
+            android:textSize="16sp"/>
+
+
+
+    </RelativeLayout>
+</ScrollView>

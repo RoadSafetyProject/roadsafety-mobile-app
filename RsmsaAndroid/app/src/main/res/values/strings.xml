@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">iRoad</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_save">Save</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="drawer_text">content</string>
+    <string name="scan">Scan</string>
+    <string name="scan_only_qr_codes">Scan only QR Codes</string>
+    <string name="signature_directory">GetSignature</string>
+    <string name="drawer_open">Menu</string>
+    <string name="drawer_close">TOR</string>
+
+    <string-array name="drawer_list">
+        <item>Report Offence</item>
+        <item>Payments</item>
+        <item>Report Accidents</item>
+        <item>Send Feedback</item>
+        <item>Settings</item>
+    </string-array>
+
+    <string-array name="payment_methods">
+        <item>CASH</item>
+        <item>M-PESA</item>
+        <item>TIGO PESA</item>
+        <item>AIRTEL MONEY</item>
+    </string-array>
+
+</resources>
