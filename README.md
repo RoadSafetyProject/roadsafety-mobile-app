@@ -28,7 +28,7 @@ Then, Gradle will do everything for you.
 This project uses other android open source libraries such as:
 
 
-1. [Zxing](https://github.com/username/repo/blob/branch/docs/more_words.md)
+1. [Zxing](https://github.com/zxing/zxing/)
 2. [MaterialDesignLibrary](https://github.com/cozej4/MaterialDesignLibrary)
 3. [Androd-InApp-Feedback](http://www.android-feedback.com/library)
 
