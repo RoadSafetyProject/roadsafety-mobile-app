@@ -26,8 +26,14 @@ import com.RSMSA.policeApp.AccidentReportFormActivity;
 import com.RSMSA.policeApp.MainOffence;
 import com.RSMSA.policeApp.R;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -37,12 +43,13 @@ import java.util.Locale;
 public class ReportAccidentsFragment extends Fragment {
     private static final String TAG="ReportAccidentsFragment";
     private RelativeLayout previewLayout,cameraOptionsLayout, contentView;
-    private RelativeLayout btnCapturePicture,btnCaptureVideo;
+    private RelativeLayout btnCapturePicture,btnCaptureVideo, btnSelectPicture;
     private Uri fileUri;  //file url to store image/video
 
     // Activity request codes
     private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
     private static final int CAMERA_CAPTURE_VIDEO_REQUEST_CODE = 200;
+    private static final int SELECT_PHOTO = 300;
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
 
@@ -58,6 +65,7 @@ public class ReportAccidentsFragment extends Fragment {
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         contentView=(RelativeLayout)inflater.inflate(R.layout.fragment_accident_reporter, container, false);
         btnCapturePicture = (RelativeLayout) contentView.findViewById(R.id.btnCapturePictureLayout);
+        btnSelectPicture = (RelativeLayout) contentView.findViewById(R.id.btnSelectPictureLayout);
         btnCaptureVideo = (RelativeLayout) contentView.findViewById(R.id.btnCaptureVideoLayout);
         imgPreview = (ImageView) contentView.findViewById(R.id.imgPreview);
         videoPreview = (VideoView) contentView.findViewById(R.id.videoPreview);
@@ -95,6 +103,15 @@ public class ReportAccidentsFragment extends Fragment {
                 recordVideo();
                 //cameraOptionsLayout.setVisibility(View.GONE);
                 //mediaTitle.setVisibility(View.VISIBLE);
+            }
+        });
+
+        btnSelectPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                photoPickerIntent.setType("image/*");
+                startActivityForResult(photoPickerIntent, SELECT_PHOTO);
             }
         });
         return contentView;
@@ -218,9 +235,112 @@ public class ReportAccidentsFragment extends Fragment {
                         "Sorry! Failed to record video", Toast.LENGTH_SHORT)
                         .show();
             }
+        }else if(requestCode == SELECT_PHOTO) {
+            if (resultCode == getActivity().RESULT_OK) {
+                Uri selectedImage = data.getData();
+                InputStream imageStream = null;
+                Bitmap bitmap = null;
+                try {
+                    bitmap = decodeUri(selectedImage);
+                    //profilePic.setImageBitmap(bitmap);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                String uniqueId = getTodaysDate() + "_" + getCurrentTime() + "_" + Math.random();
+                String filename = uniqueId + ".png";
+                storeImage(bitmap, filename);
+                ImageView imageDone=(ImageView)contentView.findViewById(R.id.image_done2);
+                imageDone.setVisibility(View.VISIBLE);
+
+            }
         }
     }
 
+    private String getTodaysDate() {
+
+        final Calendar c = Calendar.getInstance();
+        int todaysDate =     (c.get(Calendar.YEAR) * 10000) +
+                ((c.get(Calendar.MONTH) + 1) * 100) +
+                (c.get(Calendar.DAY_OF_MONTH));
+        Log.w("DATE:",String.valueOf(todaysDate));
+        return(String.valueOf(todaysDate));
+
+    }
+
+    private String getCurrentTime() {
+
+        final Calendar c = Calendar.getInstance();
+        int currentTime =     (c.get(Calendar.HOUR_OF_DAY) * 10000) +
+                (c.get(Calendar.MINUTE) * 100) +
+                (c.get(Calendar.SECOND));
+        Log.w("TIME:",String.valueOf(currentTime));
+        return(String.valueOf(currentTime));
+
+    }
+
+    private boolean storeImage(Bitmap imageData, String filename) {
+        /**
+         * get path to external storage (SD card)
+         */
+        File sdIconStorage = getActivity().getCacheDir();
+        File sdIconStorageDir = new File(sdIconStorage.getAbsolutePath()+"/THUMBS");
+
+
+        /**
+         * create storage directories, if they don't exist
+         */
+        sdIconStorageDir.mkdirs();
+
+        try {
+            imagePath = sdIconStorageDir.toString() + filename;
+            FileOutputStream fileOutputStream = new FileOutputStream(imagePath);
+
+            BufferedOutputStream bos = new BufferedOutputStream(fileOutputStream);
+
+            /**
+             * choose another format if PNG doesn't suit you
+             */
+            imageData.compress(Bitmap.CompressFormat.PNG, 100, bos);
+            bos.flush();
+            bos.close();
+
+        } catch (FileNotFoundException e) {
+            Log.w("TAG", "Error saving image file: " + e.getMessage());
+            return false;
+        } catch (IOException e) {
+            Log.w("TAG", "Error saving image file: " + e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    private Bitmap decodeUri(Uri selectedImage) throws FileNotFoundException {
+        // Decode image size
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(selectedImage), null, o);
+
+        // The new size we want to scale to
+        final int REQUIRED_SIZE = 500;
+
+        // Find the correct scale value. It should be the power of 2.
+        int width_tmp = o.outWidth, height_tmp = o.outHeight;
+        int scale = 1;
+        while (true) {
+            if (width_tmp / 2 < REQUIRED_SIZE
+                    || height_tmp / 2 < REQUIRED_SIZE) {
+                break;
+            }
+            width_tmp /= 2;
+            height_tmp /= 2;
+            scale *= 2;
+        }
+        // Decode with inSampleSize
+        BitmapFactory.Options o2 = new BitmapFactory.Options();
+        o2.inSampleSize = scale;
+        return BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(selectedImage), null, o2);
+
+    }
 
     private void setFullImageFromFilePath(String imagePath, ImageView imageView) {
         //videoPreview.setVisibility(View.GONE);

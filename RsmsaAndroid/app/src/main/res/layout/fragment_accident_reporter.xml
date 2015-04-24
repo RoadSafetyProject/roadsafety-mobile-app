@@ -21,7 +21,7 @@
             android:layout_marginTop="8dp">
             <RelativeLayout
                 android:id="@+id/btnCapturePictureLayout"
-                android:layout_width="match_parent"
+                android:layout_width="160dp"
                 android:background="@drawable/card_bg"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
@@ -32,7 +32,7 @@
                     android:layout_height="24dp"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
+                    android:layout_marginRight="8dp"
                     android:src="@drawable/ic_camera"
                     android:scaleType="centerCrop"
                     android:text="Photo"/>
@@ -41,16 +41,52 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:textSize="18sp"
-                    android:text="Capture an Image"/>
+                    android:textSize="16sp"
+                    android:gravity="center"
+                    android:text="Capture"/>
                 <ImageView
                     android:id="@+id/image_done"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:visibility="gone"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="4dp"
+                    android:src="@drawable/ic_done_all_black_48dp"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_toRightOf="@id/btnCapturePictureLayout"
+                android:id="@+id/btnSelectPictureLayout"
+                android:layout_width="match_parent"
+                android:background="@drawable/card_bg"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_height="48dp">
+                <ImageView
+                    android:id="@+id/btnSelectPicture"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="8dp"
+                    android:src="@drawable/ic_now_wallpaper_black"
+                    android:scaleType="centerCrop"
+                    android:text="Photo"/>
+                <TextView
+                    android:layout_toRightOf="@id/btnSelectPicture"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textSize="16sp"
+                    android:text="Select"/>
+                <ImageView
+                    android:id="@+id/image_done2"
                     android:layout_width="24dp"
                     android:visibility="gone"
                     android:layout_height="24dp"
                     android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"
-                    android:layout_marginRight="16dp"
+                    android:layout_marginRight="4dp"
                     android:src="@drawable/ic_done_all_black_48dp"/>
             </RelativeLayout>
             <RelativeLayout

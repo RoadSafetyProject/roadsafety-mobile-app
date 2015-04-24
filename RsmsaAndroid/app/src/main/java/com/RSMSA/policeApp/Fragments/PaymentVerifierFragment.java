@@ -5,12 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,28 +26,19 @@ import android.widget.Toast;
 
 import com.RSMSA.policeApp.MainOffence;
 import com.RSMSA.policeApp.Models.Offence;
-import com.RSMSA.policeApp.PaymentConfirmationDialogue;
+import com.RSMSA.policeApp.Dialogues.PaymentConfirmationDialogue;
 import com.RSMSA.policeApp.PoliceFunction;
 import com.RSMSA.policeApp.R;
-import com.RSMSA.policeApp.Utils.Functions;
-import com.gc.materialdesign.views.Switch;
 import com.google.zxing.integration.android.IntentIntegrator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.logging.SimpleFormatter;
 
 
 /**

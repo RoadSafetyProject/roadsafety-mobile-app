@@ -24,24 +24,22 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.RSMSA.policeApp.Dialogues.AtcSelectDialogue;
 import com.RSMSA.policeApp.Models.Accident;
-import com.RSMSA.policeApp.Models.AccidentVehicle;
 import com.RSMSA.policeApp.Utils.SystemBarTintManager;
 import com.android.datetimepicker.date.DatePickerDialog;
 import com.android.datetimepicker.time.RadialPickerLayout;
 import com.android.datetimepicker.time.TimePickerDialog;
 
-import org.apache.http.entity.mime.content.FileBody;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import adapters.ViewPagerAccidentsDetailsAdapter;
-import adapters.ViewPagerWitnessesAdapter;
-import customViews.SlidingTabLayout;
+import com.RSMSA.policeApp.Adapters.ViewPagerAccidentsDetailsAdapter;
+import com.RSMSA.policeApp.Adapters.ViewPagerWitnessesAdapter;
+import com.RSMSA.policeApp.CustomViews.SlidingTabLayout;
 
 /**
  *  Created by Isaiah on 02/02/2015.
@@ -143,7 +141,7 @@ public class AccidentReportFormActivity extends ActionBarActivity{
         accidentTypeSelectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent atcselectintent = new Intent(AccidentReportFormActivity.this, AtcSelect.class);
+                Intent atcselectintent = new Intent(AccidentReportFormActivity.this, AtcSelectDialogue.class);
                 atcselectintent.putExtra("classification", selectedSpinner + "");
                 Log.d("selected", atcSpinner.getSelectedItem() + "");
                 startActivityForResult(atcselectintent, SELECT_ACCIDENT_TYPE_REQUEST_CODE);

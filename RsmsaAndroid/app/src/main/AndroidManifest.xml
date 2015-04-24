@@ -31,11 +31,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".Registered"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait">
-
-        </activity>
         <activity android:name=".PasswordReset"
             android:screenOrientation="portrait"
             android:label="@string/app_name">
@@ -63,7 +58,7 @@
             android:screenOrientation="portrait"
             android:parentActivityName=".MainOffence"
             />
-        <activity android:name="com.RSMSA.policeApp.AtcSelect"
+        <activity android:name=".Dialogues.AtcSelectDialogue"
             android:parentActivityName=".MainOffence"
             android:screenOrientation="portrait"
             />
@@ -71,7 +66,7 @@
             android:theme="@style/MyTheme"
             android:screenOrientation="portrait"
             />
-        <activity android:name="com.RSMSA.policeApp.AccidentTypeclassification"
+        <activity android:name=".AccidentTypeclassificationActivity"
             android:parentActivityName=".MainOffence"
             android:screenOrientation="portrait"
             />
@@ -79,7 +74,7 @@
             android:theme="@android:style/Theme.Dialog"
             android:screenOrientation="portrait"
             />
-        <activity android:name="com.RSMSA.policeApp.CaptureSignature"/>
+        <activity android:name=".CaptureSignatureActivity"/>
     </application>
 
 </manifest>

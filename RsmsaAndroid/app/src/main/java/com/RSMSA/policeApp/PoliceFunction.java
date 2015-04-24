@@ -18,7 +18,7 @@ public class      PoliceFunction {
     private JSONParser jsonParser;
 
     //104.131.161.8:8000
-    public static String ipAddress = "192.168.43.49:8000";/*"41.86.176.193:8000";"41.86.176.170/rsmsa/rsmsa/public";*/
+    public static String ipAddress = "41.86.177.84:8000";//"41.86.176.170/rsmsa/rsmsa/public";*/
     private static String loginURL = "http://"+ipAddress+"/PSMS/public/android/index.php";
     public static String sendMediaApi = "http://"+ipAddress+"/AccidentUploads/media.php";
     private static String registerOffenceURL = "http://"+ipAddress+"/api/offence/";

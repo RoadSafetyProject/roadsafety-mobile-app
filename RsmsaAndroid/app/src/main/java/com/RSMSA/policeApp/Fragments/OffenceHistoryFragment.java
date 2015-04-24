@@ -276,10 +276,6 @@ public class OffenceHistoryFragment extends Fragment {
                 Toast.makeText(getActivity().getApplicationContext(), "Error in Network Connection",
                         Toast.LENGTH_LONG).show();
             }
-
-//            if(true){
-//                new ProcessVerification().execute();
-//            }
         }
     }
 
@@ -303,6 +299,11 @@ public class OffenceHistoryFragment extends Fragment {
         protected JSONObject doInBackground(String... args) {
             PoliceFunction PFunction = new PoliceFunction();
             JSONObject json = PFunction.carAndLicenceVerification(input_license,input_plate_number);
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             return json;
         }
 

@@ -50,7 +50,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import adapters.SpinnerAdapters.PaymentMethodSpinnerAdapter;
+import com.RSMSA.policeApp.Adapters.SpinnerAdapters.PaymentMethodSpinnerAdapter;
 /**
  *  Created by Isaiah on 02/02/2015.
  */

@@ -20,7 +20,7 @@
         android:text="John Doe"
         android:textColor="@color/card_grid_text"/>
 
-    <customViews.TouchFeedbackEnabledRelativeLayout
+    <com.RSMSA.policeApp.CustomViews.TouchFeedbackEnabledRelativeLayout
         android:layout_width="200dp"
         android:layout_height="100dp"
         android:background="@drawable/card"
@@ -46,5 +46,5 @@
             android:textColor="@color/second_grey"/>
 
 
-    </customViews.TouchFeedbackEnabledRelativeLayout>
+    </com.RSMSA.policeApp.CustomViews.TouchFeedbackEnabledRelativeLayout>
 </RelativeLayout>

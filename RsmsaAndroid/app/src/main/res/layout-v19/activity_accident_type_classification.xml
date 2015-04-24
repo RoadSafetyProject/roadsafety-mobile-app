@@ -502,7 +502,7 @@
                     android:layout_marginTop="8dp"/>
 
 
-                <customViews.TouchFeedbackEnabledRelativeLayout
+                <com.RSMSA.policeApp.CustomViews.TouchFeedbackEnabledRelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
                     android:id="@+id/acc_description"
@@ -528,7 +528,7 @@
                         android:textColor="@color/card_grid_text"/>
 
 
-                </customViews.TouchFeedbackEnabledRelativeLayout>
+                </com.RSMSA.policeApp.CustomViews.TouchFeedbackEnabledRelativeLayout>
 
             </RelativeLayout>
 
@@ -582,7 +582,7 @@
                     android:text="Kelvin Mbwilo"
                     android:textColor="@color/card_grid_text"/>
 
-                <customViews.TouchFeedbackEnabledRelativeLayout
+                <com.RSMSA.policeApp.CustomViews.TouchFeedbackEnabledRelativeLayout
                     android:layout_width="200dp"
                     android:layout_height="100dp"
                     android:background="@drawable/card"
@@ -609,7 +609,7 @@
                         android:textColor="@color/second_grey"/>
 
 
-                </customViews.TouchFeedbackEnabledRelativeLayout>
+                </com.RSMSA.policeApp.CustomViews.TouchFeedbackEnabledRelativeLayout>
 
 
 

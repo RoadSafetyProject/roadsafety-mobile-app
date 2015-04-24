@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/DVS.iml" filepath="$PROJECT_DIR$/DVS.iml" />
       <module fileurl="file://$PROJECT_DIR$/DateTimePicker/DateTimePicker.iml" filepath="$PROJECT_DIR$/DateTimePicker/DateTimePicker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RsmsaAndroid.iml" filepath="$PROJECT_DIR$/RsmsaAndroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/MaterialLibrary/materiallibrary.iml" filepath="$PROJECT_DIR$/MaterialLibrary/materiallibrary.iml" />
     </modules>

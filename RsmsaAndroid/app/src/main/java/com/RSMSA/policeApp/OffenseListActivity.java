@@ -97,7 +97,7 @@ public class OffenseListActivity extends Activity implements AdapterView.OnItemC
         ids=db.getOffenceIds();
 
 
-        adapter = new adapters.adapter(this, list, relatingList,ids);
+        adapter = new com.RSMSA.policeApp.Adapters.adapter(this, list, relatingList,ids);
         mlistView.setAdapter(adapter);
     }
 

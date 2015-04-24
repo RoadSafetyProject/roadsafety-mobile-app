@@ -2,73 +2,45 @@ package com.RSMSA.policeApp;
 
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.RSMSA.policeApp.Dialogues.PaymentConfirmationDialogue;
 import com.RSMSA.policeApp.Fragments.OffenceHistoryFragment;
 import com.RSMSA.policeApp.Fragments.PaymentVerifierFragment;
 import com.RSMSA.policeApp.Fragments.ReportAccidentsFragment;
-import com.RSMSA.policeApp.Models.Offence;
 import com.RSMSA.policeApp.Utils.CameraActivity;
 import com.RSMSA.policeApp.Utils.SystemBarTintManager;
-import com.google.zxing.integration.android.IntentIntegrator;
 import com.suredigit.inappfeedback.FeedbackDialog;
 import com.suredigit.inappfeedback.FeedbackSettings;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-
-import adapters.DrawerListCustomAdapter;
-import adapters.GridViewAdapter;
+import com.RSMSA.policeApp.Adapters.DrawerListCustomAdapter;
 
 /**
  *  Created by Ilakoze on 16/01/2015.
@@ -96,7 +68,7 @@ public class MainOffence extends CameraActivity implements PaymentConfirmationDi
     public static final String list = "offense_list_present";
     public static int selection=0;
     public static FeedbackDialog mFeedbackDialog;
-    private static final String KEY="AF-8AC523F9D5B4-FA";
+    private static final String KEY="AF-3065226AE0E7-23";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -37,7 +37,7 @@
                 android:gravity="center_vertical"
                 android:text="Report Accident"
                 android:textColor="@color/card_white"/>
-            <customViews.SlidingTabLayout
+            <com.RSMSA.policeApp.CustomViews.SlidingTabLayout
                 android:visibility="gone"
                 android:background="@color/transparent"
                 android:id="@+id/tabs"
