@@ -1,6 +1,7 @@
 package com.RSMSA.policeApp;
 
 
+import android.util.Base64;
 import android.util.Log;
 
 import org.apache.http.HttpEntity;
@@ -32,7 +33,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 public class JSONParser {
-    public static final String TAG = "JSONParser";
+    public static final String TAG = JSONParser.class.getSimpleName();
     static InputStream is = null;
     static JSONObject jObj = null;
     static String json = "";
@@ -274,6 +275,80 @@ public class JSONParser {
         return array;
 
     }
+
+    public JSONObject dhis2HttpRequest(String url, String method, String username, String password) {
+
+        // Making HTTP request
+        try {
+
+            // check for request method
+            if(method == "POST"){
+                DefaultHttpClient httpClient = new DefaultHttpClient();
+                HttpPost httpPost = new HttpPost(url);
+                HttpResponse httpResponse = httpClient.execute(httpPost);
+                HttpEntity httpEntity = httpResponse.getEntity();
+                is = httpEntity.getContent();
+
+            }else if(method == "GET"){
+                // request method is GET
+                DefaultHttpClient httpClient = new DefaultHttpClient();
+                HttpGet httpGet = new HttpGet(url);
+                String base64EncodedCredentials = "Basic " + Base64.encodeToString(
+                        (username + ":" + password).getBytes(),
+                        Base64.NO_WRAP);
+
+                Log.d(TAG,"encoded credentials = "+base64EncodedCredentials);
+
+                httpGet.setHeader("Authorization", base64EncodedCredentials);
+
+                httpGet.setHeader("Accept","application/json");
+
+                HttpResponse httpResponse = httpClient.execute(httpGet);
+                HttpEntity httpEntity = httpResponse.getEntity();
+                is = httpEntity.getContent();
+
+
+
+            }
+
+        } catch (UnsupportedEncodingException e) {
+            Log.d(TAG, "UnsupportedEncodingException = "+e.getMessage());
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            Log.d(TAG, "ClientProtocolException = "+e.getMessage());
+            e.printStackTrace();
+        } catch (IOException e) {
+            Log.d(TAG, "IOException = "+e.getMessage());
+            e.printStackTrace();
+        } catch (Exception ex){
+            Log.d(TAG,"Network exception"+ex.toString());
+        }
+
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    is, "iso-8859-1"), 8);
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+            is.close();
+            json = sb.toString();
+        } catch (Exception e) {
+            Log.e("Buffer Error", "Error converting result " + e.toString());
+        }
+
+        JSONObject object=null;
+        // try parse the string to a JSON object
+        try {
+            object = new JSONObject(json);
+        } catch (JSONException e) {
+            Log.e("JSON Parser", "Error parsing data " + e.toString());
+        }
+        return object;
+
+    }
+
     public JSONObject makeHttpRequestReturnJsonObject(String url, String method) {
 
         // Making HTTP request
@@ -340,4 +415,5 @@ public class JSONParser {
         return object;
 
     }
+
 }

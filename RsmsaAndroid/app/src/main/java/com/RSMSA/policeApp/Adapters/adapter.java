@@ -26,12 +26,12 @@ public class adapter extends ArrayAdapter<String> {
     private final Activity mContext;
     private final List<String> mList;
     private final List<String> mrelList;
-    private final List<Integer> ids;
+    private final List<String> ids;
     public boolean[] checked;
     public int mSize = 0;
     public int checkedcount;
 
-    public adapter(Activity context, List<String> list, List<String> relList, List<Integer> id) {
+    public adapter(Activity context, List<String> list, List<String> relList, List<String> id) {
         super(context, R.layout.offense, list);
         mContext = context;
         mList = list;
@@ -70,8 +70,6 @@ public class adapter extends ArrayAdapter<String> {
                     OffenseListActivity.offenseDesc.add(mList.get(position));
                     OffenseListActivity.OffenseListType.add(mrelList.get(position));
                     OffenseListActivity.offenceIds.add(ids.get(position));
-
-                    //checkedcount++;
                     OffenseListActivity.offenseCount++;
                 }
                 else
@@ -80,16 +78,12 @@ public class adapter extends ArrayAdapter<String> {
                     OffenseListActivity.offenseDesc.remove(mList.get(position));
                     OffenseListActivity.OffenseListType.remove(mrelList.get(position));
                     OffenseListActivity.offenceIds.remove(ids.get(position));
-                    //checkedcount--;
                     OffenseListActivity.offenseCount--;
                 }
             }
         });
 
         checkBox.setChecked(checked[position]);
-
-       // OffenseListActivity.offenseCount = checkedcount;
-
         description.setTypeface(MainOffence.Rosario_Regular);
         description.setText(mList.get(position));
 

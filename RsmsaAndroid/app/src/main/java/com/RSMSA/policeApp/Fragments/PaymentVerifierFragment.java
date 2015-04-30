@@ -24,6 +24,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.RSMSA.policeApp.Dhis2.DHIS2Config;
 import com.RSMSA.policeApp.MainOffence;
 import com.RSMSA.policeApp.Models.Offence;
 import com.RSMSA.policeApp.Dialogues.PaymentConfirmationDialogue;
@@ -35,6 +36,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -263,44 +268,39 @@ public class PaymentVerifierFragment extends Fragment {
             ConnectivityManager cm = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo netInfo = cm.getActiveNetworkInfo();
 
-            //TODO uncomment this block used to check for internet connectivity.
-//            if (netInfo != null && netInfo.isConnected()) {
-//                try {
-//                    URL url = new URL("http://www.google.com");
-//                    HttpURLConnection urlconn = (HttpURLConnection) url.openConnection();
-//                    urlconn.setConnectTimeout(3000);
-//                    urlconn.connect();
-//                    if (urlconn.getResponseCode() == 200) {
-//                        return true;
-//                    }
-//                } catch (MalformedURLException e1) {
-//                    // TODO Auto-generated catch block
-//                    e1.printStackTrace();
-//                } catch (IOException e) {
-//                    // TODO Auto-generated catch block
-//                    e.printStackTrace();
-//                }
-//            }
+            if (netInfo != null && netInfo.isConnected()) {
+                try {
+                    URL url = new URL(DHIS2Config.BASE_URL);
+                    HttpURLConnection urlconn = (HttpURLConnection) url.openConnection();
+                    urlconn.setConnectTimeout(3000);
+                    urlconn.connect();
+                    if (urlconn.getResponseCode() == 200) {
+                        return true;
+                    }
+                } catch (MalformedURLException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
             return false;
         }
 
         @Override
         protected void onPostExecute(Boolean th){
-            //TODO unblock this block to display an error if there is a problem n network connection
-            /*if(th == true){
+            if(th == true){
                 new ProcessVerification().execute();
             }
             else{
                 progressBar.setVisibility(View.GONE);
                 verifyBtn.setVisibility(View.VISIBLE);
                 verifyBtn.bringToFront();
-                registerErrorMsg.setText("Error in Network Connection");
-                //should store the data in sql lite temporary until there will be network
-            }*/
-
-            if(true){
-                new ProcessVerification().execute();
+                Toast.makeText(getActivity().getApplicationContext(),"Error in Network Connection",
+                        Toast.LENGTH_LONG).show();
             }
+
         }
     }
 

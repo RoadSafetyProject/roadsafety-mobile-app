@@ -4,10 +4,12 @@ package com.RSMSA.policeApp;
 import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -20,6 +22,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,27 +30,42 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.RSMSA.policeApp.Dhis2.DHIS2Config;
+import com.RSMSA.policeApp.Dhis2.DHIS2Modal;
+import com.RSMSA.policeApp.Dhis2.Data.DataElements;
+import com.RSMSA.policeApp.Dhis2.Data.Program;
 import com.RSMSA.policeApp.Dialogues.PaymentConfirmationDialogue;
 import com.RSMSA.policeApp.Fragments.OffenceHistoryFragment;
 import com.RSMSA.policeApp.Fragments.PaymentVerifierFragment;
 import com.RSMSA.policeApp.Fragments.ReportAccidentsFragment;
 import com.RSMSA.policeApp.Utils.CameraActivity;
 import com.RSMSA.policeApp.Utils.SystemBarTintManager;
+import com.RSMSA.policeApp.iRoadDB.IroadDatabase;
 import com.suredigit.inappfeedback.FeedbackDialog;
 import com.suredigit.inappfeedback.FeedbackSettings;
 
 import com.RSMSA.policeApp.Adapters.DrawerListCustomAdapter;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  *  Created by Ilakoze on 16/01/2015.
  */
 
 public class MainOffence extends CameraActivity implements PaymentConfirmationDialogue.OnCompleteListener {
-    public static Database db;
+    private IroadDatabase db;
     public static final String TAG = MainOffence.class.getSimpleName();
     public static Typeface Roboto_Condensed, Roboto_Black, Roboto_Light, Roboto_BoldCondensedItalic,
             Roboto_BoldCondensed, Rosario_Regular, Rosario_Bold,Roboto_Bold, Rosario_Italic,
@@ -63,12 +81,17 @@ public class MainOffence extends CameraActivity implements PaymentConfirmationDi
     private static RelativeLayout mDrawer;
     private TextView drawerTitle;
     private SharedPreferences sharedpreferences;
-    public static final String MyPREFERENCES  = "MyPrefs";
     public static final String MyPREF  = "RoadSafetyApp";
     public static final String list = "offense_list_present";
     public static int selection=0;
     public static FeedbackDialog mFeedbackDialog;
     private static final String KEY="AF-3065226AE0E7-23";
+    public static List<Program> programs = new ArrayList<>();
+    public static List<DataElements> dataElements = new ArrayList<>();
+    static final int LOGIN_REQUEST = 300;
+    public static String username;
+    public static String password;
+    public static String orgUnit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +99,8 @@ public class MainOffence extends CameraActivity implements PaymentConfirmationDi
         setContentView(R.layout.main_activity);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        db = new IroadDatabase(this);
 
         /**
          * Initializing the send feedback dialogue
@@ -99,37 +124,6 @@ public class MainOffence extends CameraActivity implements PaymentConfirmationDi
         mFeedbackDialog.setSettings(feedbackSettings);
 
         final DatabaseHandlerOffence db1 = new DatabaseHandlerOffence(getApplicationContext());
-        sharedpreferences=getSharedPreferences(MyPREF,Context.MODE_PRIVATE);
-        if (!sharedpreferences.contains(list)) {
-            Log.d(TAG, "app running for the first time");
-            /**
-             * adding user information to shared preferences
-             */
-            SharedPreferences.Editor editor = sharedpreferences.edit();
-            String name = "Vincent Minde";
-            String rank_no = "R6478";
-            String station = "Kijitonyama";
-            editor.putString("name", name);
-            editor.putString("rank_no", rank_no);
-            editor.putString("station", station);
-
-            editor.commit();
-
-            new AsyncTask<Void,Void,Void>(){
-                @Override
-                protected Void doInBackground(Void... params) {
-                    ObtainingOffenceListFromServerActivity object = new ObtainingOffenceListFromServerActivity();
-                    object.createOffence(db1);
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    sharedpreferences.edit().putString(list, "v").commit();
-                }
-            }.execute();
-
-        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             setTranslucentStatus(true);
@@ -199,14 +193,48 @@ public class MainOffence extends CameraActivity implements PaymentConfirmationDi
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         drawerTitle.setText(DrawerList[1]);
 
-        Fragment newFragment = new OffenceHistoryFragment();
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.activityMain_content_frame, newFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        sharedpreferences=getSharedPreferences(MyPREF,Context.MODE_PRIVATE);
+        String userName= sharedpreferences.getString("username","");
+        String passWord = sharedpreferences.getString("password","");
 
-        //DatabaseHandlerOffence databaseHandlerOffence = new DatabaseHandlerOffence(this);
-        //List<String> list1=databaseHandlerOffence.getOffenceNature(false);
+        if (userName.equals("")) {
+            Log.d(TAG, "app running for the first time");
+            Intent LoginActivity = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivityForResult(LoginActivity, LOGIN_REQUEST);
+            overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
+
+        }else {
+            username = userName;
+            password = passWord;
+            orgUnit = sharedpreferences.getString("orgUnit","");
+
+            Cursor cursor=db.query("SELECT * FROM " + IroadDatabase.TABLE_PROGRAMS);
+            int counter=cursor.getCount();
+            for(int i=0;i<counter;i++){
+                cursor.moveToPosition(i);
+                Program program= new Program();
+                program=(Program)program.setModel(cursor,program);
+                Log.d(TAG,"adding program "+program.getName()+" with uid = "+program.getId());
+                programs.add(program);
+            }
+
+            Cursor cursor2=db.query("SELECT * FROM "+IroadDatabase.TABLE_DATA_ELEMENTS);
+            int count=cursor2.getCount();
+            for(int i=0;i<count;i++){
+                cursor2.moveToPosition(i);
+                DataElements dataElement= new DataElements();
+                dataElement=(DataElements)dataElement.setModel(cursor2,dataElement);
+                Log.d(TAG,"adding dataElement "+dataElement.getName()+" with uid = "+dataElement.getId());
+                dataElements.add(dataElement);
+            }
+
+            Fragment newFragment = new OffenceHistoryFragment();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.activityMain_content_frame, newFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
+
 
 
     }
@@ -241,11 +269,39 @@ public class MainOffence extends CameraActivity implements PaymentConfirmationDi
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        try {
+            Fragment fragment = getFragmentManager().findFragmentById(R.id.activityMain_content_frame);
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }catch (Exception e){}
+        if (requestCode == LOGIN_REQUEST) {
+            Log.d(TAG,"results received result code = "+resultCode);
+            if(resultCode == RESULT_OK){
+                Log.d(TAG,"results received");
+                password=data.getStringExtra("password");
+                username=data.getStringExtra("username");
+                orgUnit=data.getStringExtra("orgUnit");
+                Fragment newFragment = new OffenceHistoryFragment();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.activityMain_content_frame, newFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+
+            }
+            if (resultCode == RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_logout ) {
             SharedPreferences sharedpreferences = getSharedPreferences
-                    (LoginActivity.MyPREFERENCES, Context.MODE_PRIVATE);
+                    (MyPREF, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedpreferences.edit();
             editor.clear();
             editor.commit();
@@ -285,20 +341,13 @@ public class MainOffence extends CameraActivity implements PaymentConfirmationDi
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            LoginActivity.justBack = true;
             finish();
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG,"results received");
-        Fragment fragment = getFragmentManager().findFragmentById(R.id.activityMain_content_frame);
-        fragment.onActivityResult(requestCode, resultCode, data);
-    }
+
 
     @Override
     public void onComplete(boolean saved, int index) {

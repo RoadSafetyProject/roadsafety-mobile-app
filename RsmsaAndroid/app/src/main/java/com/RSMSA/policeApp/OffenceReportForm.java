@@ -32,6 +32,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.RSMSA.policeApp.Dhis2.DHIS2Config;
+import com.RSMSA.policeApp.Dhis2.DHIS2Modal;
 import com.RSMSA.policeApp.Models.Offence;
 import com.RSMSA.policeApp.Models.Receipt;
 import com.RSMSA.policeApp.Utils.Functions;
@@ -51,6 +53,8 @@ import java.util.List;
 import java.util.Locale;
 
 import com.RSMSA.policeApp.Adapters.SpinnerAdapters.PaymentMethodSpinnerAdapter;
+import com.RSMSA.policeApp.iRoadDB.IroadDatabase;
+
 /**
  *  Created by Isaiah on 02/02/2015.
  */
@@ -80,15 +84,14 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
     private TextView latituteField;
     private TextView longitudeField;
     private LocationManager locationManager;
-    private String provider,dLicense;
+    private String provider,dLicense,driverUid,vehicleUid;
     public String mLocation;
     public double mLat;
     public double mLong;
     public Toolbar toolbar;
     public ArrayList<String> desc = new ArrayList<String>();
     public ArrayList<String> type = new ArrayList<String>();
-    public ArrayList<Integer> ids = new ArrayList<Integer>();
-    public int[] offenseTag = new int[10];
+    public ArrayList<String> uids = new ArrayList<String>();
     public int offenceCount = 0,count = 0;
     boolean backFromChild = false;
     public TextView offense_type_text;
@@ -139,6 +142,8 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
         namePassed = bundle.getString("name");
         dLicense = bundle.getString("licence_number");
         plateNumberObtained=bundle.getString("plate_number");
+        driverUid=bundle.getString("driverUid");
+        vehicleUid=bundle.getString("vehicleUid");
 
         try {
             invalidLicence=bundle.getString("invalidLicence");
@@ -459,15 +464,6 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
         try {
             List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
             Address obj = addresses.get(0);
-//            String add =   "Country        : "+ obj.getCountryName();
-//            add = add + " , " + obj.getCountryCode();
-//            add = add + "\n Admin Area     : " + obj.getAdminArea();
-//            add = add + "\n Sub Admin Area : " + obj.getSubAdminArea();
-//            add = add + "\n Locality       : " + obj.getLocality();
-//            add = add + "\n Address Line   : " + obj.getAddressLine(0);
-//            add = add + "\n" + obj.getSubThoroughfare();
-//            add = add + "\n" + obj.getPostalCode();
-
             String add ="";
             if(obj.getAdminArea()!=null){
                 add = add + obj.getAdminArea();
@@ -548,7 +544,7 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
             NetworkInfo netInfo = cm.getActiveNetworkInfo();
             if (netInfo != null && netInfo.isConnected()) {
                 try {
-                    URL url = new URL("http://www.google.com");
+                    URL url = new URL(DHIS2Config.BASE_URL);
                     HttpURLConnection urlconn = (HttpURLConnection) url.openConnection();
                     urlconn.setConnectTimeout(3000);
                     urlconn.connect();
@@ -597,8 +593,7 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
 
             submitText.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
-            //TODO uncomment this line and set the rank number received from login saved into the database
-            Input_issuer ="R111";//(CharSequence)User.get("rankNo");
+            Input_issuer =MainOffence.username;
             input_issuer_no=(String)Input_issuer;
             input_license = license.getText().toString();
             input_plateNumber = plateNo.getText().toString();
@@ -608,55 +603,152 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
         @Override
         protected JSONObject doInBackground(String... args) {
             PoliceFunction PFunction = new PoliceFunction();
-            String locaton=getAddress(mLat,mLong);
-            JSONObject json;
+            String location=getAddress(mLat,mLong);
+            JSONObject event = new JSONObject();
             Calendar cl = Calendar.getInstance();
 
-            Offence offence=new Offence();
 
-            offence.setOffence_date(cl.getTimeInMillis());
-            offence.setAdmit(input_commit);
-            offence.setDriver_license_number(input_license);
-            offence.setLatitude(mLat);
-            offence.setLongitude(mLong);
-            offence.setVehicle_plate_number(input_plateNumber);
-            offence.setRank_no(input_issuer_no);
-            offence.setFacts("");
-            offence.setPaid(paymentStatus);
-            offence.setPlace(locaton);
+            DHIS2Modal  modal = new DHIS2Modal("Offence Event",null, MainOffence.username, MainOffence.password);
+            String program = modal.getProgramByName("Offence Event").getId();
+            //TODO handle users with multiple orgUnits
+            String organizationUnit = MainOffence.orgUnit;
 
+            JSONObject coordinatesObject = new JSONObject();
+            try {
+                coordinatesObject.put("latitude",mLat);
+                coordinatesObject.put("longitude",mLong);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-            JSONObject object = offence.getjson(offence);
+            try {
+                event.put("program",program);
+                event.put("orgUnit",organizationUnit);
+                event.put("eventDate",Functions.getDateFromUnixTimestamp(cl.getTimeInMillis()));
+                event.put("coordinate",coordinatesObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-            Receipt receipt=new Receipt();
-            receipt.setReceipt_number(receiptEditText.getText()+"");
-            receipt.setAmount(amountToReport+"");
-            receipt.setPayment_mode(paymentMethod);
-            receipt.setDate(cl.getTimeInMillis());
-            JSONObject receiptObject = receipt.getjson(receipt);
+            JSONArray dataValues = new JSONArray();
+            JSONObject programPoliceDataElement = new JSONObject();
+            String programPoliceUid = modal.getDataElementByName("Program_Police").getId();
+            try {
+                programPoliceDataElement.put("dataElement",programPoliceUid);
+                //TODO implement login mechanism and store data in the datatbase
+                programPoliceDataElement.put("value","aQylIO5YSxD");
 
-
-            JSONArray events=new JSONArray();
-            int count = ids.size();
-            for (int i = 0;i<count;i++){
-                JSONObject id=new JSONObject();
-                try {
-                    id.put("id",ids.get(i));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                events.put(id);
+                dataValues.put(programPoliceDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
 
-            json = PFunction.registerOffence(object,receiptObject,events);
 
-            Log.d(TAG,"json received from server is = "+json);
-            return json;
+
+
+            JSONObject programDriverDataElement = new JSONObject();
+            String program_DriverUid = modal.getDataElementByName("Program_Driver").getId();
+            try {
+                programDriverDataElement.put("value",driverUid);
+                programDriverDataElement.put("dataElement",program_DriverUid);
+                dataValues.put(programDriverDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONObject offenceFactsDataElement = new JSONObject();
+            String offenceFactsUid = modal.getDataElementByName("Offence Facts").getId();
+            try {
+                //TODO implement an offence facts UI
+                offenceFactsDataElement.put("value","");
+                offenceFactsDataElement.put("dataElement",offenceFactsUid);
+                dataValues.put(offenceFactsDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+            JSONObject offenceDateDataElement = new JSONObject();
+            String offenceDateUid = modal.getDataElementByName("Offence Date").getId();
+            try {
+                offenceDateDataElement.put("dataElement",offenceDateUid);
+                offenceDateDataElement.put("value",Functions.getDateFromUnixTimestamp(cl.getTimeInMillis()));
+                dataValues.put(offenceDateDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONObject latitudeDataElement = new JSONObject();
+            String latitudeUid = modal.getDataElementByName("Latitude").getId();
+            try {
+                latitudeDataElement.put("dataElement",latitudeUid);
+                latitudeDataElement.put("value",mLat);
+                dataValues.put(latitudeDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+            JSONObject longitudeDataElement = new JSONObject();
+            String longitudeUid = modal.getDataElementByName("Longitude").getId();
+            try {
+                longitudeDataElement.put("dataElement",longitudeUid);
+                longitudeDataElement.put("value",mLong);
+                dataValues.put(longitudeDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONObject offencePlaceDataElement = new JSONObject();
+            String offencePlaceUid = modal.getDataElementByName("Offence Place").getId();
+            try {
+                offencePlaceDataElement.put("dataElement",offencePlaceUid);
+                offencePlaceDataElement.put("value",location);
+                dataValues.put(offencePlaceDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONObject offenceAdmissionStatusDataElement = new JSONObject();
+            String offenceAdmissionStatusUid = modal.getDataElementByName("Offence Admission Status").getId();
+            try {
+                offenceAdmissionStatusDataElement.put("dataElement",offenceAdmissionStatusUid);
+                offenceAdmissionStatusDataElement.put("value",paymentStatus);
+                dataValues.put(offenceAdmissionStatusDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONObject programVehicleDataElement = new JSONObject();
+            String programVehicleUid = modal.getDataElementByName("Program_Vehicle").getId();
+            try {
+                programVehicleDataElement.put("dataElement",programVehicleUid);
+                programVehicleDataElement.put("value",vehicleUid);
+                dataValues.put(programVehicleDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                event.put("dataValues",dataValues);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            Log.d(TAG,"event json = "+event.toString());
+            return null;
         }
         @Override
         protected void onPostExecute(JSONObject json) {
-            Log.d(TAG,"json received  received = "+json);
+            Log.d(TAG, "json received  received = " + json);
             /**
              * Checks for success message.
              **/
@@ -698,41 +790,34 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
                 final Bundle bundle = data.getExtras();
 
                 Log.d("Database", "count at parent is "+count);
-                offenseTag = bundle.getIntArray("tag");
                 desc = bundle.getStringArrayList("desc");
                 type = bundle.getStringArrayList("type");
-                ids = bundle.getIntegerArrayList("ids");
+                uids = bundle.getStringArrayList("uids");
                 OffenseListActivity.offenseDesc.clear();
                 backFromChild = true;
 
 
-                Log.d(TAG,"number of ids = "+ids.size());
+                Log.d(TAG,"number of ids = "+ uids.size());
 
                 try {
                     Log.d(TAG, " test data = " + invalidLicence);
                 }catch (Exception e){}
                 if(invalidLicence!=null && !invalidLicence.equals("")){
-                    int offence = Integer.parseInt(invalidLicence);
-                    Log.d(TAG, " test data integer = " + offence);
+                    String offenceUid = invalidLicence;
                     boolean offenceIncluded=false;
-                    for(int i : ids){
-                        if(offence==i){
+                    for(String i : uids){
+                        if(offenceUid.equals(i)){
                             offenceIncluded=true;
                         }
                     }
 
-                    Log.d(TAG, " test data included = " + offenceIncluded);
-
                     if(!offenceIncluded){
-
                         Log.d(TAG, " desc sze before = " + desc.size());
-                        DatabaseHandlerOffence databaseHandlerOffence=new DatabaseHandlerOffence(this);
-                        int counter=ids.size();
-                        ids.add(offence);
-                        desc.add(databaseHandlerOffence.getAnOffenceNature(false,offence));
-                        type.add(databaseHandlerOffence.getAnOffenceNature(true,offence));
-
-                        Log.d(TAG, " desc sze after = " + desc.size());
+                        IroadDatabase db = new IroadDatabase(getApplicationContext());
+                        int counter= uids.size();
+                        uids.add(offenceUid);
+                        desc.add(db.getAnOffenceDetail(false, offenceUid));
+                        type.add(db.getAnOffenceDetail(true,offenceUid));
                     }
 
                 }
@@ -777,7 +862,7 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
 
             }
             if (resultCode == RESULT_CANCELED) {
-                // Write your code on no result return
+                //TODO Write your code on no result return
             }
         }
     }

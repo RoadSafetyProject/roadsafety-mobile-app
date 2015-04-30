@@ -22,8 +22,9 @@ public class Functions {
         Calendar cl= Calendar.getInstance();
         cl.setTimeInMillis(time);
 
-        dateString = DateFormat.format("dd-MM-yyyy", cl).toString();
+        dateString = DateFormat.format("yyyy-MM-dd", cl).toString();
 
         return dateString;
     }
+
 }

@@ -3,7 +3,7 @@ package com.RSMSA.policeApp.Dhis2.Data;
 /**
  * Created by Ilakoze on 4/14/2015.
  */
-public class DataElements {
+public class DataElements extends Modal {
     private String id;
     private String name;
     private String created;

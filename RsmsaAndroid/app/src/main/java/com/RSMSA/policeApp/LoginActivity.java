@@ -1,352 +1,255 @@
 package com.RSMSA.policeApp;
 
-import android.app.Activity;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
+import android.annotation.TargetApi;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.RSMSA.policeApp.Dhis2.DHIS2Config;
+import com.RSMSA.policeApp.Dhis2.DHIS2Modal;
+import com.RSMSA.policeApp.Dhis2.Data.DataElements;
+import com.RSMSA.policeApp.Dhis2.Data.Program;
+import com.RSMSA.policeApp.iRoadDB.IroadDatabase;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-public class LoginActivity extends Activity {
-
-    /**
-     * defining the layout variables
-     */
-    Button login;
-    EditText username,passwd;
-    TextView error;
-    TextView passreset;
-    TextView title;
-    TextView rankNumberText;
-    TextView passwordText;
-    TextView FPText;
-
-    /**
-     * custom Typefaces
-     */
-    public static Typeface Athletic, Fun_Raiser, Roboto_Condensed, Roboto_Black, Roboto_Light, Roboto_BoldCondensedItalic, Roboto_BoldCondensed, Rosario_Regular, Rosario_Bold, Rosario_Italic, Roboto_Regular, Roboto_Medium;
-
-
-    /**
-     * Called when the activity is first created.
-     */
-    private static String KEY_SUCCESS = "success";
-
-    private static String KEY_USERNAME = "rankNo";
-    private static String KEY_FULLNAME = "fullName";
-    private static String KEY_STATION = "station";
-    private static String KEY_CREATED_AT = "created_at";
-
-    /**
-     * user session variables
-     */
-    public static final String name = "nameKey";
-    public static final String pass = "passwordKey";
-    public static final String list = "offense_list_present";
-
-    public static boolean justBack = false;
-
-    public static final String MyPREFERENCES  = "MyPrefs";
-    public static final String MyPREF  = "Prefs";
-
-
-    SharedPreferences sharedpreferences;
-
-    public ProgressBar progressBar;
+/**
+ * Created by Coze on 11/11/2014.
+ */
+public class LoginActivity extends ActionBarActivity {
+    private static final String TAG="LoginActivity";
+    public static final int HTTP_REQUEST_TIMEOUT_MS = 30 * 1000;
+    private IroadDatabase db;
+    private boolean loginStatus=false;
+    private SharedPreferences sharedpreferences;
+    private String username, password, orgUnit;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
-
-        /**
-         * Type faces used for setting fonts thoughout the app
-         */
-        Roboto_Light = Typeface.createFromAsset(this.getAssets(), "Roboto-Light.ttf");
-        Roboto_Black = Typeface.createFromAsset(this.getAssets(), "Roboto-Black.ttf");
-        Roboto_Condensed = Typeface.createFromAsset(this.getAssets(), "Roboto-Condensed.ttf");
-        Roboto_BoldCondensedItalic = Typeface.createFromAsset(getAssets(), "Roboto-BoldCondensedItalic.ttf");
-        Roboto_BoldCondensed = Typeface.createFromAsset(getAssets(), "Roboto-BoldCondensed.ttf");
-        Roboto_Regular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
-        Roboto_Medium = Typeface.createFromAsset(getAssets(), "Roboto-Medium.ttf");
-        Rosario_Regular = Typeface.createFromAsset(getAssets(), "Rosario-Regular.ttf");
-        Rosario_Italic = Typeface.createFromAsset(getAssets(), "Rosario-Italic.ttf");
-        Rosario_Bold = Typeface.createFromAsset(getAssets(), "Rosario-Bold.ttf");
-        Fun_Raiser = Typeface.createFromAsset(getAssets(), "Fun-Raiser.ttf");
-        Athletic = Typeface.createFromAsset(getAssets(), "athletic.ttf");
+        setContentView(R.layout.activity_login);
 
 
-        progressBar = (ProgressBar)findViewById(R.id.pbar);
+        db = new IroadDatabase(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            setTranslucentStatus(true);
+        }
 
-        title = (TextView)findViewById(R.id.view2);
-        title.setTypeface(Rosario_Bold);
 
-        rankNumberText = (TextView)findViewById(R.id.textName);
-        rankNumberText.setTypeface(Rosario_Regular);
+        sharedpreferences=getSharedPreferences(MainOffence.MyPREF, Context.MODE_PRIVATE);
+        ImageView background=(ImageView)findViewById(R.id.background);
 
-        passwordText = (TextView)findViewById(R.id.address);
-        passwordText.setTypeface(Rosario_Regular);
+        PropertyValuesHolder pvhX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 1.3f);
+        PropertyValuesHolder pvhY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 1.3f);
+        ObjectAnimator scaleAnimation = ObjectAnimator.ofPropertyValuesHolder(background, pvhX, pvhY);
+        scaleAnimation.setDuration(20000);
+        scaleAnimation.setRepeatMode(ValueAnimator.REVERSE);
+        scaleAnimation.setRepeatCount(ValueAnimator.INFINITE);
+        scaleAnimation.start();
 
-        FPText = (TextView)findViewById(R.id.forgotPassword);
-        FPText.setTypeface(Rosario_Regular);
+        final EditText usernameEditText = (EditText)findViewById(R.id.username);
+        final EditText passwordEditText = (EditText)findViewById(R.id.password);
+        CardView button = (CardView)findViewById(R.id.login_button);
 
-        login = (Button)findViewById(R.id.login);
-        login.setTypeface(Rosario_Regular);
-
-        username = (EditText)findViewById(R.id.userName);
-
-        passwd= (EditText)findViewById(R.id.passwd);
-
-        error = (TextView)findViewById(R.id.loginError);
-        error.setTypeface(Roboto_Condensed);
-
-        passreset = (TextView)findViewById(R.id.forgotPassword);
-        passreset.setTypeface(Rosario_Regular);
-
-        // * Login button click event
-        //* A Toast is set to alert when the Email and Password field is empty
-
-        login.setOnClickListener(new View.OnClickListener() {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View view) {
+                password = passwordEditText.getText().toString();
+                username = usernameEditText.getText().toString();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONParser jsonParser = new JSONParser();
+                        JSONObject object = jsonParser.dhis2HttpRequest(DHIS2Config.BASE_URL + "/api/me.json", "GET",username,password);
 
-
-                if (  ( !username.getText().toString().equals("")) && ( !passwd.getText().toString().equals("")) )
-                {
-                    error.setText("");
-                    NetAsync(view);
-                }
-                else if ( ( !username.getText().toString().equals("")) )
-                {
-                    Toast.makeText(getApplicationContext(),
-                            "username field empty", Toast.LENGTH_SHORT).show();
-                }
-                else if ( ( !passwd.getText().toString().equals("")) )
-                {
-                    Toast.makeText(getApplicationContext(),
-                            "password field empty", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    Toast.makeText(getApplicationContext(),
-                            "Username and Password field are empty", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-
-        // * forgot password listener of a click by user
-
-        passreset.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                Intent myIntent = new Intent(view.getContext(), PasswordReset.class);
-                myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-                startActivity(myIntent);
-            }});
-    }
-
-
-    /**
-     * Async Task to check whether internet connection is working.
-     **/
-    private class NetCheck extends AsyncTask<String, Void, Boolean>
-    {
-        //private ProgressDialog nDialog;
-        @Override
-        protected void onPreExecute(){
-            progressBar.setVisibility(View.VISIBLE);
-//            super.onPreExecute();
-//            nDialog = new ProgressDialog(LoginActivity.this);
-//            nDialog.setTitle("Checking Network");
-//            nDialog.setMessage("Loading..");
-//            nDialog.setIndeterminate(false);
-//            nDialog.setCancelable(true);
-//            nDialog.show();
-        }
-        @Override
-        protected Boolean doInBackground(String... args){
-/**
- * Gets current device state and checks for working internet connection by trying Google.
- **/
-            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo netInfo = cm.getActiveNetworkInfo();
-            if (netInfo != null && netInfo.isConnected()) {
-                try {
-                    URL url = new URL("http://www.google.com");
-                    HttpURLConnection urlc = (HttpURLConnection) url.openConnection();
-                    urlc.setConnectTimeout(3000);
-                    urlc.connect();
-                    if (urlc.getResponseCode() == 200) {
-                        return true;
-                    }
-                } catch (MalformedURLException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-            return false;
-        }
-        @Override
-        protected void onPostExecute(Boolean th){
-            if(th == true){
-                progressBar.setVisibility(View.GONE);
-                new ProcessLogin().execute();
-            }
-            else{
-                progressBar.setVisibility(View.GONE);
-                error.setText("Error in Network Connection");
-            }
-        }
-    }
-    /**
-     * Async Task to get and send data to MySql database through JSON response.
-     **/
-    private class ProcessLogin extends AsyncTask<String, Void, JSONObject> {
-        //private ProgressDialog pDialog;
-        String User,Pword;
-        @Override
-        protected void onPreExecute() {
-            progressBar.setVisibility(View.VISIBLE);
-            super.onPreExecute();
-            username = (EditText) findViewById(R.id.userName);
-            passwd = (EditText) findViewById(R.id.passwd);
-            User = username.getText().toString();
-            Pword = passwd.getText().toString();
-//            pDialog = new ProgressDialog(LoginActivity.this);
-//            pDialog.setTitle("Contacting Servers");
-//            pDialog.setMessage("verifying user ...");
-//            pDialog.setIndeterminate(false);
-//            pDialog.setCancelable(true);
-//            pDialog.show();
-        }
-        @Override
-        protected JSONObject doInBackground(String... args) {
-            PoliceFunction pFunction = new PoliceFunction();
-            JSONObject json = pFunction.loginPolice(User, Pword);
-            return json;
-        }
-        @Override
-        protected void onPostExecute(JSONObject json) {
-            try {
-
-
-
-                if (json != null && json.getString(KEY_SUCCESS) != null){
-                    String res = json.getString(KEY_SUCCESS);
-                    if(Integer.parseInt(res) == 1){
-
-                        /**
-                         * adding user information to shared preferences
-                         */
-                        SharedPreferences.Editor editor = sharedpreferences.edit();
-                        String u = username.getText().toString();
-                        String p = passwd.getText().toString();
-                        editor.putString(name, u);
-                        editor.putString(pass, p);
-                        editor.commit();
-
-//                        pDialog.setMessage("Loading User Space");
-//                        pDialog.setTitle("Getting Data");
-                        DatabaseHandlerOffence db = new DatabaseHandlerOffence(getApplicationContext());
-                        DatabaseHandlerOffence db1 = new DatabaseHandlerOffence(getApplicationContext());
-                        JSONObject json_user = json.getJSONObject("user");
-                        /**
-                         * Clear all previous data in SQlite database.
-                         **/
-                        PoliceFunction logout = new PoliceFunction();
-                        logout.logoutUser(getApplicationContext());
-                        db.addUser(json_user.getString(KEY_USERNAME),json_user.getString(KEY_FULLNAME),
-                                json_user.getString(KEY_STATION),json_user.getString(KEY_CREATED_AT));
-
-
-                        /**
-                         * create the offenceNature on the database this is done only once the application is first
-                         * run on device
-                         */
-                        sharedpreferences=getSharedPreferences(MyPREF,
-                                Context.MODE_PRIVATE);
-                        if (!sharedpreferences.contains(list)) {
-
-                            Log.d("pref", "app running for the first time");
-
-                            ObtainingOffenceListFromServerActivity object = new ObtainingOffenceListFromServerActivity();
-
-                            object.createOffence(db1);
-
-                            sharedpreferences.edit().putString(list, "v").commit();
+                        String id = "";
+                        try {
+                            id=object.getString("id");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (NullPointerException e){
+                            e.printStackTrace();
                         }
 
+                        if (!id.equals("")) {
+                            try {
+                                JSONObject orgJson = object.getJSONArray("organisationUnits").getJSONObject(0);
+                                SharedPreferences.Editor editor = sharedpreferences.edit();
+                                editor.putString("username", usernameEditText.getText().toString());
+                                editor.putString("password", passwordEditText.getText().toString());
+                                editor.putString("orgUnit", orgJson.getString("id"));
+                                editor.commit();
 
-                        /**
-                         *If JSON array details are stored in SQlite it launches the User Panel.
-                         **/
-                        Intent upanel = new Intent(getApplicationContext(), MainOffence.class);
-                        upanel.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        progressBar.setVisibility(View.GONE);
-                        startActivity(upanel);
-                        /**
-                         * Close Login Screen
-                         */
-                         finish();
+                                orgUnit = orgJson.getString("id");
 
-                    }else{
-                        progressBar.setVisibility(View.GONE);
-                        error.setText("Incorrect username/password");
+
+                                String url = DHIS2Config.BASE_URL+"api/programs?paging=false";
+                                JSONParser dhis2parser = new JSONParser();
+                                JSONObject objectProgram = dhis2parser.dhis2HttpRequest(url, "GET",username,password);
+                                Log.d(TAG,"DHIS2 Programs = "+objectProgram.toString());
+                                JSONArray jsonPrograms = null;
+                                try {
+                                    jsonPrograms = objectProgram.getJSONArray("programs");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                int counter = jsonPrograms.length();
+                                for (int i=0;i<counter;i++) {
+                                    JSONObject jsonProgram = null;
+                                    ContentValues values = new ContentValues();
+                                    try {
+                                        jsonProgram = jsonPrograms.getJSONObject(i);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    Program program = new Program();
+                                    program.setModel(jsonProgram, program);
+                                    MainOffence.programs.add(i, program);
+
+                                    values.put(IroadDatabase.KEY_ID, program.getId());
+                                    values.put(IroadDatabase.KEY_NAME, program.getName());
+                                    values.put(IroadDatabase.KEY_CREATED, program.getCreated());
+                                    values.put(IroadDatabase.KEY_LAST_UPDATED, program.getLastUpdated());
+                                    values.put(IroadDatabase.KEY_HREF, program.getHref());
+                                    try {
+                                        db.insert(IroadDatabase.TABLE_PROGRAMS, null, values);
+                                    }catch (Exception e){
+                                        Log.d(TAG, "error catched = " + e.getMessage());
+                                    }
+
+                                }
+
+
+
+
+
+                                String urlDataElements = DHIS2Config.BASE_URL+"api/dataElements?paging=false";
+                                JSONObject objectDataElements = dhis2parser.dhis2HttpRequest(urlDataElements, "GET",username,password);
+                                Log.d(TAG, "DHIS2 Data Elements = " + objectDataElements.toString());
+                                JSONArray jsonDatalements = null;
+                                try {
+                                    jsonDatalements = objectDataElements.getJSONArray("dataElements");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                int cou = jsonDatalements.length();
+                                for (int i=0;i<cou;i++) {
+                                    JSONObject jsonDataElement = null;
+                                    ContentValues values = new ContentValues();
+                                    try {
+                                        jsonDataElement = jsonDatalements.getJSONObject(i);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    DataElements dataElement = new DataElements();
+                                    dataElement.setModel(jsonDataElement, dataElement);
+                                    MainOffence.dataElements.add(i, dataElement);
+
+                                    values.put(IroadDatabase.KEY_ID, dataElement.getId());
+                                    values.put(IroadDatabase.KEY_NAME, dataElement.getName());
+                                    values.put(IroadDatabase.KEY_CREATED, dataElement.getCreated());
+                                    values.put(IroadDatabase.KEY_LAST_UPDATED, dataElement.getLastUpdated());
+                                    values.put(IroadDatabase.KEY_HREF, dataElement.getHref());
+                                    try {
+                                        db.insert(IroadDatabase.TABLE_DATA_ELEMENTS, null, values);
+                                    }catch (Exception e){
+                                        Log.d(TAG, "error catched = " + e.getMessage());
+                                    }
+                                }
+
+
+                                DHIS2Modal dhis2Modal = new DHIS2Modal("Offence Registry",null, username,password);
+                                JSONArray jsonArray = dhis2Modal.getAllEvents();
+                                int count=jsonArray.length();
+                                for(int i=0;i<count;i++) {
+                                    JSONObject offenceRegistryObject = null;
+                                    ContentValues values = new ContentValues();
+                                    try {
+                                        offenceRegistryObject = jsonArray.getJSONObject(i);
+                                        String uid = offenceRegistryObject.getString("id");
+                                        String description = offenceRegistryObject.getString("Description");
+                                        String nature = offenceRegistryObject.getString("Nature");
+                                        String section = offenceRegistryObject.getString("Section");
+                                        String amount = offenceRegistryObject.getString("Amount");
+                                        values.put(IroadDatabase.KEY_ID, uid);
+                                        values.put(IroadDatabase.KEY_DESCRIPTION, description);
+                                        values.put(IroadDatabase.KEY_NATURE, nature);
+                                        values.put(IroadDatabase.KEY_SECTION, section);
+                                        values.put(IroadDatabase.KEY_AMOUNT, amount);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    try {
+                                        db.insert(IroadDatabase.TABLE_OFFENCE_REGISTRY, null, values);
+                                    } catch (Exception e) {
+                                        Log.d(TAG, "error catched = " + e.getMessage());
+                                    }
+                                }
+
+                                loginStatus = true;
+                                finish();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    Toast.makeText(LoginActivity.this, "Login Failed, Try Again", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
                     }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+                }).start();
             }
+        });
+    }
+
+    @TargetApi(19)
+    private void setTranslucentStatus(boolean on) {
+        Window win = getWindow();
+        WindowManager.LayoutParams winParams = win.getAttributes();
+        final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+        if (on) {
+            winParams.flags |= bits;
+        } else {
+            winParams.flags &= ~bits;
         }
+        win.setAttributes(winParams);
     }
 
     @Override
-    protected void onResume() {
-        sharedpreferences=getSharedPreferences(MyPREFERENCES,
-                Context.MODE_PRIVATE);
-        if (sharedpreferences.contains(name))
-        {
-            if(sharedpreferences.contains(pass)){
-
-                if(justBack)
-                {
-                    finish();
-                    justBack = false;
-                }
-                else {
-                    Intent i = new Intent(this, MainOffence.class);
-                    startActivity(i);
-                }
-
-            }
+    public void finish(){
+        if(loginStatus){
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("username",username);
+            returnIntent.putExtra("password",password);
+            returnIntent.putExtra("orgUnit",orgUnit);
+            setResult(RESULT_OK,returnIntent);
+        }else{
+            Intent returnIntent = new Intent();
+            setResult(RESULT_CANCELED,returnIntent);
         }
-        super.onResume();
+        super.finish();
+        overridePendingTransition(R.anim.activity_slide_in_right, R.anim.activity_slide_out_right);
     }
-
-    public void NetAsync(View view){
-        new NetCheck().execute();
-    }
-
 
 }
