@@ -12,6 +12,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -276,18 +277,95 @@ public class JSONParser {
 
     }
 
-    public JSONObject dhis2HttpRequest(String url, String method, String username, String password) {
+    public JSONObject dhis2HttpRequest(String url, String method, String username, String password, JSONObject obj) {
 
         // Making HTTP request
         try {
 
             // check for request method
             if(method == "POST"){
-                DefaultHttpClient httpClient = new DefaultHttpClient();
-                HttpPost httpPost = new HttpPost(url);
-                HttpResponse httpResponse = httpClient.execute(httpPost);
-                HttpEntity httpEntity = httpResponse.getEntity();
-                is = httpEntity.getContent();
+
+                HttpParams myParams = new BasicHttpParams();
+                HttpConnectionParams.setConnectionTimeout(myParams, 10000);
+                HttpConnectionParams.setSoTimeout(myParams, 10000);
+                HttpClient httpclient = new DefaultHttpClient(myParams );
+                String json=obj.toString();
+                Log.d(TAG, "string created from json" + json);
+
+                try {
+
+                    HttpPost httppost = new HttpPost(url.toString());
+                    httppost.setHeader("Content-type", "application/json");
+                    String base64EncodedCredentials = "Basic " + Base64.encodeToString(
+                            (username + ":" + password).getBytes(),
+                            Base64.NO_WRAP);
+
+                    Log.d(TAG,"encoded credentials = "+base64EncodedCredentials);
+
+                    httppost.setHeader("Authorization", base64EncodedCredentials);
+
+
+                    Log.d(TAG, "URL Host: "+httppost.getURI().getHost());
+                    Log.d(TAG, "URL Path: "+httppost.getURI().getPath());
+
+                    Log.d(TAG, "URL: "+url.trim());
+
+                    StringEntity se = new StringEntity(obj.toString());
+                    se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+                    httppost.setEntity(se);
+
+                    HttpResponse httpResponse = httpclient.execute(httppost);
+                    HttpEntity httpEntity = httpResponse.getEntity();
+                    is = httpEntity.getContent();
+                }catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (ClientProtocolException e) {
+
+                } catch (IOException e) {
+
+                }
+
+            }else if(method == "PUT"){
+
+                HttpParams myParams = new BasicHttpParams();
+                HttpConnectionParams.setConnectionTimeout(myParams, 10000);
+                HttpConnectionParams.setSoTimeout(myParams, 10000);
+                HttpClient httpclient = new DefaultHttpClient(myParams );
+                String json=obj.toString();
+                Log.d(TAG,"string created from json"+json);
+
+                try {
+
+                    HttpPut httpput = new HttpPut(url.toString());
+                    httpput.setHeader("Content-type", "application/json");
+                    String base64EncodedCredentials = "Basic " + Base64.encodeToString(
+                            (username + ":" + password).getBytes(),
+                            Base64.NO_WRAP);
+
+                    Log.d(TAG,"encoded credentials = "+base64EncodedCredentials);
+
+                    httpput.setHeader("Authorization", base64EncodedCredentials);
+
+
+                    Log.d(TAG, "URL Host: " + httpput.getURI().getHost());
+                    Log.d(TAG, "URL Path: "+httpput.getURI().getPath());
+
+                    Log.d(TAG, "URL: " + url.trim());
+
+                    StringEntity se = new StringEntity(obj.toString());
+                    se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+                    httpput.setEntity(se);
+
+                    HttpResponse httpResponse = httpclient.execute(httpput);
+                    HttpEntity httpEntity = httpResponse.getEntity();
+                    is = httpEntity.getContent();
+                }catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (ClientProtocolException e) {
+
+                } catch (IOException e) {
+
+                }
 
             }else if(method == "GET"){
                 // request method is GET
@@ -334,6 +412,7 @@ public class JSONParser {
             }
             is.close();
             json = sb.toString();
+
         } catch (Exception e) {
             Log.e("Buffer Error", "Error converting result " + e.toString());
         }
@@ -415,5 +494,7 @@ public class JSONParser {
         return object;
 
     }
+
+
 
 }

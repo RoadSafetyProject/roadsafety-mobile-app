@@ -297,114 +297,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-                <View
-                    android:id="@+id/divider2"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_below="@id/receipt"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginBottom="32dp"
-                    android:background="#666666"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:layout_below="@id/divider2"
-                    android:layout_marginLeft="16dp"
-                    android:text="ISSUER INFORMATION"
-                    android:id="@+id/issuer_info_head"
-                    android:textStyle="bold"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/issuer_name"
-                    android:text="Name"
-                    android:layout_marginTop="16dp"
-                    android:textColor="@color/blue_500"
-                    android:layout_below="@id/issuer_info_head"
-                    android:layout_marginLeft="16dp"
-                    android:textSize="16sp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/issuer_name_text"
-                    android:textSize="16sp"
-                    android:text="Mwita Marwa"
-                    android:textColor="#777777"
-                    android:layout_marginTop="8dp"
-                    android:layout_below="@id/issuer_name"
-                    android:layout_marginLeft="16dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/rank_no"
-                    android:textSize="16sp"
-                    android:layout_below="@id/issuer_name_text"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="32dp"
-                    android:textColor="@color/blue_500"
-                    android:text="Rank No."
-                    />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/rank_no_text"
-                    android:textSize="16sp"
-                    android:text="B8943"
-                    android:layout_marginTop="8dp"
-                    android:layout_below="@id/rank_no"
-                    android:layout_marginLeft="16dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/date"
-                    android:textSize="16sp"
-                    android:textColor="@color/blue_500"
-                    android:layout_below="@id/rank_no_text"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="32dp"
-                    android:text="Date"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/date_text"
-                    android:textSize="16sp"
-                    android:text="12/7/2013"
-                    android:layout_marginTop="8dp"
-                    android:layout_below="@id/date"
-                    android:layout_marginLeft="16dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/date_text"
-                    android:layout_marginLeft="16dp"
-                    android:id="@+id/location_title"
-                    android:textColor="@color/blue_500"
-                    android:layout_marginTop="32dp"
-                    android:text="Location"
-                    android:textSize="16sp"/>
-
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_below="@id/location_title"
-                    android:textSize="16sp"
-                    android:text="Kindoni, Sayansi"
-                    android:layout_marginBottom="32dp"
-                    android:layout_marginLeft="16dp"
-                    android:id="@+id/location"/>
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
@@ -412,7 +304,7 @@
                     android:id="@+id/submit_layout"
                     android:layout_marginTop="32dp"
                     android:layout_marginBottom="32dp"
-                    android:layout_below="@id/location"
+                    android:layout_below="@id/receipt"
                     android:background="@drawable/button4"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="16dp">

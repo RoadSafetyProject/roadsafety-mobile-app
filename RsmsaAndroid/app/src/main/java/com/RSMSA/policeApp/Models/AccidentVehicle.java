@@ -14,7 +14,7 @@ public class AccidentVehicle extends Model {
     private int cost;
     private int alcohol_percentage;
 
-    private String licence_no="",plate_number="",estimated_repair="";
+    private String licence_no="",plate_number="",estimated_repair="",program_driver="",program_vehicle="";
     private boolean drug,phone_use,healmet;
     private String violations="", defects="";
     private String signature="";
@@ -171,5 +171,21 @@ public class AccidentVehicle extends Model {
 
     public void setSignature(String signature) {
         this.signature = signature;
+    }
+
+    public String getProgram_driver() {
+        return program_driver;
+    }
+
+    public void setProgram_driver(String program_driver) {
+        this.program_driver = program_driver;
+    }
+
+    public String getProgram_vehicle() {
+        return program_vehicle;
+    }
+
+    public void setProgram_vehicle(String program_vehicle) {
+        this.program_vehicle = program_vehicle;
     }
 }

@@ -78,7 +78,7 @@ public class LoginActivity extends ActionBarActivity {
                     @Override
                     public void run() {
                         JSONParser jsonParser = new JSONParser();
-                        JSONObject object = jsonParser.dhis2HttpRequest(DHIS2Config.BASE_URL + "/api/me.json", "GET",username,password);
+                        JSONObject object = jsonParser.dhis2HttpRequest(DHIS2Config.BASE_URL + "api/me.json", "GET",username,password,null);
 
                         String id = "";
                         try {
@@ -100,10 +100,11 @@ public class LoginActivity extends ActionBarActivity {
 
                                 orgUnit = orgJson.getString("id");
 
+                                Log.d(TAG,"org unit id = "+orgUnit);
 
                                 String url = DHIS2Config.BASE_URL+"api/programs?paging=false";
                                 JSONParser dhis2parser = new JSONParser();
-                                JSONObject objectProgram = dhis2parser.dhis2HttpRequest(url, "GET",username,password);
+                                JSONObject objectProgram = dhis2parser.dhis2HttpRequest(url, "GET",username,password,null);
                                 Log.d(TAG,"DHIS2 Programs = "+objectProgram.toString());
                                 JSONArray jsonPrograms = null;
                                 try {
@@ -141,8 +142,8 @@ public class LoginActivity extends ActionBarActivity {
 
 
 
-                                String urlDataElements = DHIS2Config.BASE_URL+"api/dataElements?paging=false";
-                                JSONObject objectDataElements = dhis2parser.dhis2HttpRequest(urlDataElements, "GET",username,password);
+                                String urlDataElements = DHIS2Config.BASE_URL+"api/dataElements.json?paging=false&fields=id,name,type,optionSet[id,name,options[id,name],version]";
+                                JSONObject objectDataElements = dhis2parser.dhis2HttpRequest(urlDataElements, "GET",username,password,null);
                                 Log.d(TAG, "DHIS2 Data Elements = " + objectDataElements.toString());
                                 JSONArray jsonDatalements = null;
                                 try {
@@ -173,6 +174,28 @@ public class LoginActivity extends ActionBarActivity {
                                     }catch (Exception e){
                                         Log.d(TAG, "error catched = " + e.getMessage());
                                     }
+
+
+                                    try {
+                                        JSONObject optionSetObject = jsonDataElement.getJSONObject("optionSet");
+                                        JSONArray optionsArray = optionSetObject.getJSONArray("options");
+                                        int size = optionsArray.length();
+                                        for(int j=0 ;j<size;j++){
+                                            JSONObject option = optionsArray.getJSONObject(j);
+
+                                            Log.d(TAG,"option set = "+optionSetObject.getString("name")+"|"+" Option naame =  "+option.getString("name"));
+                                            ContentValues contentValues = new ContentValues();
+                                            contentValues.put(IroadDatabase.KEY_ID, option.getString("id"));
+                                            contentValues.put(IroadDatabase.KEY_NAME, optionSetObject.getString("name"));
+                                            contentValues.put(IroadDatabase.KEY_OPTION_NAME, option.getString("name"));
+                                            db.insert(IroadDatabase.TABLE_OPTION_SETS, null, contentValues);
+                                        }
+                                    }catch (JSONException e){
+
+                                    } catch (Exception e){
+
+                                    }
+
                                 }
 
 

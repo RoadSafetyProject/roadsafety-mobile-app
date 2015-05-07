@@ -1,8 +1,10 @@
 package com.RSMSA.policeApp.Adapters;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +17,17 @@ import android.widget.RadioButton;
 import android.widget.ScrollView;
 
 import com.RSMSA.policeApp.AccidentReportFormActivity;
+import com.RSMSA.policeApp.Dhis2.DHIS2Modal;
 import com.RSMSA.policeApp.MainOffence;
 import com.RSMSA.policeApp.Models.AccidentVehicle;
 import com.RSMSA.policeApp.Models.PassengerVehicle;
 import com.RSMSA.policeApp.R;
 import com.RSMSA.policeApp.Utils.CustomeTimeWatcher;
 import com.android.datetimepicker.date.DatePickerDialog;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,22 +94,68 @@ public class ViewPagerAccidentsDetailsAdapter extends PagerAdapter {
         });
 
         final EditText fatalEdit=(EditText)itemView.findViewById(R.id.fatal_edit);
-        fatalEdit.addTextChangedListener(new CustomeTimeWatcher(accidentVehicle,"setFatal"));
+        fatalEdit.setOnFocusChangeListener(new CustomeTimeWatcher(accidentVehicle,"setFatal"));  
 
         final EditText simpleEdit=(EditText)itemView.findViewById(R.id.simple_edit);
-        simpleEdit.addTextChangedListener(new CustomeTimeWatcher(accidentVehicle,"setSimple"));
+        simpleEdit.setOnFocusChangeListener(new CustomeTimeWatcher(accidentVehicle,"setSimple"));
 
         EditText injuryEdit=(EditText)itemView.findViewById(R.id.injury_edit);
-        injuryEdit.addTextChangedListener(new CustomeTimeWatcher(accidentVehicle,"setSevere_injured"));
+        injuryEdit.setOnFocusChangeListener(new CustomeTimeWatcher(accidentVehicle,"setSevere_injured"));
 
         EditText notInjuredEdit=(EditText)itemView.findViewById(R.id.not_injured_edit);
-        notInjuredEdit.addTextChangedListener(new CustomeTimeWatcher(accidentVehicle,"setOnly_damage"));
+        notInjuredEdit.setOnFocusChangeListener(new CustomeTimeWatcher(accidentVehicle,"setOnly_damage"));
 
         EditText driverLicenceEdit=(EditText)itemView.findViewById(R.id.license_one);
-        driverLicenceEdit.addTextChangedListener(new CustomeTimeWatcher(accidentVehicle,"setLicence_no"));
+        driverLicenceEdit.setOnFocusChangeListener(new CustomeTimeWatcher(accidentVehicle,"setLicence_no"){
+            public void afterFocus(final String text, final EditText editText) {
+                new AsyncTask<Void,Void,Boolean>(){
+                    @Override
+                    protected Boolean doInBackground(Void... params) {
+                        DHIS2Modal dhis2Modal = new DHIS2Modal("Driver",null,MainOffence.username,MainOffence.password);
+                        JSONObject where = new JSONObject();
+                        try {
+                            where.put("value",text);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        JSONArray driver=dhis2Modal.getEvent(where);
+                        Log.d(TAG,"returned driver json = "+driver.toString());
+                        JSONObject driverObject = null;
+                        try {
+                            driverObject = driver.getJSONObject(0);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        try {
+                            if(driverObject.getString("Driver License Number").equals(text)){
+                                accidentVehicle.setProgram_driver(driverObject.getString("id"));
+                                return true;
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (NullPointerException e){
+                            Log.e(TAG,"returned json object is null");
+                        }
+                        return false;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean aVoid) {
+                        super.onPostExecute(aVoid);
+                        if(!aVoid){
+                            editText.setTextColor(context.getResources().getColor(R.color.red));
+                        }else{
+                            editText.setTextColor(context.getResources().getColor(R.color.light_gray));
+                        }
+                    }
+                }.execute();
+
+            }
+        });
 
         final EditText alcoholEdit=(EditText)itemView.findViewById(R.id.alcohol_edit);
-        alcoholEdit.addTextChangedListener(new CustomeTimeWatcher(accidentVehicle,"setAlcohol_percentage"));
+        alcoholEdit.setOnFocusChangeListener(new CustomeTimeWatcher(accidentVehicle,"setAlcohol_percentage"));
 
         CheckBox drug=(CheckBox)itemView.findViewById(R.id.drug_edit);
         drug.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -122,22 +175,68 @@ public class ViewPagerAccidentsDetailsAdapter extends PagerAdapter {
 
 
         EditText plateNumber=(EditText)itemView.findViewById(R.id.registration_number_one);
-        plateNumber.addTextChangedListener(new CustomeTimeWatcher(accidentVehicle,"setPlate_number"));
+        plateNumber.setOnFocusChangeListener(new CustomeTimeWatcher(accidentVehicle,"setPlate_number"){
+            public void afterFocus(final String text, final EditText editText) {
+                new AsyncTask<Void,Void,Boolean>(){
+                    @Override
+                    protected Boolean doInBackground(Void... params) {
+                        DHIS2Modal dhis2Modal = new DHIS2Modal("Vehicle",null,MainOffence.username,MainOffence.password);
+                        JSONObject where = new JSONObject();
+                        try {
+                            where.put("value",text);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        JSONArray vehiclesArray=dhis2Modal.getEvent(where);
+                        Log.d(TAG, "returned vehicle json = "+vehiclesArray.toString());
+                        JSONObject vehicleObject = null;
+                        try {
+                            vehicleObject = vehiclesArray.getJSONObject(0);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        try {
+                            if(vehicleObject.getString("Vehicle Plate Number").equals(text)){
+                                accidentVehicle.setProgram_vehicle(vehicleObject.getString("id"));
+                                return true;
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (NullPointerException e){
+                            Log.e(TAG,"returned json object is null");
+                        }
+                        return false;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean aVoid) {
+                        super.onPostExecute(aVoid);
+                        if(!aVoid){
+                            editText.setTextColor(context.getResources().getColor(R.color.red));
+                        }else{
+                            editText.setTextColor(context.getResources().getColor(R.color.light_gray));
+                        }
+                    }
+                }.execute();
+
+            }
+        });
 
         EditText repairCost=(EditText)itemView.findViewById(R.id.repair_amount_one);
-        repairCost.addTextChangedListener(new CustomeTimeWatcher(accidentVehicle,"setEstimated_repair"));
+        repairCost.setOnFocusChangeListener(new CustomeTimeWatcher(accidentVehicle,"setEstimated_repair"));
 
         EditText vehicleEdit=(EditText)itemView.findViewById(R.id.vehicle_title_edit);
-        vehicleEdit.addTextChangedListener(new CustomeTimeWatcher(accidentVehicle,"setVehicle"));
+        vehicleEdit.setOnFocusChangeListener(new CustomeTimeWatcher(accidentVehicle,"setVehicle"));
 
         EditText vehicleTotalEdit=(EditText)itemView.findViewById(R.id.vehicle_total_edit);
-        vehicleTotalEdit.addTextChangedListener(new CustomeTimeWatcher(accidentVehicle,"setVehicle_total"));
+        vehicleTotalEdit.setOnFocusChangeListener(new CustomeTimeWatcher(accidentVehicle,"setVehicle_total"));
 
         EditText infastructureEdit=(EditText)itemView.findViewById(R.id.infrastructure_edit);
-        infastructureEdit.addTextChangedListener(new CustomeTimeWatcher(accidentVehicle,"setInfastructure"));
+        infastructureEdit.setOnFocusChangeListener(new CustomeTimeWatcher(accidentVehicle,"setInfastructure"));
 
         EditText costEdit=(EditText)itemView.findViewById(R.id.rescue_cost_edit);
-        costEdit.addTextChangedListener(new CustomeTimeWatcher(accidentVehicle,"setCost"));
+        costEdit.setOnFocusChangeListener(new CustomeTimeWatcher(accidentVehicle,"setCost"));
 
         final List <PassengerVehicle> passengers= new ArrayList<PassengerVehicle>();
 
@@ -150,25 +249,25 @@ public class ViewPagerAccidentsDetailsAdapter extends PagerAdapter {
                 linearLayout.addView(passenger);
 
                 EditText nameEdit=(EditText)passenger.findViewById(R.id.name_edit);
-                nameEdit.addTextChangedListener(new CustomeTimeWatcher(passengerVehicle,"setName"));
+                nameEdit.setOnFocusChangeListener(new CustomeTimeWatcher(passengerVehicle,"setName"));
 
                 final EditText dateOfBirth=(EditText)passenger.findViewById(R.id.dob_one);
-                dateOfBirth.addTextChangedListener(new CustomeTimeWatcher(passengerVehicle,"setDate_of_birth"));
+                dateOfBirth.setOnFocusChangeListener(new CustomeTimeWatcher(passengerVehicle,"setDate_of_birth"));
 
                 EditText physicalAddressEdit=(EditText)passenger.findViewById(R.id.physical_address_one);
-                physicalAddressEdit.addTextChangedListener(new CustomeTimeWatcher(passengerVehicle,"setPhysical_address"));
+                physicalAddressEdit.setOnFocusChangeListener(new CustomeTimeWatcher(passengerVehicle,"setPhysical_address"));
 
                 EditText addressBoxEdit=(EditText)passenger.findViewById(R.id.address_box_one);
-                addressBoxEdit.addTextChangedListener(new CustomeTimeWatcher(passengerVehicle,"setAddress"));
+                addressBoxEdit.setOnFocusChangeListener(new CustomeTimeWatcher(passengerVehicle,"setAddress"));
 
                 EditText nationalIDEdit=(EditText)passenger.findViewById(R.id.national_id_one);
-                nationalIDEdit.addTextChangedListener(new CustomeTimeWatcher(passengerVehicle,"setNational_id"));
+                nationalIDEdit.setOnFocusChangeListener(new CustomeTimeWatcher(passengerVehicle,"setNational_id"));
 
                 EditText phoneNoEdit=(EditText)passenger.findViewById(R.id.phone_no_one);
-                phoneNoEdit.addTextChangedListener(new CustomeTimeWatcher(passengerVehicle,"setPhone_no"));
+                phoneNoEdit.setOnFocusChangeListener(new CustomeTimeWatcher(passengerVehicle,"setPhone_no"));
 
                 EditText alcoholPercentageEdit=(EditText)passenger.findViewById(R.id.alcohol_percentage);
-                alcoholPercentageEdit.addTextChangedListener(new CustomeTimeWatcher(passengerVehicle,"setAlcohol_percent"));
+                alcoholPercentageEdit.setOnFocusChangeListener(new CustomeTimeWatcher(passengerVehicle,"setAlcohol_percent"));
 
 
                 CheckBox seatbeltCheckbox=(CheckBox)passenger.findViewById(R.id.seat_belt_check);

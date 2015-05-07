@@ -4,17 +4,21 @@ package com.RSMSA.policeApp.Models;
  * Created by Ilakoze on 2/4/2015.
  */
 public class Offence extends Model {
-    private long offence_date;
+    private String offence_date;
     private String place="";
     private String facts="";
-    private double latitude;
-    private double longitude;
+    private String latitude;
+    private String longitude;
     private String vehicle_plate_number="";
     private String driver_license_number="";
     private String rank_no="";
     private boolean paid;
     private boolean admit;
     private String id="";
+    private String Program_Driver="";
+    private String Program_Police="";
+    private String Program_Vehicle="";
+
 
     public String getId() {
         return id;
@@ -24,11 +28,11 @@ public class Offence extends Model {
         this.id = id;
     }
 
-    public long getOffence_date() {
+    public String getOffence_date() {
         return offence_date;
     }
 
-    public void setOffence_date(long offence_date) {
+    public void setOffence_date(String offence_date) {
         this.offence_date = offence_date;
     }
 
@@ -46,22 +50,6 @@ public class Offence extends Model {
 
     public void setFacts(String facts) {
         this.facts = facts;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
     }
 
     public String getVehicle_plate_number() {
@@ -102,5 +90,53 @@ public class Offence extends Model {
 
     public void setAdmit(boolean admit) {
         this.admit = admit;
+    }
+
+    public boolean isPaid() {
+        return paid;
+    }
+
+    public boolean isAdmit() {
+        return admit;
+    }
+
+    public String getProgram_Driver() {
+        return Program_Driver;
+    }
+
+    public void setProgram_Driver(String program_Driver) {
+        Program_Driver = program_Driver;
+    }
+
+    public String getProgram_Police() {
+        return Program_Police;
+    }
+
+    public void setProgram_Police(String program_Police) {
+        Program_Police = program_Police;
+    }
+
+    public String getProgram_Vehicle() {
+        return Program_Vehicle;
+    }
+
+    public void setProgram_Vehicle(String program_Vehicle) {
+        Program_Vehicle = program_Vehicle;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
     }
 }

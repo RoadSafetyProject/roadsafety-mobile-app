@@ -59,16 +59,16 @@ public class OffenseListActivity extends Activity{
          */
         IroadDatabase db = new IroadDatabase(getApplicationContext());
         List<String> list= new ArrayList<String>();
-        List<String> relatingList = new ArrayList<String>();
+        List<String> offenceAmountList = new ArrayList<String>();
         List<String> ids = new ArrayList<String>();
 
 
         list = db.getAllOffenceDetails(false);
-        relatingList = db.getAllOffenceDetails(true);
+        offenceAmountList = db.getAllOffenceDetails(true);
         ids=db.getOffenceUIds();
 
 
-        adapter = new com.RSMSA.policeApp.Adapters.adapter(this, list, relatingList,ids);
+        adapter = new com.RSMSA.policeApp.Adapters.adapter(this, list, offenceAmountList,ids);
         mlistView.setAdapter(adapter);
     }
     private String isCheckedOrNot(CheckBox checkbox) {

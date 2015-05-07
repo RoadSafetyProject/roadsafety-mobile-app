@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.RSMSA.policeApp.Dialogues.AtcSelectDialogue;
 import com.RSMSA.policeApp.Models.Accident;
+import com.RSMSA.policeApp.Utils.CustomeTimeWatcher;
 import com.RSMSA.policeApp.Utils.SystemBarTintManager;
 import com.android.datetimepicker.date.DatePickerDialog;
 import com.android.datetimepicker.time.RadialPickerLayout;
@@ -90,6 +91,8 @@ public class AccidentReportFormActivity extends ActionBarActivity{
         imagePath = i.getStringExtra("imagePath");
         videoPath= i.getStringExtra("videoPath");
 
+        accident = new Accident();
+
 
         atcSpinner = (Spinner) findViewById(R.id.atc_spinner);
         accidentTypeSelectButton = (Button)findViewById(R.id.accident_type_select_button);
@@ -98,9 +101,6 @@ public class AccidentReportFormActivity extends ActionBarActivity{
         mTabs = (SlidingTabLayout)findViewById(R.id.tabs);
         numberOfVihaclesInvolved=(EditText)findViewById(R.id.number_of_vehicles);
         numberOfWitnesses=(EditText)findViewById(R.id.number_of_witnesses);
-
-        //numberOfVihaclesInvolved.setOnTouchListener(editTextOnTouchListener);
-        //numberOfWitnesses.setOnTouchListener(editTextOnTouchListener);
 
         Button buttonNext=(Button)findViewById(R.id.next);
         accidentRegistration=(ScrollView)findViewById(R.id.accident_registration);
@@ -152,21 +152,73 @@ public class AccidentReportFormActivity extends ActionBarActivity{
         witnesses = new JSONArray();
 
         final EditText accident_reg=(EditText)findViewById(R.id.reg_ref);
+        accident_reg.setOnFocusChangeListener(new CustomeTimeWatcher(accident,"setAccident_regNumber"));
+
+
         final EditText fatal=(EditText)findViewById(R.id.fatal_edit);
+        fatal.setOnFocusChangeListener(new CustomeTimeWatcher(accident,"setFatal"));
+
+
         final EditText severInjuries=(EditText)findViewById(R.id.injury_edit);
+        severInjuries.setOnFocusChangeListener(new CustomeTimeWatcher(accident,"setSevere_injured"));
+
+
         final EditText simpleEdit=(EditText)findViewById(R.id.simple_edit);
+        simpleEdit.setOnFocusChangeListener(new CustomeTimeWatcher(accident,"setSimple"));
+
+
         final EditText onlyDamage=(EditText)findViewById(R.id.not_injured_edit);
+        onlyDamage.setOnFocusChangeListener(new CustomeTimeWatcher(accident,"setOnly_damage"));
+
+
         final EditText date=(EditText)findViewById(R.id.date);
         final EditText time=(EditText)findViewById(R.id.time);
+
+
         final EditText areaName=(EditText)findViewById(R.id.name);
+        areaName.setOnFocusChangeListener(new CustomeTimeWatcher(accident,"setArea_name"));
+
+
+
         final EditText district=(EditText)findViewById(R.id.district);
+        district.setOnFocusChangeListener(new CustomeTimeWatcher(accident,"setDistrict"));
+
+
+
         final EditText city=(EditText)findViewById(R.id.city);
+        city.setOnFocusChangeListener(new CustomeTimeWatcher(accident,"setCity"));
+
+
         final EditText roadName=(EditText)findViewById(R.id.road_name);
+        roadName.setOnFocusChangeListener(new CustomeTimeWatcher(accident,"setRoad_name"));
+
+
+
+
         final EditText intersectionName=(EditText)findViewById(R.id.intersection_name);
+        intersectionName.setOnFocusChangeListener(new CustomeTimeWatcher(accident,"setIntersection_name"));
+
+
+
         final EditText roadNumber=(EditText)findViewById(R.id.road_number);
+        roadNumber.setOnFocusChangeListener(new CustomeTimeWatcher(accident,"setRoad_number"));
+
+
+
         final EditText intersectionNumber=(EditText)findViewById(R.id.intersection_number);
+        intersectionNumber.setOnFocusChangeListener(new CustomeTimeWatcher(accident,"setIntersection_number"));
+
+
+
         final EditText roadMark=(EditText)findViewById(R.id.road_mark);
+        roadMark.setOnFocusChangeListener(new CustomeTimeWatcher(accident,"setRoad_km_mark"));
+
+
         final EditText intersectionMark=(EditText)findViewById(R.id.intersection_mark);
+        intersectionMark.setOnFocusChangeListener(new CustomeTimeWatcher(accident,"setIntersection_km_mark"));
+
+
+
         timePicker= (Button)findViewById(R.id.time_picker);
         timePicker.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -212,18 +264,6 @@ public class AccidentReportFormActivity extends ActionBarActivity{
                 mViewPagerWitness.setAdapter(witnessPagerAdapter);
                 mViewPagerWitness.setOffscreenPageLimit(10);
 
-
-                accident=new Accident();
-                accident.setAccident_regNumber(accident_reg.getText().toString());
-                accident.setFatal(Integer.parseInt(fatal.getText().toString()));
-                accident.setSevere_injured(Integer.parseInt(severInjuries.getText().toString()));
-                accident.setSimple(Integer.parseInt(simpleEdit.getText().toString()));
-                accident.setOnly_damage(Integer.parseInt(onlyDamage.getText().toString()));
-                accident.setTime(dateSelected+" "+timeSelected);
-
-
-
-
                 try {
                     File imageFile = new File(imagePath);
                     accident.setImage_filename(imageFile.getName());
@@ -233,19 +273,6 @@ public class AccidentReportFormActivity extends ActionBarActivity{
                     File videoFile = new File(videoPath);
                     accident.setVideo_filename(videoFile.getName());
                 }catch (Exception e){}
-
-
-
-                accident.setArea_name(areaName.getText().toString());
-                accident.setDistrict(district.getText().toString());
-                accident.setCity(city.getText().toString());
-                accident.setRoad_name(roadName.getText().toString());
-                accident.setIntersection_name(intersectionName.getText().toString());
-                accident.setRoad_number(Integer.parseInt(roadNumber.getText().toString()));
-                accident.setIntersection_number(Integer.parseInt(intersectionNumber.getText().toString()));
-                accident.setRoad_km_mark(Integer.parseInt(roadMark.getText().toString()));
-                accident.setIntersection_km_mark(Integer.parseInt(intersectionMark.getText().toString()));
-
 
 
             }

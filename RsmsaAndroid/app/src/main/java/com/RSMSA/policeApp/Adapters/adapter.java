@@ -25,7 +25,7 @@ public class adapter extends ArrayAdapter<String> {
      */
     private final Activity mContext;
     private final List<String> mList;
-    private final List<String> mrelList;
+    private final List<String> mAmountList;
     private final List<String> ids;
     public boolean[] checked;
     public int mSize = 0;
@@ -35,7 +35,7 @@ public class adapter extends ArrayAdapter<String> {
         super(context, R.layout.offense, list);
         mContext = context;
         mList = list;
-        mrelList = relList;
+        mAmountList = relList;
         ids=id;
         mSize = list.size();
         checkedcount = 0;
@@ -68,7 +68,7 @@ public class adapter extends ArrayAdapter<String> {
                 {
                     checked[position] = true;
                     OffenseListActivity.offenseDesc.add(mList.get(position));
-                    OffenseListActivity.OffenseListType.add(mrelList.get(position));
+                    OffenseListActivity.OffenseListType.add(mAmountList.get(position));
                     OffenseListActivity.offenceIds.add(ids.get(position));
                     OffenseListActivity.offenseCount++;
                 }
@@ -76,7 +76,7 @@ public class adapter extends ArrayAdapter<String> {
                 {
                     checked[position] = false;
                     OffenseListActivity.offenseDesc.remove(mList.get(position));
-                    OffenseListActivity.OffenseListType.remove(mrelList.get(position));
+                    OffenseListActivity.OffenseListType.remove(mAmountList.get(position));
                     OffenseListActivity.offenceIds.remove(ids.get(position));
                     OffenseListActivity.offenseCount--;
                 }

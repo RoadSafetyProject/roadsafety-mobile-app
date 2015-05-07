@@ -23,6 +23,7 @@ public class IroadDatabase extends SQLiteOpenHelper {
     public static final String TABLE_OFFENCE_REGISTRY = "tbl_offence_registry";
     public static final String TABLE_PROGRAMS= "tbl_programs";
     public static final String TABLE_DATA_ELEMENTS= "tbl_data_elements";
+    public static final String TABLE_OPTION_SETS= "tbl_option_sets";
 
 
     //  Table Columns offence
@@ -33,6 +34,7 @@ public class IroadDatabase extends SQLiteOpenHelper {
     public static final String KEY_AMOUNT = "amount";
 
     public static final String KEY_NAME= "name";
+    public static final String KEY_OPTION_NAME= "data_option_name";
     public static final String KEY_CREATED = "created";
     public static final String KEY_LAST_UPDATED = "lastUpdated";
     public static final String KEY_HREF = "href";
@@ -66,9 +68,15 @@ public class IroadDatabase extends SQLiteOpenHelper {
                 + KEY_SECTION + " VARCHAR,"
                 + KEY_AMOUNT + " VARCHAR" + ")";
 
+        String CREATE_TABLE_OPTION_SETS = "CREATE TABLE if not exists " + TABLE_OPTION_SETS + "("
+                + KEY_ID + " STRING PRIMARY KEY ,"
+                + KEY_NAME + " VARCHAR,"
+                + KEY_OPTION_NAME + ")";
+
         db.execSQL(CREATE_TABLE_OFFENCE_REGISTRY);
         db.execSQL(CREATE_TABLE_PROGRAMS);
         db.execSQL(CREATE_TABLE_DATA_ELEMENTS);
+        db.execSQL(CREATE_TABLE_OPTION_SETS);
     }
     // Upgrading database
     @Override
@@ -76,6 +84,7 @@ public class IroadDatabase extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_OFFENCE_REGISTRY);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROGRAMS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DATA_ELEMENTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_OPTION_SETS);
         onCreate(db);
     }
 
@@ -88,12 +97,12 @@ public class IroadDatabase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         List<String> listOfOffenceNature = new ArrayList<String>();
-        List<String> listOfOffenceDescriptions = new ArrayList<String>();
+        List<String> listOfOffenceAmounts = new ArrayList<String>();
         if(cursor.getCount() != 0) {
             cursor.moveToFirst();
             for (int i = 0; i < cursor.getCount(); i++) {
                 listOfOffenceNature.add(cursor.getString(cursor.getColumnIndex(KEY_NATURE)));
-                listOfOffenceDescriptions.add(cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)));
+                listOfOffenceAmounts.add(cursor.getString(cursor.getColumnIndex(KEY_AMOUNT)));
                 cursor.moveToNext();
 
             }
@@ -101,7 +110,7 @@ public class IroadDatabase extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         if (flag){
-            return listOfOffenceDescriptions;
+            return listOfOffenceAmounts;
         }
 
         else {

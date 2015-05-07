@@ -51,6 +51,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.RSMSA.policeApp.Adapters.SpinnerAdapters.PaymentMethodSpinnerAdapter;
 import com.RSMSA.policeApp.iRoadDB.IroadDatabase;
@@ -58,23 +60,7 @@ import com.RSMSA.policeApp.iRoadDB.IroadDatabase;
 /**
  *  Created by Isaiah on 02/02/2015.
  */
-public class OffenceReportForm extends ActionBarActivity implements LocationListener{
-
-    /**
-     *  JSON Response node names.
-     **/
-    private static String KEY_ERROR = "error";
-    private static String KEY_SUCCESS = "status";
-    private static String KEY_UID = "id";
-    private static String KEY_PLATE_NUMBER = "plateNumber";
-    private static String KEY_OFFENSE = "offence";
-    private static String KEY_COMMIT = "commit";
-    private static String KEY_LICENSE = "license";
-    private static String KEY_RANK_NO = "rankNo";
-    private static String KEY_AMOUNT = "amount";
-    private static String KEY_CREATED_AT = "created_at";
-    private static String KEY_LATITUDE = "latitude";
-    private static String KEY_LONGITUDE = "longitude";
+public class OffenceReportForm extends ActionBarActivity{
     public int id;
 
     public static final String TAG="ReportForm";
@@ -86,8 +72,6 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
     private LocationManager locationManager;
     private String provider,dLicense,driverUid,vehicleUid;
     public String mLocation;
-    public double mLat;
-    public double mLong;
     public Toolbar toolbar;
     public ArrayList<String> desc = new ArrayList<String>();
     public ArrayList<String> type = new ArrayList<String>();
@@ -103,7 +87,7 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
     public ArrayList<String> offensesToReport = new ArrayList<String>();
     public int amountToReport = 0;
     public ProgressBar progressBar;
-    public TextView offencesSelectedTextView,offencesCostTitle,offensesCommittedTextview,ChargesAcceptanceTitle,issuerNameTitle, issuerRankNo,issuerDateTitle,PaymentTitle,paymentMethodTitle,locationTitle;
+    public TextView offencesSelectedTextView,offencesCostTitle,offensesCommittedTextview,ChargesAcceptanceTitle,issuerNameTitle, issuerRankNo,issuerDateTitle,PaymentTitle,paymentMethodTitle;
     public String offencesSelected="",paymentMethod="",plateNumberObtained="";
     public RelativeLayout report,summary;
     public EditText  receiptEditText,plateNumberEdit,licenceNumberEdit;
@@ -113,6 +97,10 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
     private SharedPreferences sharedpreferences;
     private String invalidLicence=null;
     private String expiredInsuarance=null;
+
+    private double mLat,mLong;
+    private Timer gpsTimer = new Timer();
+    private Location lastLocation=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,43 +148,6 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
         }
 
 
-        /**
-         * initializing location variables
-         */
-        latituteField = (TextView) findViewById(R.id.location);
-
-        /**
-         * get the location manager
-         */
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        /**
-         * define the criteria of how to select the location
-         * provider -> use default
-         */
-        Criteria criteria = new Criteria();
-        provider = locationManager.getBestProvider(criteria, false);
-        Location location;
-        try{
-            location = locationManager.getLastKnownLocation(provider);
-        }catch (Exception e){
-            provider = locationManager.getBestProvider(criteria,true);
-            location = locationManager.getLastKnownLocation(provider);
-        }
-
-
-
-        /**
-         * initialize location fields
-         */
-        if (location != null) {
-            System.out.println("Provider " + provider + " has been selected.");
-            onLocationChanged(location);
-        } else {
-            latituteField.setText("Location error!");
-            //longitudeField.setText("Location not available");
-        }
-
         submit = (TextView)findViewById(R.id.submit_text);
 
         plateNo =(TextView)findViewById(R.id.plate_no_);
@@ -207,20 +158,11 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
         offensesCommittedTextview.setTypeface(MainOffence.Roboto_BoldCondensed);
 
         ChargesAcceptanceTitle=(TextView)findViewById(R.id.charges_acceptance_title);
-
-        issuerNameTitle=(TextView)findViewById(R.id.issuer_name);
-        issuerRankNo =(TextView)findViewById(R.id.rank_no);
-        issuerDateTitle=(TextView)findViewById(R.id.date);
-        locationTitle=(TextView)findViewById(R.id.location_title);
         paymentMethodTitle=(TextView)findViewById(R.id.payment_method_title);
         PaymentTitle=(TextView)findViewById(R.id.payment_title);
 
 
         ChargesAcceptanceTitle.setTypeface(MainOffence.Roboto_BoldCondensed);
-        issuerNameTitle.setTypeface(MainOffence.Roboto_BoldCondensed);
-        issuerRankNo.setTypeface(MainOffence.Roboto_BoldCondensed);;
-        issuerDateTitle.setTypeface(MainOffence.Roboto_BoldCondensed);;
-        locationTitle.setTypeface(MainOffence.Roboto_BoldCondensed);
         paymentMethodTitle.setTypeface(MainOffence.Roboto_BoldCondensed);
         PaymentTitle.setTypeface(MainOffence.Roboto_BoldCondensed);
 
@@ -240,7 +182,6 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
         submit_layout1 = (RelativeLayout)findViewById(R.id.submit_layout1);
         submit_layout1.setVisibility(View.GONE);
 
-        date_text = (TextView)findViewById(R.id.date_text);
 
         progressBar = (ProgressBar)findViewById(R.id.pbar_report);
 
@@ -368,12 +309,6 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
 
             }
         });
-
-        TextView policeName = (TextView)findViewById(R.id.issuer_name_text);
-        TextView rankNo = (TextView)findViewById(R.id.rank_no_text);
-
-        policeName.setText(sharedpreferences.getString("name",""));
-        rankNo.setText(sharedpreferences.getString("rank_no",""));
         Calendar calendar = Calendar.getInstance();
         date_text.setText(Functions.getDateFromUnixTimestamp(calendar.getTimeInMillis()));
 
@@ -396,7 +331,7 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
     @Override
     public void onResume(){
         super.onResume();
-        locationManager.requestLocationUpdates(provider, 400, 1, this);
+        startRecording();
         if (backFromChild){
             backFromChild = false;
             offense_type_text.setText(count+" offenses selected");
@@ -489,37 +424,7 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
     @Override
     protected void onPause() {
         super.onPause();
-        locationManager.removeUpdates(this);
-    }
-
-
-    @Override
-    public void onLocationChanged(Location location) {
-        double lat = (double) (location.getLatitude());
-        double lng = (double) (location.getLongitude());
-        mLat = lat;
-        mLong = lng;
-        mLocation = getAddress(lat, lng);
-        latituteField.setText(mLocation);
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-        Toast.makeText(this, "Enabled new provider " + provider,
-                Toast.LENGTH_SHORT).show();
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-        Toast.makeText(this, "Disabled provider " + provider,
-                Toast.LENGTH_SHORT).show();
+        gpsTimer.cancel();
     }
 
     /**
@@ -603,7 +508,13 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
         @Override
         protected JSONObject doInBackground(String... args) {
             PoliceFunction PFunction = new PoliceFunction();
-            String location=getAddress(mLat,mLong);
+
+
+            Location location =getBestLocation();
+            mLat=location.getLatitude();
+            mLong=location.getLongitude();
+
+            String place=getAddress(mLat,mLong);
             JSONObject event = new JSONObject();
             Calendar cl = Calendar.getInstance();
 
@@ -658,6 +569,19 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
             }
 
 
+
+            JSONObject programVehicleDataElement = new JSONObject();
+            String programVehicleDataElementUid = modal.getDataElementByName("Program_Vehicle").getId();
+            try {
+                programVehicleDataElement.put("value",vehicleUid);
+                programVehicleDataElement.put("dataElement",programVehicleDataElementUid);
+                dataValues.put(programVehicleDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
             JSONObject offenceFactsDataElement = new JSONObject();
             String offenceFactsUid = modal.getDataElementByName("Offence Facts").getId();
             try {
@@ -709,7 +633,7 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
             String offencePlaceUid = modal.getDataElementByName("Offence Place").getId();
             try {
                 offencePlaceDataElement.put("dataElement",offencePlaceUid);
-                offencePlaceDataElement.put("value",location);
+                offencePlaceDataElement.put("value",place);
                 dataValues.put(offencePlaceDataElement);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -720,22 +644,48 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
             String offenceAdmissionStatusUid = modal.getDataElementByName("Offence Admission Status").getId();
             try {
                 offenceAdmissionStatusDataElement.put("dataElement",offenceAdmissionStatusUid);
-                offenceAdmissionStatusDataElement.put("value",paymentStatus);
+                offenceAdmissionStatusDataElement.put("value",commit);
                 dataValues.put(offenceAdmissionStatusDataElement);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
 
-            JSONObject programVehicleDataElement = new JSONObject();
-            String programVehicleUid = modal.getDataElementByName("Program_Vehicle").getId();
+
+            JSONObject offencePaidDataElement = new JSONObject();
+            String offencePaidDataElementUid = modal.getDataElementByName("Offence Paid").getId();
             try {
-                programVehicleDataElement.put("dataElement",programVehicleUid);
-                programVehicleDataElement.put("value",vehicleUid);
-                dataValues.put(programVehicleDataElement);
+                offencePaidDataElement.put("dataElement",offencePaidDataElementUid);
+                offencePaidDataElement.put("value",paymentStatus);
+                dataValues.put(offencePaidDataElement);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+
+            if(paymentStatus){
+                JSONObject offenceRecieptAmountDataElement = new JSONObject();
+                String offenceRecieptAmountDataElementUid = modal.getDataElementByName("Offence Reciept Amount").getId();
+                try {
+                    offenceRecieptAmountDataElement.put("dataElement",offenceRecieptAmountDataElementUid);
+                    offenceRecieptAmountDataElement.put("value",amountToReport+"");
+                    dataValues.put(offenceRecieptAmountDataElement);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                JSONObject offenceRecieptNumberDataElement = new JSONObject();
+                String offenceRecieptNumberDataElementUid = modal.getDataElementByName("Offence Reciept Number").getId();
+                try {
+                    offenceRecieptNumberDataElement.put("dataElement",offenceRecieptNumberDataElementUid);
+                    offenceRecieptNumberDataElement.put("value",receiptEditText.getText().toString());
+                    dataValues.put(offenceRecieptNumberDataElement);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
 
             try {
                 event.put("dataValues",dataValues);
@@ -743,7 +693,63 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
                 e.printStackTrace();
             }
 
-            Log.d(TAG,"event json = "+event.toString());
+            JSONParser jsonParser = new JSONParser();
+            JSONObject resultObject = jsonParser.dhis2HttpRequest(DHIS2Config.BASE_URL+"/api/events","PUT",MainOffence.username,MainOffence.password,event);
+            try {
+                String reference = resultObject.getJSONArray("importSummaries").getJSONObject(0).getString("reference");
+                for(int i=0;i<count;i++){
+                    DHIS2Modal  offenceModal = new DHIS2Modal("Offence",null, MainOffence.username, MainOffence.password);
+                    String OffenceUid = offenceModal.getProgramByName("Offence").getId();
+                    try {
+
+                        JSONObject offenceEvent = new JSONObject();
+                        offenceEvent.put("program",OffenceUid);
+                        offenceEvent.put("orgUnit",organizationUnit);
+                        offenceEvent.put("eventDate",Functions.getDateFromUnixTimestamp(cl.getTimeInMillis()));
+
+
+                        JSONArray offenceDataValues = new JSONArray();
+
+                        JSONObject programOffenceEventDataElement = new JSONObject();
+                        String programOffenceEventDataElementUid = modal.getDataElementByName("Program_Offence_Event").getId();
+                        try {
+                            programOffenceEventDataElement.put("dataElement",programOffenceEventDataElementUid);
+                            programOffenceEventDataElement.put("value",reference);
+                            offenceDataValues.put(programOffenceEventDataElement);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                        JSONObject programOffenceRegistryDataElement = new JSONObject();
+                        String programOffenceRegistryDataElementUid = modal.getDataElementByName("Program_Offence_Registry").getId();
+                        try {
+                            programOffenceRegistryDataElement.put("dataElement",programOffenceRegistryDataElementUid);
+                            programOffenceRegistryDataElement.put("value",uids.get(i));
+                            offenceDataValues.put(programOffenceRegistryDataElement);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                        try {
+                            offenceEvent.put("dataValues",offenceDataValues);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        JSONObject resultObject2 = jsonParser.dhis2HttpRequest(DHIS2Config.BASE_URL+"/api/events","PUT",MainOffence.username,MainOffence.password,offenceEvent);
+                        Log.d(TAG,"offence Program results = "+resultObject2.toString());
+
+
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             return null;
         }
         @Override
@@ -866,5 +872,143 @@ public class OffenceReportForm extends ActionBarActivity implements LocationList
             }
         }
     }
+
+
+    /**
+     * try to get the 'best' location selected from all providers
+     */
+    private Location getBestLocation() {
+        Location gpslocation = getLocationByProvider(LocationManager.GPS_PROVIDER);
+        Location networkLocation =  getLocationByProvider(LocationManager.NETWORK_PROVIDER);
+        // if we have only one location available, the choice is easy
+        if (gpslocation == null) {
+            Log.d(TAG, "No GPS Location available.");
+            return networkLocation;
+        }
+        if (networkLocation == null) {
+            Log.d(TAG, "No Network Location available");
+            return gpslocation;
+        }
+        // a locationupdate is considered 'old' if its older than the configured
+        // update interval. this means, we didn't get a
+        // update from this provider since the last check
+        long old = System.currentTimeMillis() - 1*60*60*1000;
+        boolean gpsIsOld = (gpslocation.getTime() < old);
+        boolean networkIsOld = (networkLocation.getTime() < old);
+        // gps is current and available, gps is better than network
+        if (!gpsIsOld) {
+            Log.d(TAG, "Returning current GPS Location");
+            return gpslocation;
+        }
+        // gps is old, we can't trust it. use network location
+        if (!networkIsOld) {
+            Log.d(TAG, "GPS is old, Network is current, returning network");
+            return networkLocation;
+        }
+        // both are old return the newer of those two
+        if (gpslocation.getTime() > networkLocation.getTime()) {
+            Log.d(TAG, "Both are old, returning gps(newer)");
+            return gpslocation;
+        } else {
+            Log.d(TAG, "Both are old, returning network(newer)");
+            return networkLocation;
+        }
+    }
+
+    /**
+     * get the last known location from a specific provider (network/gps)
+     */
+    private Location getLocationByProvider(String provider) {
+        Location location = null;
+        LocationManager locationManager = (LocationManager) getApplicationContext()
+                .getSystemService(Context.LOCATION_SERVICE);
+        try {
+            if (locationManager.isProviderEnabled(provider)) {
+                location = locationManager.getLastKnownLocation(provider);
+            }
+        } catch (IllegalArgumentException e) {
+            Log.d(TAG, "Cannot acces Provider " + provider);
+        }
+        return location;
+    }
+
+    /**
+     * Start listening and recording locations
+     */
+    public void startRecording() {
+        gpsTimer.cancel();
+        gpsTimer = new Timer();
+        long checkInterval = 60*1000;
+        long minDistance = 1000;
+        // receive updates
+        LocationManager locationManager = (LocationManager) getApplicationContext()
+                .getSystemService(Context.LOCATION_SERVICE);
+        for (String s : locationManager.getAllProviders()) {
+            locationManager.requestLocationUpdates(s, checkInterval,
+                    minDistance, new LocationListener() {
+
+                        @Override
+                        public void onStatusChanged(String provider,
+                                                    int status, Bundle extras) {}
+
+                        @Override
+                        public void onProviderEnabled(String provider) {}
+
+                        @Override
+                        public void onProviderDisabled(String provider) {}
+
+                        @Override
+                        public void onLocationChanged(Location location) {
+                            // if this is a gps location, we can use it
+                            if (location.getProvider().equals(
+                                    LocationManager.GPS_PROVIDER)) {
+                                doLocationUpdate(location, true);
+                            }
+                        }
+                    });
+        }
+        // start the gps receiver thread
+        gpsTimer.scheduleAtFixedRate(new TimerTask() {
+
+            @Override
+            public void run() {
+                Location location = getBestLocation();
+                doLocationUpdate(location, false);
+            }
+        }, 0, checkInterval);
+    }
+
+    /**
+     * Performe a location update either by force or due to location or distance change
+     * @param l
+     * @param force
+     */
+    public void doLocationUpdate(Location l, boolean force) {
+        long minDistance = 1000;
+        Log.d(TAG, "update received:" + l);
+        if (l == null) {
+            Log.d(TAG, "Empty location");
+            if (force)
+                Toast.makeText(this, "Current location not available",
+                        Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (lastLocation != null) {
+            float distance = l.distanceTo(lastLocation);
+            Log.d(TAG, "Distance to last: " + distance);
+            if (l.distanceTo(lastLocation) < minDistance && !force) {
+                Log.d(TAG, "Position didn't change");
+                return;
+            }
+            if (l.getAccuracy() >= lastLocation.getAccuracy()
+                    && l.distanceTo(lastLocation) < l.getAccuracy() && !force) {
+                Log.d(TAG,
+                        "Accuracy got worse and we are still "
+                                + "within the accuracy range.. Not updating");
+                return;
+            }
+        }
+    }
+
 
 }

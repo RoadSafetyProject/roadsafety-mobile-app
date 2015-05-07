@@ -506,9 +506,9 @@ public class OffenceHistoryFragment extends Fragment {
                     try {
                         jsonObjet=offences.getJSONObject(i);
                         plateNumber=jsonObjet.getJSONObject("Program_Vehicle").getString("Vehicle Plate Number");
+                        date  = jsonObjet.getString("Offence Date");
                         offenceEvents = jsonObjet.getJSONArray("offences");
                         place = jsonObjet.getString("Offence Place");
-                        date  = jsonObjet.getString("Offence Date");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

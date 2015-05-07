@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 
 import com.RSMSA.policeApp.AccidentReportFormActivity;
 import com.RSMSA.policeApp.AccidentTypeclassificationActivity;
+import com.RSMSA.policeApp.Dhis2.DHIS2Modal;
 import com.RSMSA.policeApp.MainOffence;
 import com.RSMSA.policeApp.Models.Witness;
 import com.RSMSA.policeApp.R;
@@ -92,22 +93,25 @@ public class ViewPagerWitnessesAdapter extends PagerAdapter {
         }
 
         EditText nameEdit=(EditText)itemView.findViewById(R.id.name_edit);
-        nameEdit.addTextChangedListener(new CustomeTimeWatcher(witness,"setName"));
+        nameEdit.setOnFocusChangeListener(new CustomeTimeWatcher(witness,"setName"));
 
         final EditText dateOfBirth=(EditText)itemView.findViewById(R.id.dob_one);
-        dateOfBirth.addTextChangedListener(new CustomeTimeWatcher(witness,"setDate_of_birth"));
+        dateOfBirth.setOnFocusChangeListener(new CustomeTimeWatcher(witness,"setDate_of_birth"));
 
         EditText physicalAddressEdit=(EditText)itemView.findViewById(R.id.physical_address_one);
-        physicalAddressEdit.addTextChangedListener(new CustomeTimeWatcher(witness,"setPhysical_address"));
+        physicalAddressEdit.setOnFocusChangeListener(new CustomeTimeWatcher(witness,"setPhysical_address"));
 
         EditText addressBoxEdit=(EditText)itemView.findViewById(R.id.address_box_one);
-        addressBoxEdit.addTextChangedListener(new CustomeTimeWatcher(witness,"setAddress"));
+        addressBoxEdit.setOnFocusChangeListener(new CustomeTimeWatcher(witness,"setAddress"));
 
         EditText nationalIDEdit=(EditText)itemView.findViewById(R.id.national_id_one);
-        nationalIDEdit.addTextChangedListener(new CustomeTimeWatcher(witness,"setNational_id"));
+        nationalIDEdit.setOnFocusChangeListener(new CustomeTimeWatcher(witness,"setNational_id"));
 
         EditText phoneNoEdit=(EditText)itemView.findViewById(R.id.phone_no_one);
-        phoneNoEdit.addTextChangedListener(new CustomeTimeWatcher(witness,"setPhone_no"));
+        phoneNoEdit.setOnFocusChangeListener(new CustomeTimeWatcher(witness,"setPhone_no"));
+
+
+
 
         Button date_picker=(Button)itemView.findViewById(R.id.date_picker);
         date_picker.setOnClickListener(new View.OnClickListener() {

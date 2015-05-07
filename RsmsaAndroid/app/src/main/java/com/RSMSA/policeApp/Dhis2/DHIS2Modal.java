@@ -83,7 +83,7 @@ public class DHIS2Modal {
         JSONArray allEvents = new JSONArray();
         Program program = getProgramByName(modalName);
         JSONParser jsonParser = new JSONParser();
-        JSONObject  jsonObject = jsonParser.dhis2HttpRequest(DHIS2Config.BASE_URL + "api/events?program=" + program.getId(), "GET", username, password);
+        JSONObject  jsonObject = jsonParser.dhis2HttpRequest(DHIS2Config.BASE_URL + "api/events?program=" + program.getId(), "GET", username, password,null);
         JSONArray events = null;
         try {
             events = jsonObject.getJSONArray("events");
@@ -214,7 +214,7 @@ public class DHIS2Modal {
         Program program = getProgramByName(modalName);
         //Get events of the program from the server
         JSONParser jsonParser = new JSONParser();
-        JSONObject  jsonObject = jsonParser.dhis2HttpRequest(DHIS2Config.BASE_URL + "api/events/" + uid + ".json", "GET", username, password);
+        JSONObject  jsonObject = jsonParser.dhis2HttpRequest(DHIS2Config.BASE_URL + "api/events/" + uid + ".json", "GET", username, password, null);
         Log.d(TAG,"event by id = "+uid+"  :  "+jsonObject.toString());
         JSONObject renderedJson = null;
         try {
@@ -239,7 +239,7 @@ public class DHIS2Modal {
         Program program = getProgramByName(modalName);
         //Get events of the program from the server
         JSONParser jsonParser = new JSONParser();
-        JSONObject  jsonObject = jsonParser.dhis2HttpRequest(DHIS2Config.BASE_URL + "api/events?program=" + program.getId(), "GET", username, password);
+        JSONObject  jsonObject = jsonParser.dhis2HttpRequest(DHIS2Config.BASE_URL + "api/events?program=" + program.getId(), "GET", username, password,null);
         JSONArray eventsReceived = null;
         try {
             Log.d(TAG,"events of program "+modalName + " = "+jsonObject);

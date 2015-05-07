@@ -3,14 +3,21 @@ package com.RSMSA.policeApp;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,11 +36,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.RSMSA.policeApp.Dhis2.DHIS2Config;
+import com.RSMSA.policeApp.Dhis2.DHIS2Modal;
 import com.RSMSA.policeApp.Dialogues.AtcSelectDialogue;
 import com.RSMSA.policeApp.Models.AccidentVehicle;
 import com.RSMSA.policeApp.Models.PassengerVehicle;
 import com.RSMSA.policeApp.Models.Witness;
 import com.RSMSA.policeApp.Utils.AndroidMultiPartEntity;
+import com.RSMSA.policeApp.Utils.Functions;
 import com.RSMSA.policeApp.Utils.SystemBarTintManager;
 
 import org.apache.http.HttpEntity;
@@ -52,11 +62,16 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.RSMSA.policeApp.Adapters.ViewPagerAccidentsDetailsAdapter;
 import com.RSMSA.policeApp.Adapters.ViewPagerWitnessesAdapter;
 import com.RSMSA.policeApp.CustomViews.TouchFeedbackEnabledRelativeLayout;
+import com.RSMSA.policeApp.iRoadDB.IroadDatabase;
 
 
 /**
@@ -64,68 +79,45 @@ import com.RSMSA.policeApp.CustomViews.TouchFeedbackEnabledRelativeLayout;
  */
 public class AccidentTypeclassificationActivity extends ActionBarActivity {
     private static final String TAG=AccidentTypeclassificationActivity.class.getSimpleName();
-
-    /**
-     * JSON Response node names.
-     */
-    private static String KEY_SUCCESS = "success";
-    private static String KEY_ERROR = "error";
-
     /**
      * Select buttons
      */
     Button accidentTypeSelectButton, finishButton;
-
     public static final int POLICE_SIGNATURE = 100, DRIVER_A_SIGNATURE = 17, DRIVER_B_SIGNATURE = 23,
             WITNES_SIGNATURE = 24, DESC_SKETCH = 104;
-
     int selectedSpinner, selectedjunctionStructureSpinner, selectedjunctionControlSpinner, selectedroadTypeSpinner,
             selectedsurfaceTypeSpinner, selectedroadStructureSpinner, selectedsurfaceStatusSpinner, selectedroadSurfaceSpinner,
             selectedlightSpinner, selectedwhetherSpinner, selectedcontrolSpinner,selecteddefectOneSpinner,
             selecteddefectTwoSpinner;
-
     public final int REPORT_RESULT = 1;
-    public String positionSelected = "-1";
     private LinearLayout driversSignaturesLayouts, witnessSignatureLayouts;
-
     /**
      *
      * Accident type classification spinner
      */
     public Spinner atcSpinner, junctionStructureSpinner, junctionControlSpinner, roadTypeSpinner, surfaceTypeSpinner, roadStructureSpinner,
             surfaceStatusSpinner, roadSurfaceSpinner, lightSpinner, whetherSpinner, controlSpinner;
-
-    /**
-     * Spinner Adapter declaration
-     */
-    public SpinnerAdapter dataAdapter;
-
     public ImageView scroller, policeImage, driverAImage, driverBImage, witnessImage;
-
     public TextView policeHint, driverAHint, driverBHint, witnessHint, sketchHint, sthinSelected;
-
     public static int currentSignature;
-
     public static final int SIGNATURE_ACTIVITY = 2;
-
     private Toolbar toolbar;
-
     private String imagePath=null, videoPath=null;
-
     private boolean isImage=true,isDriver=true;
-
-
-    long totalSize = 0;
-
-    private JSONObject postAccident;
-
+    private long totalSize = 0;
     private String filePath;
     private ProgressBar progressBarDetermininate;
+    private IroadDatabase iroadDatabase;
+    private double mLat,mLong;
+    private Timer gpsTimer = new Timer();
+    private Location lastLocation=null;
+    private String urlVideo="",urlImage="",urlPoliceSignature="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accident_type_classification);
+        iroadDatabase = new IroadDatabase(this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -231,13 +223,12 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
 
 
         List<String> list = new ArrayList<String>();
-        list.add("Single vehicle accident");
-        list.add("Accidents between vehicles driving same travel direction (2 or more vehicles)");
-        list.add("Accidents between vehicles driving opposite travel direction (2 or more vehicles)");
-        list.add("Accidents at a junction turning in same or opposite direction (2 or more vehi.)");
-        list.add("Collision at a junction between two or more participants");
-        list.add("Accident w. parked vehicles");
-        list.add("Pedestrian, animals and other accidents");
+        Cursor cursor = iroadDatabase.query("SELECT * FROM "+IroadDatabase.TABLE_OPTION_SETS+" WHERE "+IroadDatabase.KEY_NAME+" = 'Accident Type Classification'");
+        int cnt = cursor.getCount();
+        for (int i = 0; i < cnt; i++){
+            cursor.moveToPosition(i);
+            list.add(cursor.getString(cursor.getColumnIndex(IroadDatabase.KEY_OPTION_NAME)));
+        }
 
         final List<String> junctionStructure = new ArrayList<String>();
         junctionStructure.add("Crossing Roads");
@@ -307,11 +298,15 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
         light.add("Smoke");
         light.add("Street Light");
 
+
         final List<String> weather = new ArrayList<String>();
-        weather.add("Clear");
-        weather.add("Cloudy");
-        weather.add("Storm");
-        weather.add("Fog");
+        Cursor cursor2 = iroadDatabase.query("SELECT * FROM "+IroadDatabase.TABLE_OPTION_SETS+" WHERE "+IroadDatabase.KEY_NAME+" = 'Weather'");
+        int cnt2 = cursor2.getCount();
+        Log.d(TAG,"weater count = "+cnt2);
+        for (int i = 0; i < cnt2; i++){
+            cursor2.moveToPosition(i);
+            weather.add(cursor2.getString(cursor2.getColumnIndex(IroadDatabase.KEY_OPTION_NAME)));
+        }
 
         final List<String> control = new ArrayList<String>();
         control.add("Trafic Signal");
@@ -322,18 +317,12 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
 
 
         final List<String> violation = new ArrayList<String>();
-        violation.add("Overspeed");
-        violation.add("Overload");
-        violation.add("Distance Keeping");
-        violation.add("White Lane Cross");
-        violation.add("Red Light");
-        violation.add("Over Taking");
-        violation.add("Wrong Direction");
-        violation.add("Drink and Drive");
-        violation.add("Careless Pedestrian");
-        violation.add("Unsecure Load");
-        violation.add("Zebra Crossing");
-        violation.add("Others");
+        Cursor cursor3 = iroadDatabase.query("SELECT * FROM "+IroadDatabase.TABLE_OPTION_SETS+" WHERE "+IroadDatabase.KEY_NAME+" = 'Cause of Accident'");
+        int cnt3 = cursor3.getCount();
+        for (int i = 0; i < cnt3; i++){
+            cursor3.moveToPosition(i);
+            violation.add(cursor3.getString(cursor3.getColumnIndex(IroadDatabase.KEY_OPTION_NAME)));
+        }
 
         final List<String> defects = new ArrayList<String>();
         defects.add("Breaks");
@@ -346,75 +335,30 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
         finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Log.d(TAG,"video path = "+videoPath);
-//                Log.d(TAG,"image path = "+imagePath);
-//                textButton.setVisibility(View.GONE);
-                  UploadFileToServer uploadFileToServer = new UploadFileToServer();
-                  uploadFileToServer.execute();
+                File [] files = new File[3];
+                try {
+                    files[0] = new File(videoPath);
 
-
-                postAccident = new JSONObject();
-                for(int i=0;i< ViewPagerAccidentsDetailsAdapter.accident.size();i++){
-                    AccidentVehicle accidentVehicle=ViewPagerAccidentsDetailsAdapter.accident.get(i);
-                    List<PassengerVehicle> passengerVehicle=ViewPagerAccidentsDetailsAdapter.passanger.get(i);
-                    JSONArray passengersJsonArray=new JSONArray();
-                    for(int p=0;p<passengerVehicle.size();p++){
-                        try {
-                            passengersJsonArray.put(p, passengerVehicle.get(p).getjson(passengerVehicle.get(p)));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    JSONObject vehicleJson = new JSONObject();
-                    try {
-                        vehicleJson.put("vehicleDetails", accidentVehicle.getjson(accidentVehicle));
-                        vehicleJson.put("passengers", passengersJsonArray);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    try {
-                        AccidentReportFormActivity.vehicles.put(i, vehicleJson);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                }catch (Exception e){
+                    files[0]= new File("");
                 }
 
-                for(int i=0;i< ViewPagerWitnessesAdapter.witnesses.size();i++){
-                    Witness witness=ViewPagerWitnessesAdapter.witnesses.get(i);
-                    try {
-                        AccidentReportFormActivity.witnesses.put(i, witness.getjson(witness));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                }
 
                 try {
-                    postAccident.put("accident",AccidentReportFormActivity.accident.getjson(AccidentReportFormActivity.accident));
-                    postAccident.put("vehicles",AccidentReportFormActivity.vehicles);
-                    postAccident.put("witnesses",AccidentReportFormActivity.witnesses);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    files[1] = new File(imagePath);
+
+                }catch (Exception e){
+                    files[1]= new File("");
+                }
+                try {
+                    files[2] = new File(AccidentReportFormActivity.accident.getPolice_signatureFilePath());
+
+                }catch (Exception e){
+                    files[2]= new File("");
                 }
 
-                final PoliceFunction policeFunction= new PoliceFunction();
-                new AsyncTask<Void,Void,Void>(){
+                UploadFileToServer.execute(files);
 
-                    @Override
-                    protected Void doInBackground(Void... params) {
-                        policeFunction.registerAccident(postAccident);
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Void aVoid) {
-                        super.onPostExecute(aVoid);
-                        Toast.makeText(getApplicationContext(),
-                                "DATA SENT", Toast.LENGTH_LONG).show();
-                    }
-                }.execute();
 
             }
         });
@@ -724,7 +668,7 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
                     (android.R.layout.simple_spinner_dropdown_item);
 
             violationSpinner.setAdapter(violationOneAdapter);
-            ViewPagerAccidentsDetailsAdapter.accident.get(i).setViolations(violation.get(0));
+            //ViewPagerAccidentsDetailsAdapter.accident.get(i).setViolations(violation.get(0));
             violationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
@@ -867,7 +811,13 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
     @Override
     public void onResume(){
         super.onResume();
+        startRecording();
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        gpsTimer.cancel();
     }
 
     @Override
@@ -942,7 +892,482 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
         }
     }
 
-    private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
+    AsyncTask  UploadFileToServer = new  AsyncTask<File, Integer, Void>() {
+
+
+        @Override
+        protected Void doInBackground(File... params) {
+            File [] files = params;
+            int counter = params.length;
+            for(int i=0;i<counter;i++) {
+                JSONObject resultjson = uploadFile(files[i]);
+                try {
+                    String responceUrl = resultjson.getJSONArray("documents").getJSONObject(0).getString("href");
+                    switch (i){
+                        case 0:
+                            urlVideo = responceUrl;
+                            break;
+                        case 1:
+                            urlImage = responceUrl;
+                            break;
+                        case 2:
+                            urlPoliceSignature = responceUrl;
+                            break;
+                    }
+
+                } catch (Exception e) {
+                    switch (i){
+                        case 0:
+                            urlVideo = "";
+                            break;
+                        case 1:
+                            urlImage = "";
+                            break;
+                        case 2:
+                            urlPoliceSignature = "";
+                            break;
+                    }
+                }
+            }
+
+            Location location =getBestLocation();
+            mLat=location.getLatitude();
+            mLong=location.getLongitude();
+
+            String placeName=getAddress(mLat,mLong);
+            Calendar cl = Calendar.getInstance();
+
+
+            JSONObject eventAccident = new JSONObject();
+            DHIS2Modal accidentModal = new DHIS2Modal("Accident",null,MainOffence.username,MainOffence.password);
+
+            String accidentProgramUid = accidentModal.getProgramByName("Accident").getId();
+            //TODO handle users with multiple orgUnits
+            String organizationUnit = MainOffence.orgUnit;
+
+            JSONObject coordinatesObject = new JSONObject();
+            try {
+                coordinatesObject.put("latitude",mLat);
+                coordinatesObject.put("longitude",mLong);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                eventAccident.put("program",accidentProgramUid);
+                eventAccident.put("orgUnit",organizationUnit);
+                eventAccident.put("eventDate",Functions.getDateFromUnixTimestamp(cl.getTimeInMillis()));
+                eventAccident.put("coordinate",coordinatesObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONArray values = new JSONArray();
+            JSONObject programPoliceDataElement = new JSONObject();
+            String programPoliceUid = accidentModal.getDataElementByName("Program_Police").getId();
+            try {
+                programPoliceDataElement.put("dataElement",programPoliceUid);
+                //TODO implement login mechanism and store data in the datatbase
+                programPoliceDataElement.put("value","aQylIO5YSxD");
+                values.put(programPoliceDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            JSONObject roadNumberDataElement = new JSONObject();
+            String roadNumberDataElementUid = accidentModal.getDataElementByName("Road Number").getId();
+            try {
+                roadNumberDataElement.put("dataElement",roadNumberDataElementUid);
+                roadNumberDataElement.put("value",AccidentReportFormActivity.accident.getRoad_number());
+                values.put(roadNumberDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONObject intersectionMarkDataElement = new JSONObject();
+            String intersectionMarkDataElementtUid = accidentModal.getDataElementByName("Intersection Mark").getId();
+            try {
+                intersectionMarkDataElement.put("dataElement",intersectionMarkDataElementtUid);
+                intersectionMarkDataElement.put("value",AccidentReportFormActivity.accident.getIntersection_km_mark());
+                values.put(intersectionMarkDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONObject intersectionNameDataElement = new JSONObject();
+            String intersectionNameDataElementtUid = accidentModal.getDataElementByName("Intersection Name").getId();
+            try {
+                intersectionNameDataElement.put("dataElement",intersectionNameDataElementtUid);
+                intersectionNameDataElement.put("value",AccidentReportFormActivity.accident.getIntersection_name());
+                values.put(intersectionNameDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+            JSONObject roadMarkDataElement = new JSONObject();
+            String roadMarkDataElementUid = accidentModal.getDataElementByName("Road Mark").getId();
+            try {
+                roadMarkDataElement.put("dataElement",roadMarkDataElementUid);
+                roadMarkDataElement.put("value",AccidentReportFormActivity.accident.getRoad_km_mark());
+                values.put(roadMarkDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONObject causeOfAccidentDataElement = new JSONObject();
+            String causeOfAccidentDataElementUid = accidentModal.getDataElementByName("Cause of Accident").getId();
+            try {
+                causeOfAccidentDataElement.put("dataElement",causeOfAccidentDataElementUid);
+                //TODO fix this with the correct corresponding value
+                causeOfAccidentDataElement.put("value","");
+                values.put(causeOfAccidentDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONObject weatherDataElement = new JSONObject();
+            String weatherDataElementUid = accidentModal.getDataElementByName("Weather").getId();
+            try {
+                weatherDataElement.put("dataElement",weatherDataElementUid);
+                weatherDataElement.put("value",AccidentReportFormActivity.accident.getWeather());
+                values.put(weatherDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONObject latitudeDataElement = new JSONObject();
+            String latitudeDataElementUid = accidentModal.getDataElementByName("Latitude").getId();
+            try {
+                latitudeDataElement.put("dataElement",latitudeDataElementUid);
+                latitudeDataElement.put("value",mLat);
+                values.put(latitudeDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+
+            JSONObject LongitudeDataElement = new JSONObject();
+            String LongitudeDataElementUid = accidentModal.getDataElementByName("Longitude").getId();
+            try {
+                LongitudeDataElement.put("dataElement",LongitudeDataElementUid);
+                LongitudeDataElement.put("value",mLong);
+                values.put(LongitudeDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONObject roadNameDataElement = new JSONObject();
+            String roadNameDataElementUid = accidentModal.getDataElementByName("Road Name").getId();
+            try {
+                roadNameDataElement.put("dataElement",roadNameDataElementUid);
+                roadNameDataElement.put("value",AccidentReportFormActivity.accident.getRoad_name());
+                values.put(roadNameDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONObject timeOfAccidentDataElement = new JSONObject();
+            String timeOfAccidentDataElementUid = accidentModal.getDataElementByName("Time of Accident").getId();
+            try {
+                timeOfAccidentDataElement.put("dataElement",timeOfAccidentDataElementUid);
+                timeOfAccidentDataElement.put("value",Functions.getDateFromUnixTimestamp(cl.getTimeInMillis()));
+                values.put(timeOfAccidentDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONObject numberOfSimpleInjuriesDataElement = new JSONObject();
+            String numberOfSimpleInjuriesDataElementUid = accidentModal.getDataElementByName("Number of Simple Injuries").getId();
+            try {
+                numberOfSimpleInjuriesDataElement.put("dataElement",numberOfSimpleInjuriesDataElementUid);
+                numberOfSimpleInjuriesDataElement.put("value",AccidentReportFormActivity.accident.getSimple());
+                values.put(numberOfSimpleInjuriesDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+            JSONObject numberOfFatalInjuriesDataElement = new JSONObject();
+            String numberOfFatalInjuriesDataElementUid = accidentModal.getDataElementByName("Number of Fatal Injuries").getId();
+            try {
+                numberOfFatalInjuriesDataElement.put("dataElement", numberOfFatalInjuriesDataElementUid);
+                numberOfFatalInjuriesDataElement.put("value", AccidentReportFormActivity.accident.getFatal());
+                values.put(numberOfFatalInjuriesDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+            JSONObject accidentClassDataElement = new JSONObject();
+            String accidentClassDataElementUid = accidentModal.getDataElementByName("Accident Class").getId();
+            try {
+                accidentClassDataElement.put("dataElement", accidentClassDataElementUid);
+                //Fix this with the correct value
+                accidentClassDataElement.put("value","");
+                values.put(accidentClassDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+            JSONObject numberOfSevereInjuriesDataElement = new JSONObject();
+            String numberOfSevereInjuriesDataElementUid = accidentModal.getDataElementByName("Number of Severe Injuries").getId();
+            try {
+                numberOfSevereInjuriesDataElement.put("dataElement", numberOfSevereInjuriesDataElementUid);
+                numberOfSevereInjuriesDataElement.put("value", AccidentReportFormActivity.accident.getSevere_injured());
+                values.put(numberOfSevereInjuriesDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+            JSONObject accidentTypeClassificationDataElement = new JSONObject();
+            String accidentTypeClassificationDataElementUid = accidentModal.getDataElementByName("Accident Type").getId();
+            try {
+                accidentTypeClassificationDataElement.put("dataElement", accidentTypeClassificationDataElementUid);
+                accidentTypeClassificationDataElement.put("value", AccidentReportFormActivity.accident.getAccident_type());
+                values.put(accidentTypeClassificationDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONObject accidentTypeDetailDataElement = new JSONObject();
+            String accidentTypeDetailDataElementUid = accidentModal.getDataElementByName("Accident Type Detail").getId();
+            try {
+                accidentTypeDetailDataElement.put("dataElement", accidentTypeDetailDataElementUid);
+                //TODO GET the right info..
+                accidentTypeDetailDataElement.put("value", "");
+                values.put(accidentTypeDetailDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+            JSONObject  area0fAccidentDataElement = new JSONObject();
+            String area0fAccidentDataElementUid = accidentModal.getDataElementByName("Area of Accident").getId();
+            try {
+                area0fAccidentDataElement.put("dataElement", area0fAccidentDataElementUid);
+                area0fAccidentDataElement.put("value", AccidentReportFormActivity.accident.getArea_name());
+                values.put(area0fAccidentDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+            JSONObject  intersectionNumberDataElement = new JSONObject();
+            String intersectionNumberDataElementUid = accidentModal.getDataElementByName("Intersection Number").getId();
+            try {
+                intersectionNumberDataElement.put("dataElement", intersectionNumberDataElementUid);
+                intersectionNumberDataElement.put("value", AccidentReportFormActivity.accident.getIntersection_number());
+                values.put(intersectionNumberDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONObject  accidentImageDataElement = new JSONObject();
+            String accidentImageDataElementUid = accidentModal.getDataElementByName("Accident Image").getId();
+            try {
+                accidentImageDataElement.put("dataElement", accidentImageDataElementUid);
+                accidentImageDataElement.put("value", urlImage);
+                values.put(accidentImageDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            JSONObject  accidentVideoDataElement = new JSONObject();
+            String accidentVideoDataElementUid = accidentModal.getDataElementByName("Accident Video").getId();
+            try {
+                accidentVideoDataElement.put("dataElement", accidentVideoDataElementUid);
+                accidentVideoDataElement.put("value", urlVideo);
+                values.put(accidentVideoDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONObject  accidentSignatureDataElement = new JSONObject();
+            String accidentSignatureDataElementUid = accidentModal.getDataElementByName("Signature").getId();
+            try {
+                accidentSignatureDataElement.put("dataElement", accidentSignatureDataElementUid);
+                accidentSignatureDataElement.put("value", urlPoliceSignature);
+                values.put(accidentSignatureDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                eventAccident.put("dataValues",values);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            JSONParser jsonParser = new JSONParser();
+            JSONObject result = jsonParser.dhis2HttpRequest(DHIS2Config.BASE_URL+"api/events","POST",MainOffence.username,MainOffence.password,eventAccident);
+
+            try {
+                String reference = result.getJSONArray("importSummaries").getJSONObject(0).getString("reference");
+                int size= ViewPagerAccidentsDetailsAdapter.accident.size();
+                for(int i=0;i<size;i++){
+                    AccidentVehicle accidentVehicle=ViewPagerAccidentsDetailsAdapter.accident.get(i);
+
+                    JSONObject eventAccidentVehicle = new JSONObject();
+                    DHIS2Modal accidentVehicleModal = new DHIS2Modal("Accident Vehicle",null,MainOffence.username,MainOffence.password);
+
+                    String accidentVehicleProgramUid = accidentVehicleModal.getProgramByName("Accident Vehicle").getId();
+                    try {
+                        eventAccidentVehicle.put("program",accidentVehicleProgramUid);
+                        eventAccidentVehicle.put("orgUnit",organizationUnit);
+                        eventAccidentVehicle.put("eventDate",Functions.getDateFromUnixTimestamp(cl.getTimeInMillis()));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    JSONArray accidentVehicleDataValues = new JSONArray();
+                    JSONObject programAccidentVehicleDataElement = new JSONObject();
+                    String programAccidentVehicleDataElementUid = accidentVehicleModal.getDataElementByName("Program_Accident").getId();
+                    try {
+                        programAccidentVehicleDataElement.put("dataElement",programAccidentVehicleDataElementUid);
+                        programAccidentVehicleDataElement.put("value",reference);
+                        accidentVehicleDataValues.put(programAccidentVehicleDataElement);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    JSONObject programVehicleDataElement = new JSONObject();
+                    String programVehicleDataElementUid = accidentVehicleModal.getDataElementByName("Program_Vehicle").getId();
+                    try {
+                        programVehicleDataElement.put("dataElement",programVehicleDataElementUid);
+                        programVehicleDataElement.put("value",accidentVehicle.getProgram_vehicle());
+                        accidentVehicleDataValues.put(programVehicleDataElement);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    JSONObject programDriverDataElement = new JSONObject();
+                    String programDriverDataElementUid = accidentVehicleModal.getDataElementByName("Program_Driver").getId();
+                    try {
+                        programDriverDataElement.put("dataElement",programDriverDataElementUid);
+                        programDriverDataElement.put("value",accidentVehicle.getProgram_driver());
+                        accidentVehicleDataValues.put(programDriverDataElement);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    File file = new File(accidentVehicle.getSignatureFilePath());
+                    String signatureUrl="";
+                    try {
+                        JSONObject signatureResultJson = uploadFile(file);
+                        signatureUrl = signatureResultJson.getJSONArray("documents").getJSONObject(0).getString("href");
+                    }catch (Exception e){}
+
+                    JSONObject signatureDataElement = new JSONObject();
+                    String signatureDataElementUid = accidentVehicleModal.getDataElementByName("Signature").getId();
+                    try {
+                        signatureDataElement.put("dataElement",signatureDataElementUid);
+                        signatureDataElement.put("value",signatureUrl);
+                        accidentVehicleDataValues.put(signatureDataElement);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    JSONObject numberofFatalInjuriesDataElement = new JSONObject();
+                    String numberofFatalInjuriesDataElementUid = accidentVehicleModal.getDataElementByName("Number of Fatal Injuries").getId();
+                    try {
+                        numberofFatalInjuriesDataElement.put("dataElement",numberofFatalInjuriesDataElementUid);
+                        numberofFatalInjuriesDataElement.put("value",signatureUrl);
+                        accidentVehicleDataValues.put(numberofFatalInjuriesDataElement);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+
+                    JSONObject numberOfNotDamagedDataElement = new JSONObject();
+                    String numberOfNotDamagedDataElementUid = accidentVehicleModal.getDataElementByName("Number of Not Damaged").getId();
+                    try {
+                        numberOfNotDamagedDataElement.put("dataElement",numberOfNotDamagedDataElementUid);
+                        numberOfNotDamagedDataElement.put("value",signatureUrl);
+                        accidentVehicleDataValues.put(numberOfNotDamagedDataElement);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    JSONObject numberOfSimpleVehiclesInjuriesDataElement = new JSONObject();
+                    String numberOfSimpleVehiclesInjuriesDataElementUid = accidentVehicleModal.getDataElementByName("Number of Simple Injuries").getId();
+                    try {
+                        numberOfSimpleVehiclesInjuriesDataElement.put("dataElement",numberOfSimpleVehiclesInjuriesDataElementUid);
+                        numberOfSimpleVehiclesInjuriesDataElement.put("value",signatureUrl);
+                        accidentVehicleDataValues.put(numberOfSimpleVehiclesInjuriesDataElement);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+
+                    JSONObject numberOfSevereInjuriesDriverDataElement = new JSONObject();
+                    String numberOfSevereInjuriesDriverDataElementUid = accidentVehicleModal.getDataElementByName("Number of Severe Injuries").getId();
+                    try {
+                        numberOfSevereInjuriesDriverDataElement.put("dataElement",numberOfSevereInjuriesDriverDataElementUid);
+                        numberOfSevereInjuriesDriverDataElement.put("value",signatureUrl);
+                        accidentVehicleDataValues.put(numberOfSevereInjuriesDriverDataElement);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        eventAccidentVehicle.put("dataValues",accidentVehicleDataValues);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    JSONObject result2 = jsonParser.dhis2HttpRequest(DHIS2Config.BASE_URL+"api/events","POST",MainOffence.username,MainOffence.password,eventAccidentVehicle);
+
+
+                    Log.d(TAG,"vehicles "+i+" responce json = "+result2.toString());
+
+//                    List<PassengerVehicle> passengerVehicle=ViewPagerAccidentsDetailsAdapter.passanger.get(i);
+//                    JSONArray passengersJsonArray=new JSONArray();
+//                    for(int p=0;p<passengerVehicle.size();p++){
+//                        try {
+//                            passengersJsonArray.put(p, passengerVehicle.get(p).getjson(passengerVehicle.get(p)));
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
 
         @Override
         protected void onPreExecute() {
@@ -956,38 +1381,39 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
         }
 
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
             finishButton.setVisibility(View.VISIBLE);
             progressBarDetermininate.setVisibility(View.GONE);
-            Log.e(TAG, "Response from server: " + s);
             Toast.makeText(getApplicationContext(),
                     "Files uploaded successfully", Toast.LENGTH_LONG).show();
-            super.onPostExecute(s);
+
+            Log.d(TAG,"video file url = "+urlVideo);
+            Log.d(TAG,"image file url = "+urlImage);
+            Log.d(TAG,"police signature file url = "+urlPoliceSignature);
+
         }
 
         @Override
         protected void onProgressUpdate(Integer... progress) {
-            // Making progress bar visible
             progressBarDetermininate.setVisibility(View.VISIBLE);
-
-            // updating progress bar value
             progressBarDetermininate.setProgress(progress[0]);
-
-            // updating percentage value
-            //txtPercentage.setText(String.valueOf(progress[0]) + "%");
             super.onProgressUpdate(progress);
         }
 
-        @Override
-        protected String doInBackground(Void... params) {
-            return uploadFile();
-        }
         @SuppressWarnings("deprecation")
-        private String uploadFile() {
+        private JSONObject uploadFile(File sourceFile) {
             String responseString = null;
-
             HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(PoliceFunction.sendMediaApi);
+            HttpPost httppost = new HttpPost(DHIS2Config.BASE_URL+"dhis-web-reporting/saveDocument.action");
+            String base64EncodedCredentials = "Basic " + Base64.encodeToString(
+                    (MainOffence.username + ":" + MainOffence.password).getBytes(),
+                    Base64.NO_WRAP);
+
+            Log.d(TAG,"encoded credentials = "+base64EncodedCredentials);
+
+            httppost.setHeader("Authorization", base64EncodedCredentials);
+
 
             try {
                 AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
@@ -998,51 +1424,19 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
                             }
                         });
 
-                final int numberOfDrivers=ViewPagerAccidentsDetailsAdapter.accident.size();
-                final int numberOfWitnesses=ViewPagerWitnessesAdapter.witnesses.size();
-
-                int status=4+numberOfDrivers+numberOfWitnesses;
-
-
 
                 //TODO obtain both video path and imagePath from Accident object
                 try{
-                    File sourceFile = new File(videoPath);
-                    entity.addPart("file1", new FileBody(sourceFile));
-                }catch (Exception e){}
-
-                try{
-                    File sourceFile = new File(imagePath);
-                    entity.addPart("file2", new FileBody(sourceFile));
-                }catch (Exception e){}
-
-                try{
-                    File sourceFile = new File(AccidentReportFormActivity.accident.getPolice_signatureFilePath());
-                    entity.addPart("file3", new FileBody(sourceFile));
-                }catch (Exception e){}
-
-                try{
-                    File sourceFile = new File(AccidentReportFormActivity.accident.getDescriptionFilePath());
-                    entity.addPart("file4", new FileBody(sourceFile));
-                }catch (Exception e){}
-
-
-                for(int i=5;i<=status-numberOfDrivers;i++){
-                    try{
-                        File sourceFile = new File(ViewPagerAccidentsDetailsAdapter.accident.get(i-5).getSignatureFilePath());
-                        entity.addPart("file"+i, new FileBody(sourceFile));
-                    }catch (Exception e){}
+                    Log.d(TAG,"file name = "+sourceFile.getName());
+                    entity.addPart("upload", new FileBody(sourceFile));
+                    entity.addPart("name", new StringBody(sourceFile.getName()));
+                    entity.addPart("external", new StringBody("false"));
+                    entity.addPart("id", new StringBody(""));
+                    entity.addPart("url", new StringBody("http://"));
+                }catch (Exception e){
+                    Log.d(TAG, "error adding a file to a post");
                 }
 
-
-                for(int i=status-numberOfWitnesses+1;i<=status;i++){
-                    try{
-                        File sourceFile = new File(ViewPagerWitnessesAdapter.witnesses.get(i-status+numberOfWitnesses-1).getSignatureFilePath());
-                        entity.addPart("file"+i, new FileBody(sourceFile));
-                    }catch (Exception e){}
-                }
-
-                entity.addPart("status", new StringBody(status+""));
 
                 totalSize = entity.getContentLength();
                 httppost.setEntity(entity);
@@ -1055,6 +1449,10 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
                 if (statusCode == 200) {
                     // Server response
                     responseString = EntityUtils.toString(r_entity);
+
+                    JSONParser jsonParser = new JSONParser();
+                    JSONObject object = jsonParser.dhis2HttpRequest(DHIS2Config.BASE_URL+"api/documents.json?paging=false&filter=name:eq:"+sourceFile.getName(),"GET",MainOffence.username,MainOffence.password,null);
+                    return object;
                 } else {
                     responseString = "Error occurred! Http Status Code: "
                             + statusCode;
@@ -1066,8 +1464,171 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
                 responseString = e.toString();
             }
 
-            return responseString;
+            return null;
+        }
+    };
+
+    /**
+     * try to get the 'best' location selected from all providers
+     */
+    private Location getBestLocation() {
+        Location gpslocation = getLocationByProvider(LocationManager.GPS_PROVIDER);
+        Location networkLocation =  getLocationByProvider(LocationManager.NETWORK_PROVIDER);
+        // if we have only one location available, the choice is easy
+        if (gpslocation == null) {
+            Log.d(TAG, "No GPS Location available.");
+            return networkLocation;
+        }
+        if (networkLocation == null) {
+            Log.d(TAG, "No Network Location available");
+            return gpslocation;
+        }
+        // a locationupdate is considered 'old' if its older than the configured
+        // update interval. this means, we didn't get a
+        // update from this provider since the last check
+        long old = System.currentTimeMillis() - 1*60*60*1000;
+        boolean gpsIsOld = (gpslocation.getTime() < old);
+        boolean networkIsOld = (networkLocation.getTime() < old);
+        // gps is current and available, gps is better than network
+        if (!gpsIsOld) {
+            Log.d(TAG, "Returning current GPS Location");
+            return gpslocation;
+        }
+        // gps is old, we can't trust it. use network location
+        if (!networkIsOld) {
+            Log.d(TAG, "GPS is old, Network is current, returning network");
+            return networkLocation;
+        }
+        // both are old return the newer of those two
+        if (gpslocation.getTime() > networkLocation.getTime()) {
+            Log.d(TAG, "Both are old, returning gps(newer)");
+            return gpslocation;
+        } else {
+            Log.d(TAG, "Both are old, returning network(newer)");
+            return networkLocation;
+        }
+    }
+
+    /**
+     * get the last known location from a specific provider (network/gps)
+     */
+    private Location getLocationByProvider(String provider) {
+        Location location = null;
+        LocationManager locationManager = (LocationManager) getApplicationContext()
+                .getSystemService(Context.LOCATION_SERVICE);
+        try {
+            if (locationManager.isProviderEnabled(provider)) {
+                location = locationManager.getLastKnownLocation(provider);
+            }
+        } catch (IllegalArgumentException e) {
+            Log.d(TAG, "Cannot acces Provider " + provider);
+        }
+        return location;
+    }
+
+    /**
+     * Start listening and recording locations
+     */
+    public void startRecording() {
+        gpsTimer.cancel();
+        gpsTimer = new Timer();
+        long checkInterval = 5*60*1000;
+        long minDistance = 1000;
+        // receive updates
+        LocationManager locationManager = (LocationManager) getApplicationContext()
+                .getSystemService(Context.LOCATION_SERVICE);
+        for (String s : locationManager.getAllProviders()) {
+            locationManager.requestLocationUpdates(s, checkInterval,
+                    minDistance, new LocationListener() {
+
+                        @Override
+                        public void onStatusChanged(String provider,
+                                                    int status, Bundle extras) {}
+
+                        @Override
+                        public void onProviderEnabled(String provider) {}
+
+                        @Override
+                        public void onProviderDisabled(String provider) {}
+
+                        @Override
+                        public void onLocationChanged(Location location) {
+                            // if this is a gps location, we can use it
+                            if (location.getProvider().equals(
+                                    LocationManager.GPS_PROVIDER)) {
+                                doLocationUpdate(location, true);
+                            }
+                        }
+                    });
+        }
+        // start the gps receiver thread
+        gpsTimer.scheduleAtFixedRate(new TimerTask() {
+
+            @Override
+            public void run() {
+                Location location = getBestLocation();
+                doLocationUpdate(location, false);
+            }
+        }, 0, checkInterval);
+    }
+
+    /**
+     * Performe a location update either by force or due to location or distance change
+     * @param l
+     * @param force
+     */
+    public void doLocationUpdate(Location l, boolean force) {
+        long minDistance = 1000;
+        Log.d(TAG, "update received:" + l);
+        if (l == null) {
+            Log.d(TAG, "Empty location");
+            if (force)
+                Toast.makeText(this, "Current location not available",
+                        Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (lastLocation != null) {
+            float distance = l.distanceTo(lastLocation);
+            Log.d(TAG, "Distance to last: " + distance);
+            if (l.distanceTo(lastLocation) < minDistance && !force) {
+                Log.d(TAG, "Position didn't change");
+                return;
+            }
+            if (l.getAccuracy() >= lastLocation.getAccuracy()
+                    && l.distanceTo(lastLocation) < l.getAccuracy() && !force) {
+                Log.d(TAG,
+                        "Accuracy got worse and we are still "
+                                + "within the accuracy range.. Not updating");
+                return;
+            }
+        }
+    }
+
+
+    public String getAddress(double lat, double lng) {
+        Geocoder geocoder = new Geocoder(AccidentTypeclassificationActivity.this, Locale.getDefault());
+        String address = "";
+        try {
+            List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
+            Address obj = addresses.get(0);
+            String add ="";
+            if(obj.getAdminArea()!=null){
+                add = add + obj.getAdminArea();
+            }
+            if (obj.getSubAdminArea()!=null){
+                add = add + ", "+obj.getSubAdminArea();
+            }
+            if (obj.getAddressLine(0)!=null){
+                add = add + ", "+ obj.getAddressLine(0);
+            }
+            address = add;
+
+            Log.v("IGA", "Address" + add);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }catch (Exception e){
 
         }
+        return address;
     }
 }

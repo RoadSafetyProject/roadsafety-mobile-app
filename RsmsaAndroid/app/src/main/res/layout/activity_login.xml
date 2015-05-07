@@ -55,7 +55,7 @@
                 android:textSize="15sp"
                 android:inputType="textWebEmailAddress"
                 android:background="@color/transparent"
-                android:hint="Enter Username...."/>
+                android:hint="Enter Username"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -68,7 +68,7 @@
                 android:layout_marginRight="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:hint="Enter Password...."
+                android:hint="Enter Password"
                 android:background="@color/transparent"
                 android:textSize="15sp"
                 android:inputType="textPassword"/>

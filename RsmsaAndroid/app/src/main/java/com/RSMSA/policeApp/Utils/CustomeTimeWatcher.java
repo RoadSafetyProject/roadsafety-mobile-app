@@ -3,8 +3,12 @@ package com.RSMSA.policeApp.Utils;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 
 import com.RSMSA.policeApp.Models.Model;
+
+import org.json.JSONException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -12,7 +16,7 @@ import java.lang.reflect.Method;
 /**
  * Created by Ilakoze on 3/5/2015.
  */
-public class CustomeTimeWatcher implements TextWatcher {
+public class CustomeTimeWatcher implements View.OnFocusChangeListener {
     private static final String TAG = CustomeTimeWatcher.class.getSimpleName();
     Model model;
     String methodString;
@@ -20,36 +24,36 @@ public class CustomeTimeWatcher implements TextWatcher {
         this.model = model;
         methodString = method;
     }
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-    }
 
     @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-        try {
-            for(Method method: model.getClass().getMethods())
-            {
-                if(method.getName().equals(methodString))
+    public void onFocusChange(View v, boolean hasFocus) {
+        EditText editText = (EditText)v;
+        if(!hasFocus){
+            try {
+                for(Method method: model.getClass().getMethods())
                 {
-                    if(method.getParameterTypes()[0]==int.class)
-                        method.invoke(model, Integer.parseInt(s.toString()));
-                    else
-                        method.invoke(model,s.toString());
+                    if(method.getName().equals(methodString))
+                    {
+                        if(method.getParameterTypes()[0]==int.class)
+                            method.invoke(model, Integer.parseInt(editText.getText().toString()));
+                        else
+                            method.invoke(model,editText.getText().toString());
+                    }
                 }
+                afterFocus(editText.getText().toString(),editText);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (NumberFormatException e){
+
             }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+
+            Log.d(TAG,methodString+"("+editText.getText().toString()+")");
         }
-
-        Log.d(TAG,methodString+"("+s.toString()+")");
-
     }
 
-    @Override
-    public void afterTextChanged(Editable s) {
+    public void afterFocus(String text, EditText editText) {
 
     }
 }

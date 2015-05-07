@@ -32,14 +32,14 @@ public class Accident extends Model {
     private String road_name="";
     private String intersection_name="";
     private String accident_type="";
-    private int fatal,
-            severe_injured,
-            simple,
-            only_damage,
-            road_number,
-            intersection_number,
-            road_km_mark,
-            intersection_km_mark;
+    private String fatal="",
+            severe_injured="",
+            simple="",
+            only_damage="",
+            road_number="",
+            intersection_number="",
+            road_km_mark="",
+            intersection_km_mark="";
     private String junction_structure="",
             junction_control="",
             road_type="",
@@ -172,70 +172,6 @@ public class Accident extends Model {
         this.accident_type = accident_type;
     }
 
-    public int getFatal() {
-        return fatal;
-    }
-
-    public void setFatal(int fatal) {
-        this.fatal = fatal;
-    }
-
-    public int getSevere_injured() {
-        return severe_injured;
-    }
-
-    public void setSevere_injured(int severe_injured) {
-        this.severe_injured = severe_injured;
-    }
-
-    public int getSimple() {
-        return simple;
-    }
-
-    public void setSimple(int simple) {
-        this.simple = simple;
-    }
-
-    public int getOnly_damage() {
-        return only_damage;
-    }
-
-    public void setOnly_damage(int only_damage) {
-        this.only_damage = only_damage;
-    }
-
-    public int getRoad_number() {
-        return road_number;
-    }
-
-    public void setRoad_number(int road_number) {
-        this.road_number = road_number;
-    }
-
-    public int getIntersection_number() {
-        return intersection_number;
-    }
-
-    public void setIntersection_number(int intersection_number) {
-        this.intersection_number = intersection_number;
-    }
-
-    public int getRoad_km_mark() {
-        return road_km_mark;
-    }
-
-    public void setRoad_km_mark(int road_km_mark) {
-        this.road_km_mark = road_km_mark;
-    }
-
-    public int getIntersection_km_mark() {
-        return intersection_km_mark;
-    }
-
-    public void setIntersection_km_mark(int intersection_km_mark) {
-        this.intersection_km_mark = intersection_km_mark;
-    }
-
     public String getJunction_structure() {
         return junction_structure;
     }
@@ -338,5 +274,69 @@ public class Accident extends Model {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getFatal() {
+        return fatal;
+    }
+
+    public void setFatal(String fatal) {
+        this.fatal = fatal;
+    }
+
+    public String getSevere_injured() {
+        return severe_injured;
+    }
+
+    public void setSevere_injured(String severe_injured) {
+        this.severe_injured = severe_injured;
+    }
+
+    public String getSimple() {
+        return simple;
+    }
+
+    public void setSimple(String simple) {
+        this.simple = simple;
+    }
+
+    public String getOnly_damage() {
+        return only_damage;
+    }
+
+    public void setOnly_damage(String only_damage) {
+        this.only_damage = only_damage;
+    }
+
+    public String getRoad_number() {
+        return road_number;
+    }
+
+    public void setRoad_number(String road_number) {
+        this.road_number = road_number;
+    }
+
+    public String getIntersection_number() {
+        return intersection_number;
+    }
+
+    public void setIntersection_number(String intersection_number) {
+        this.intersection_number = intersection_number;
+    }
+
+    public String getRoad_km_mark() {
+        return road_km_mark;
+    }
+
+    public void setRoad_km_mark(String road_km_mark) {
+        this.road_km_mark = road_km_mark;
+    }
+
+    public String getIntersection_km_mark() {
+        return intersection_km_mark;
+    }
+
+    public void setIntersection_km_mark(String intersection_km_mark) {
+        this.intersection_km_mark = intersection_km_mark;
     }
 }
