@@ -80,7 +80,7 @@ public class OffenceReportForm extends ActionBarActivity{
     boolean backFromChild = false;
     public TextView offense_type_text;
     public final int REPORT_RESULT = 1;
-    public TextView date_text,license,plateNo,submit,submitText,LocationTitle;
+    public TextView license,plateNo,submit,submitText,LocationTitle;
     public String namePassed;
     public RelativeLayout submit_layout, submit_layout1;
     public boolean commit=true;
@@ -294,11 +294,11 @@ public class OffenceReportForm extends ActionBarActivity{
         paymentMethodSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                paymentMethod=paymentMethodsArray[position];
-                if(position==0){
+                paymentMethod = paymentMethodsArray[position];
+                if (position == 0) {
                     receiptEditText.setVisibility(View.VISIBLE);
                     receipt_title.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     receiptEditText.setVisibility(View.GONE);
                     receipt_title.setVisibility(View.GONE);
                 }
@@ -309,8 +309,6 @@ public class OffenceReportForm extends ActionBarActivity{
 
             }
         });
-        Calendar calendar = Calendar.getInstance();
-        date_text.setText(Functions.getDateFromUnixTimestamp(calendar.getTimeInMillis()));
 
     }
 
@@ -471,12 +469,20 @@ public class OffenceReportForm extends ActionBarActivity{
             if(th == true){
                 submitText.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
-                new ProcessRegister().execute();
+                Location location =getBestLocation();
+                try {
+                    mLat = location.getLatitude();
+                    mLong = location.getLongitude();
+                    new ProcessRegister().execute();
+                }catch (NullPointerException e){
+                    Functions.displayPromptForEnablingGPS(OffenceReportForm.this);
+                }
+
             }
             else{
                 submitText.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
-                //should store the data in sql lite temporary until there will be network
+                //TODO should store the data in sql lite temporary until there will be network
             }
         }
     }
@@ -485,7 +491,7 @@ public class OffenceReportForm extends ActionBarActivity{
      *To process the data from the offense form
      */
 
-    private class ProcessRegister extends AsyncTask <String, String, JSONObject> {
+    private class ProcessRegister extends AsyncTask <String, String, Boolean> {
         /**
          * Defining Process dialog
          **/
@@ -506,13 +512,11 @@ public class OffenceReportForm extends ActionBarActivity{
             offenceCount=count;
         }
         @Override
-        protected JSONObject doInBackground(String... args) {
+        protected Boolean doInBackground(String... args) {
             PoliceFunction PFunction = new PoliceFunction();
 
 
-            Location location =getBestLocation();
-            mLat=location.getLatitude();
-            mLong=location.getLongitude();
+
 
             String place=getAddress(mLat,mLong);
             JSONObject event = new JSONObject();
@@ -693,8 +697,10 @@ public class OffenceReportForm extends ActionBarActivity{
                 e.printStackTrace();
             }
 
+            Log.d(TAG,"sent offence event = "+event.toString());
             JSONParser jsonParser = new JSONParser();
-            JSONObject resultObject = jsonParser.dhis2HttpRequest(DHIS2Config.BASE_URL+"/api/events","PUT",MainOffence.username,MainOffence.password,event);
+            JSONObject resultObject = jsonParser.dhis2HttpRequest(DHIS2Config.BASE_URL+"api/events","POST",MainOffence.username,MainOffence.password,event);
+            Log.d(TAG,"received offence event result = "+resultObject.toString());
             try {
                 String reference = resultObject.getJSONArray("importSummaries").getJSONObject(0).getString("reference");
                 for(int i=0;i<count;i++){
@@ -737,48 +743,36 @@ public class OffenceReportForm extends ActionBarActivity{
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        JSONObject resultObject2 = jsonParser.dhis2HttpRequest(DHIS2Config.BASE_URL+"/api/events","PUT",MainOffence.username,MainOffence.password,offenceEvent);
+                        JSONObject resultObject2 = jsonParser.dhis2HttpRequest(DHIS2Config.BASE_URL+"api/events","POST",MainOffence.username,MainOffence.password,offenceEvent);
                         Log.d(TAG,"offence Program results = "+resultObject2.toString());
-
-
 
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
+                return true;
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            return null;
+            return false;
         }
         @Override
-        protected void onPostExecute(JSONObject json) {
-            Log.d(TAG, "json received  received = " + json);
+        protected void onPostExecute(Boolean aBoolean) {
             /**
              * Checks for success message.
              **/
-            try {
-                if (json != null && json.getString("status") != null){
-                    String status = json.getString("status");
-                    Log.d(TAG,"Status received = "+status);
-                    if(status.equals("OK")){
-                        Toast toast = Toast.makeText(OffenceReportForm.this,
-                                "Offence reported successfully", Toast.LENGTH_SHORT);
-                        toast.show();
-                        finish();
-                    }else{
-                        Toast toast = Toast.makeText(OffenceReportForm.this,
-                                "Offence reporting failed", Toast.LENGTH_SHORT);
-                        toast.show();
-                    }
-                }
-                else{
-                    submitText.setVisibility(View.VISIBLE);
-                    progressBar.setVisibility(View.GONE);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            if (aBoolean){
+                    Toast toast = Toast.makeText(OffenceReportForm.this,
+                            "Offence reported successfully", Toast.LENGTH_SHORT);
+                    toast.show();
+                    finish();
+            } else{
+                submitText.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+                Toast toast = Toast.makeText(OffenceReportForm.this,
+                        "Offence reporting failed", Toast.LENGTH_SHORT);
+                toast.show();
             }
         }
 

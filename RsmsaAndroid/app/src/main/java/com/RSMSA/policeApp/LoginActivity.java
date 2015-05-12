@@ -19,6 +19,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.RSMSA.policeApp.Dhis2.DHIS2Config;
@@ -67,6 +69,8 @@ public class LoginActivity extends ActionBarActivity {
 
         final EditText usernameEditText = (EditText)findViewById(R.id.username);
         final EditText passwordEditText = (EditText)findViewById(R.id.password);
+        final TextView loginText = (TextView)findViewById(R.id.login_text);
+        final ProgressBar progressBar = (ProgressBar)findViewById(R.id.pbar_main);
         CardView button = (CardView)findViewById(R.id.login_button);
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +78,8 @@ public class LoginActivity extends ActionBarActivity {
             public void onClick(View view) {
                 password = passwordEditText.getText().toString();
                 username = usernameEditText.getText().toString();
+                progressBar.setVisibility(View.VISIBLE);
+                loginText.setVisibility(View.GONE);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -236,6 +242,8 @@ public class LoginActivity extends ActionBarActivity {
                         } else {
                             runOnUiThread(new Runnable() {
                                 public void run() {
+                                    loginText.setVisibility(View.VISIBLE);
+                                    progressBar.setVisibility(View.GONE);
                                     Toast.makeText(LoginActivity.this, "Login Failed, Try Again", Toast.LENGTH_LONG).show();
                                 }
                             });

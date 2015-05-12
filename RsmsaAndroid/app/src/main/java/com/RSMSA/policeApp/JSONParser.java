@@ -108,8 +108,7 @@ public class JSONParser {
 
             Log.d(TAG, "URL Host: "+httppost.getURI().getHost());
             Log.d(TAG, "URL Path: "+httppost.getURI().getPath());
-
-            Log.d(TAG, "URL: "+url.trim());
+            Log.d(TAG, "URL:      "+url.trim());
 
             StringEntity se = new StringEntity(obj.toString());
             se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));

@@ -146,7 +146,7 @@ public class ViewPagerAccidentsDetailsAdapter extends PagerAdapter {
                         if(!aVoid){
                             editText.setTextColor(context.getResources().getColor(R.color.red));
                         }else{
-                            editText.setTextColor(context.getResources().getColor(R.color.light_gray));
+                            editText.setTextColor(context.getResources().getColor(R.color.green_500));
                         }
                     }
                 }.execute();

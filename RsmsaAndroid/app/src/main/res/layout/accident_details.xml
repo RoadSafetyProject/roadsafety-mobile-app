@@ -182,15 +182,12 @@
                     android:layout_width="25dp"
                     android:layout_height="20dp"
                     android:id="@+id/drug_edit"
-                    android:visibility="visible"
-                    android:layout_below="@id/drug_edit"
-                    android:layout_marginTop="16dp"
                     android:layout_marginLeft="88dp"
                     />
 
                 <EditText
                     android:layout_width="72dp"
-                    android:layout_height="24dp"
+                    android:layout_height="wrap_content"
                     android:id="@+id/alcohol_edit"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="8dp"
@@ -200,7 +197,8 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="32dp"
+                    android:gravity="center"
                     android:id="@+id/alcohol_text"
                     android:layout_toLeftOf="@id/alcohol_edit"
                     android:text="Alcohol %"
@@ -208,22 +206,22 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30dp"
+                    android:gravity="center_vertical"
                     android:layout_marginLeft="8dp"
                     android:text="Phone Use  "
                     android:id="@+id/phone_text"
-                    android:layout_below="@id/drug_edit"
+                    android:layout_below="@id/alcohol_text"
                     android:textSize="16sp"
                     android:layout_marginTop="8dp"/>
 
                 <CheckBox
-                    android:layout_width="25dp"
-                    android:layout_height="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:id="@+id/phone_edit"
-                    android:layout_below="@id/drug_edit"
-                    android:layout_toRightOf="@id/phone_text"
+                    android:layout_below="@id/alcohol_text"
                     android:layout_marginTop="8dp"
-                    android:layout_marginLeft="8dp"
+                    android:layout_marginLeft="88dp"
                     />
 
 
@@ -297,7 +295,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/registration_number_one"
-                android:layout_marginLeft="146dp"
+                android:layout_marginLeft="156dp"
                 android:textSize="12sp"
                 android:minWidth="100dp"
                 android:layout_marginTop="16dp"
@@ -316,7 +314,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/repair_amount_one"
-                android:layout_marginLeft="146dp"
+                android:layout_marginLeft="156dp"
                 android:layout_marginTop="4dp"
                 android:minWidth="100dp"
                 android:layout_below="@id/registration_number_one"
@@ -351,8 +349,8 @@
                 android:layout_height="1dp"
                 android:id="@+id/damage_strip"
                 android:layout_below="@id/damage_title"
-                android:background="@color/card_separator"
-                android:layout_marginTop="16dp"/>
+                android:background="@color/transparent"
+                android:layout_marginTop="0dp"/>
 
             <ImageView
                 android:layout_width="match_parent"

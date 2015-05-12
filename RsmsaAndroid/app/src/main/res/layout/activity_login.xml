@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:cardView="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <ImageView
@@ -8,24 +8,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/medicine"/>
+        android:src="@drawable/road_to_death_valley"/>
     <android.support.v7.widget.CardView
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="64dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:foreground="?android:attr/selectableItemBackground"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         style="@style/CardViewStyle"
-        cardCornerRadius="4dp"
+        cardView:cardCornerRadius="4dp"
         android:id="@+id/login_button"
         android:clickable="true"
-        android:elevation="8dp">
+        cardView:elevation="8dp"
+        cardView:cardMaxElevation="12dp">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Login"
+            android:id="@+id/login_text"
             android:gravity="center"
             android:textSize="22sp"
             android:fontFamily="@style/TextAppearance.AppCompat.Title"
@@ -33,6 +35,13 @@
             android:textColor="@color/white"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"/>
+        <ProgressBar
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:id="@+id/pbar_main"
+            android:scrollbarStyle="insideInset"/>
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
@@ -40,6 +49,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="8dp"
         android:layout_width="match_parent"
+        android:id="@+id/inputs_layout"
         android:layout_height="104dp"
         android:layout_above="@id/login_button">
         <LinearLayout
@@ -74,4 +84,20 @@
                 android:inputType="textPassword"/>
         </LinearLayout>
     </android.support.v7.widget.CardView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="32sp"
+        android:layout_above="@id/inputs_layout"
+        android:layout_marginLeft="16dp"
+        android:shadowColor="#AF000000"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:layout_marginBottom="16dp"
+        android:id="@+id/title"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:text="iRoad Mobile App"/>
 </RelativeLayout>

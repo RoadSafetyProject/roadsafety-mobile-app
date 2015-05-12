@@ -111,7 +111,7 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
     private double mLat,mLong;
     private Timer gpsTimer = new Timer();
     private Location lastLocation=null;
-    private String urlVideo="",urlImage="",urlPoliceSignature="";
+    private String urlVideo="",urlImage="",urlPoliceSignature="",urlAccidetDescription="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -335,7 +335,7 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
         finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                File [] files = new File[3];
+                File [] files = new File[4];
                 try {
                     files[0] = new File(videoPath);
 
@@ -355,6 +355,13 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
 
                 }catch (Exception e){
                     files[2]= new File("");
+                }
+
+                try {
+                    files[3] = new File(AccidentReportFormActivity.accident.getDescriptionFilePath());
+
+                }catch (Exception e){
+                    files[3]= new File("");
                 }
 
                 UploadFileToServer.execute(files);
@@ -913,6 +920,9 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
                         case 2:
                             urlPoliceSignature = responceUrl;
                             break;
+                        case 3:
+                            urlAccidetDescription = responceUrl;
+                            break;
                     }
 
                 } catch (Exception e) {
@@ -925,6 +935,10 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
                             break;
                         case 2:
                             urlPoliceSignature = "";
+                            break;
+
+                        case 3:
+                            urlAccidetDescription = "";
                             break;
                     }
                 }
@@ -1216,6 +1230,17 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
                 e.printStackTrace();
             }
 
+//TODO finish adding the description image to the post request
+//            JSONObject  accidentSignatureDataElement = new JSONObject();
+//            String accidentSignatureDataElementUid = accidentModal.getDataElementByName("Signature").getId();
+//            try {
+//                accidentSignatureDataElement.put("dataElement", accidentSignatureDataElementUid);
+//                accidentSignatureDataElement.put("value", urlAccidetDescription);
+//                values.put(accidentSignatureDataElement);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+
             try {
                 eventAccident.put("dataValues",values);
             } catch (JSONException e) {
@@ -1298,7 +1323,7 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
                     String numberofFatalInjuriesDataElementUid = accidentVehicleModal.getDataElementByName("Number of Fatal Injuries").getId();
                     try {
                         numberofFatalInjuriesDataElement.put("dataElement",numberofFatalInjuriesDataElementUid);
-                        numberofFatalInjuriesDataElement.put("value",signatureUrl);
+                        numberofFatalInjuriesDataElement.put("value",accidentVehicle.getFatal());
                         accidentVehicleDataValues.put(numberofFatalInjuriesDataElement);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -1310,7 +1335,7 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
                     String numberOfNotDamagedDataElementUid = accidentVehicleModal.getDataElementByName("Number of Not Damaged").getId();
                     try {
                         numberOfNotDamagedDataElement.put("dataElement",numberOfNotDamagedDataElementUid);
-                        numberOfNotDamagedDataElement.put("value",signatureUrl);
+                        numberOfNotDamagedDataElement.put("value",accidentVehicle.getOnly_damage());
                         accidentVehicleDataValues.put(numberOfNotDamagedDataElement);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -1321,7 +1346,7 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
                     String numberOfSimpleVehiclesInjuriesDataElementUid = accidentVehicleModal.getDataElementByName("Number of Simple Injuries").getId();
                     try {
                         numberOfSimpleVehiclesInjuriesDataElement.put("dataElement",numberOfSimpleVehiclesInjuriesDataElementUid);
-                        numberOfSimpleVehiclesInjuriesDataElement.put("value",signatureUrl);
+                        numberOfSimpleVehiclesInjuriesDataElement.put("value",accidentVehicle.getSimple());
                         accidentVehicleDataValues.put(numberOfSimpleVehiclesInjuriesDataElement);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -1333,7 +1358,7 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
                     String numberOfSevereInjuriesDriverDataElementUid = accidentVehicleModal.getDataElementByName("Number of Severe Injuries").getId();
                     try {
                         numberOfSevereInjuriesDriverDataElement.put("dataElement",numberOfSevereInjuriesDriverDataElementUid);
-                        numberOfSevereInjuriesDriverDataElement.put("value",signatureUrl);
+                        numberOfSevereInjuriesDriverDataElement.put("value",accidentVehicle.getSevere_injured());
                         accidentVehicleDataValues.put(numberOfSevereInjuriesDriverDataElement);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -1364,6 +1389,142 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+
+
+            try {
+                String reference = result.getJSONArray("importSummaries").getJSONObject(0).getString("reference");
+                int size= ViewPagerWitnessesAdapter.witnesses.size();
+                for(int i=0;i<size;i++){
+
+
+                    Witness witness=ViewPagerWitnessesAdapter.witnesses.get(i);
+                    JSONObject eventAccidentWitness = new JSONObject();
+                    DHIS2Modal accidentWitnessModal = new DHIS2Modal("Accident Witness",null,MainOffence.username,MainOffence.password);
+
+                    String accidentWitnessProgramUid = accidentWitnessModal.getProgramByName("Accident Witness").getId();
+                    try {
+                        eventAccidentWitness.put("program",accidentWitnessProgramUid);
+                        eventAccidentWitness.put("orgUnit",organizationUnit);
+                        eventAccidentWitness.put("eventDate",Functions.getDateFromUnixTimestamp(cl.getTimeInMillis()));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    JSONArray accidentWitnessDataValues = new JSONArray();
+                    JSONObject programAccidentDataElement = new JSONObject();
+                    String programAccidentDataElementUid = accidentWitnessModal.getDataElementByName("Program_Accident").getId();
+                    try {
+                        programAccidentDataElement.put("dataElement",programAccidentDataElementUid);
+                        programAccidentDataElement.put("value",reference);
+                        accidentWitnessDataValues.put(programAccidentDataElement);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    JSONObject postalAddresseDataElement = new JSONObject();
+                    String postalAddresseDataElementUid = accidentWitnessModal.getDataElementByName("Postal Address").getId();
+                    try {
+                        postalAddresseDataElement.put("dataElement",postalAddresseDataElementUid);
+                        postalAddresseDataElement.put("value",witness.getAddress());
+                        accidentWitnessDataValues.put(postalAddresseDataElement);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    JSONObject firstNameDataElement = new JSONObject();
+                    String firstNameDataElementUid = accidentWitnessModal.getDataElementByName("First Name").getId();
+                    try {
+                        firstNameDataElement.put("dataElement",firstNameDataElementUid);
+                        firstNameDataElement.put("value",witness.getName());
+                        accidentWitnessDataValues.put(firstNameDataElement);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    File file = new File(witness.getSignatureFilePath());
+                    String signatureUrl="";
+                    try {
+                        JSONObject signatureResultJson = uploadFile(file);
+                        signatureUrl = signatureResultJson.getJSONArray("documents").getJSONObject(0).getString("href");
+                    }catch (Exception e){}
+
+                    JSONObject signatureDataElement = new JSONObject();
+                    String signatureDataElementUid = accidentWitnessModal.getDataElementByName("Signature").getId();
+                    try {
+                        signatureDataElement.put("dataElement",signatureDataElementUid);
+                        signatureDataElement.put("value",signatureUrl);
+                        accidentWitnessDataValues.put(signatureDataElement);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    JSONObject genderDataElement = new JSONObject();
+                    String genderDataElementUid = accidentWitnessModal.getDataElementByName("Gender").getId();
+                    try {
+                        genderDataElement.put("dataElement",genderDataElementUid);
+                        genderDataElement.put("value",witness.getGender());
+                        accidentWitnessDataValues.put(genderDataElement);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+
+                    JSONObject nationalIdDataElement = new JSONObject();
+                    String nationalIdDataElementUid = accidentWitnessModal.getDataElementByName("National Id").getId();
+                    try {
+                        nationalIdDataElement.put("dataElement",nationalIdDataElementUid);
+                        nationalIdDataElement.put("value",witness.getNational_id());
+                        accidentWitnessDataValues.put(nationalIdDataElement);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    JSONObject dateOfBirthDataElement = new JSONObject();
+                    String dateOfBirthDataElementUid = accidentWitnessModal.getDataElementByName("Date of Birth").getId();
+                    try {
+                        dateOfBirthDataElement.put("dataElement",dateOfBirthDataElementUid);
+                        dateOfBirthDataElement.put("value",signatureUrl);
+                        accidentWitnessDataValues.put(dateOfBirthDataElement);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+
+                    JSONObject phoneNumberDataElement = new JSONObject();
+                    String phoneNumberDataElementUid = accidentWitnessModal.getDataElementByName("Phone Number").getId();
+                    try {
+                        phoneNumberDataElement.put("dataElement",phoneNumberDataElementUid);
+                        phoneNumberDataElement.put("value",witness.getPhone_no());
+                        accidentWitnessDataValues.put(phoneNumberDataElement);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        eventAccidentWitness.put("dataValues",accidentWitnessDataValues);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    JSONObject result2 = jsonParser.dhis2HttpRequest(DHIS2Config.BASE_URL+"api/events","POST",MainOffence.username,MainOffence.password,eventAccidentWitness);
+
+
+                    Log.d(TAG,"witness "+i+" responce json = "+result2.toString());
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
 
             return null;
         }
@@ -1603,7 +1764,6 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
             }
         }
     }
-
 
     public String getAddress(double lat, double lng) {
         Geocoder geocoder = new Geocoder(AccidentTypeclassificationActivity.this, Locale.getDefault());

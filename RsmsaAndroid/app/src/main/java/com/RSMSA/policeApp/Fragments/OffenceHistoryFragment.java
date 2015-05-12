@@ -542,7 +542,7 @@ public class OffenceHistoryFragment extends Fragment {
                     contentView.findViewById(R.id.vehicle_information_layout).setVisibility(View.VISIBLE);
                     Log.d(TAG, "vehicles object = " + vehiclesObject.toString());
 
-                    //ownersNameTexView.setText(vehiclesObject.getString("owner_name"));
+                    ownersNameTexView.setText(vehiclesObject.getString("Vehicle Owner Name"));
                     vehiclesMakeTextView.setText(vehiclesObject.getString("Make"));
                     vehclesColorTextView.setText(vehiclesObject.getString("Color"));
                     //TODO fix insuarance
