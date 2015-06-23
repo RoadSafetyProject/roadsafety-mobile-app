@@ -8,6 +8,10 @@ import android.provider.Settings;
 import android.text.format.DateFormat;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Calendar;
 
 /**
@@ -56,6 +60,38 @@ public class Functions {
                             }
                         });
         builder.create().show();
+    }
+
+
+
+
+    public static JSONArray generateJson(JSONArray header, JSONArray rows){
+        int counter = rows.length();
+        JSONArray jsonArray = new JSONArray();
+
+        for(int i=0;i<counter;i++){
+            JSONObject object = new JSONObject();
+            JSONArray row = null;
+            try {
+                row = rows.getJSONArray(i);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            int count = row.length();
+            for(int j = 0; j<count;j++) {
+                try {
+                    object.put(header.getJSONObject(j).getString("column"), row.getString(j));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                jsonArray.put(i,object);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return jsonArray;
     }
 
 }

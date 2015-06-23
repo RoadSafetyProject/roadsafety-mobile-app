@@ -168,7 +168,6 @@ public class IroadDatabase extends SQLiteOpenHelper {
 
 
     public void insert(String table,String nullCollumnHack,ContentValues contentValues){
-        Log.d(TAG,"inserting into the database");
         SQLiteDatabase db = this.getWritableDatabase();
         try {
             db.insert(table,nullCollumnHack,contentValues);
@@ -185,4 +184,14 @@ public class IroadDatabase extends SQLiteOpenHelper {
         return cursor;
     }
 
+//    /**
+//     * Re create database
+//     * Delete all tables and create them again
+//     * */
+//    public void resetTables(){
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        // Delete All Rows
+//        db.delete(TABLE_USER, null, null);
+//        db.close();
+//    }
 }

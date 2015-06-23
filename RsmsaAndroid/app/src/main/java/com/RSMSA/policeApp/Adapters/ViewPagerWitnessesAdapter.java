@@ -37,14 +37,14 @@ public class ViewPagerWitnessesAdapter extends PagerAdapter {
     private static Context context;
     private LayoutInflater inflater;
     List<String> tabnames;
-
+    public static Witness[] witnesses;
     public ViewPagerWitnessesAdapter(Context context, List<String> tnames) {
         this.context  = context;
         tabnames=tnames;
+        witnesses = new Witness[tnames.size()];
 
     }
 
-    public static List<Witness> witnesses=new ArrayList<Witness>();
 
 
 
@@ -162,7 +162,7 @@ public class ViewPagerWitnessesAdapter extends PagerAdapter {
             e.printStackTrace();
         }
 
-        witnesses.add(position,witness);
+        witnesses[position]=witness;
 
         ((ViewPager) container).addView(itemView);
         return itemView;

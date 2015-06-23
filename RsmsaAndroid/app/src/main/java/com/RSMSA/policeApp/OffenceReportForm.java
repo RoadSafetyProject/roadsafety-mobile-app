@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import com.RSMSA.policeApp.Dhis2.DHIS2Config;
 import com.RSMSA.policeApp.Dhis2.DHIS2Modal;
+import com.RSMSA.policeApp.Fragments.OffenceHistoryFragment;
 import com.RSMSA.policeApp.Models.Offence;
 import com.RSMSA.policeApp.Models.Receipt;
 import com.RSMSA.policeApp.Utils.Functions;
@@ -88,7 +89,7 @@ public class OffenceReportForm extends ActionBarActivity{
     public int amountToReport = 0;
     public ProgressBar progressBar;
     public TextView offencesSelectedTextView,offencesCostTitle,offensesCommittedTextview,ChargesAcceptanceTitle,issuerNameTitle, issuerRankNo,issuerDateTitle,PaymentTitle,paymentMethodTitle;
-    public String offencesSelected="",paymentMethod="",plateNumberObtained="";
+    public String offencesSelected="",offenceList="",paymentMethod="",plateNumberObtained="";
     public RelativeLayout report,summary;
     public EditText  receiptEditText,plateNumberEdit,licenceNumberEdit;
     public TextView chargesAcceptance,offencesCommittedTitle,inputs;
@@ -550,8 +551,8 @@ public class OffenceReportForm extends ActionBarActivity{
             String programPoliceUid = modal.getDataElementByName("Program_Police").getId();
             try {
                 programPoliceDataElement.put("dataElement",programPoliceUid);
-                //TODO implement login mechanism and store data in the datatbase
-                programPoliceDataElement.put("value","aQylIO5YSxD");
+                //TODO use the logged in police
+                programPoliceDataElement.put("value","UOE7AQyxerK");
 
                 dataValues.put(programPoliceDataElement);
             } catch (JSONException e) {
@@ -644,6 +645,79 @@ public class OffenceReportForm extends ActionBarActivity{
             }
 
 
+
+
+
+            JSONObject nameDataElement = new JSONObject();
+            String nameUid = modal.getDataElementByName("Full Name").getId();
+            try {
+                nameDataElement.put("dataElement",nameUid);
+                nameDataElement.put("value", OffenceHistoryFragment.name);
+                dataValues.put(nameDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONObject DriverLicenseNumberDataElement = new JSONObject();
+            String DriverLicenseNumberDataElementUid = modal.getDataElementByName("Driver License Number").getId();
+            try {
+                DriverLicenseNumberDataElement.put("dataElement",DriverLicenseNumberDataElementUid);
+                DriverLicenseNumberDataElement.put("value",dLicense);
+                dataValues.put(DriverLicenseNumberDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+            JSONObject GenderDataElement = new JSONObject();
+            String GenderDataElementUid = modal.getDataElementByName("Gender").getId();
+            try {
+                GenderDataElement.put("dataElement",GenderDataElementUid);
+                GenderDataElement.put("value",OffenceHistoryFragment.gender);
+                dataValues.put(GenderDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONObject VehiclePlateNumberDataElement = new JSONObject();
+            String VehiclePlateNumberDataElementUid = modal.getDataElementByName("Vehicle Plate Number").getId();
+            try {
+                VehiclePlateNumberDataElement.put("dataElement",VehiclePlateNumberDataElementUid);
+                VehiclePlateNumberDataElement.put("value",plateNumberObtained);
+                dataValues.put(VehiclePlateNumberDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONObject OffenceRegistryListDataElement = new JSONObject();
+            String OffenceRegistryListDataElementUid = modal.getDataElementByName("Offence Registry List").getId();
+            try {
+                OffenceRegistryListDataElement.put("dataElement",OffenceRegistryListDataElementUid);
+                OffenceRegistryListDataElement.put("value",offenceList);
+                dataValues.put(OffenceRegistryListDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+
+            JSONObject VehicleOwnerNameDataElement = new JSONObject();
+            String VehicleOwnerNameDataElementUid = modal.getDataElementByName("Vehicle Owner Name").getId();
+            try {
+                VehicleOwnerNameDataElement.put("dataElement",VehicleOwnerNameDataElementUid);
+                VehicleOwnerNameDataElement.put("value",OffenceHistoryFragment.vehicleOwnerName);
+                dataValues.put(VehicleOwnerNameDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
             JSONObject offenceAdmissionStatusDataElement = new JSONObject();
             String offenceAdmissionStatusUid = modal.getDataElementByName("Offence Admission Status").getId();
             try {
@@ -653,6 +727,10 @@ public class OffenceReportForm extends ActionBarActivity{
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+
+
+
 
 
 
@@ -666,17 +744,17 @@ public class OffenceReportForm extends ActionBarActivity{
                 e.printStackTrace();
             }
 
+            JSONObject offenceRecieptAmountDataElement = new JSONObject();
+            String offenceRecieptAmountDataElementUid = modal.getDataElementByName("Offence Reciept Amount").getId();
+            try {
+                offenceRecieptAmountDataElement.put("dataElement",offenceRecieptAmountDataElementUid);
+                offenceRecieptAmountDataElement.put("value",amountToReport+"");
+                dataValues.put(offenceRecieptAmountDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
             if(paymentStatus){
-                JSONObject offenceRecieptAmountDataElement = new JSONObject();
-                String offenceRecieptAmountDataElementUid = modal.getDataElementByName("Offence Reciept Amount").getId();
-                try {
-                    offenceRecieptAmountDataElement.put("dataElement",offenceRecieptAmountDataElementUid);
-                    offenceRecieptAmountDataElement.put("value",amountToReport+"");
-                    dataValues.put(offenceRecieptAmountDataElement);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
 
                 JSONObject offenceRecieptNumberDataElement = new JSONObject();
                 String offenceRecieptNumberDataElementUid = modal.getDataElementByName("Offence Reciept Number").getId();
@@ -839,19 +917,21 @@ public class OffenceReportForm extends ActionBarActivity{
                 for (int i = 0; i<counter; i++){
                     if(i==counter-1) {
                         offencesSelected = offencesSelected + desc.get(i);
+                        offenceList = offenceList+desc.get(i);
                     }else{
                         offencesSelected = offencesSelected + desc.get(i) + "\n\n";
+                        offenceList = offenceList + desc.get(i) + ",";
                     }
                 }
                 offencesSelectedTextView.setText(offencesSelected);
                 offensesCommittedTextview.setText(offencesSelected);
                 amountToReport=0;
                 for(int i=0; i<count; i++) {
-                    if (type.get(i).equals("30000")) {
-                        amountToReport += 30000;
-                    }
-                    else if (type.get(i).equals("20000")){
-                        amountToReport += 20000;
+                    Log.d(TAG,"type = "+type.get(i));
+                    try {
+                        amountToReport += Integer.parseInt(type.get(i));
+                    }catch (Exception e){
+                        e.printStackTrace();
                     }
                 }
                 Log.d(TAG,"amount to report = "+amountToReport);

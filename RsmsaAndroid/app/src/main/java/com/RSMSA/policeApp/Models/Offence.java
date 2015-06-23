@@ -9,8 +9,6 @@ public class Offence extends Model {
     private String facts="";
     private String latitude;
     private String longitude;
-    private String vehicle_plate_number="";
-    private String driver_license_number="";
     private String rank_no="";
     private boolean paid;
     private boolean admit;
@@ -18,7 +16,44 @@ public class Offence extends Model {
     private String Program_Driver="";
     private String Program_Police="";
     private String Program_Vehicle="";
+    private String full_Name="";
+    private String gender="";
+    private String driver_license_number="";
+    private String vehicle_owner_name="";
+    private String vehicle_plate_number="";
+    private String Offence_registry_list="";
 
+    public String getFull_Name() {
+        return full_Name;
+    }
+
+    public void setFull_Name(String full_Name) {
+        this.full_Name = full_Name;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getVehicle_owner_name() {
+        return vehicle_owner_name;
+    }
+
+    public void setVehicle_owner_name(String vehicle_owner_name) {
+        this.vehicle_owner_name = vehicle_owner_name;
+    }
+
+    public String getOffence_registry_list() {
+        return Offence_registry_list;
+    }
+
+    public void setOffence_registry_list(String offence_registry_list) {
+        Offence_registry_list = offence_registry_list;
+    }
 
     public String getId() {
         return id;

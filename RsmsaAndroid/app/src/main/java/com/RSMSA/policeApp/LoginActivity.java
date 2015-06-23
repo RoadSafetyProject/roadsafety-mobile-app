@@ -176,9 +176,10 @@ public class LoginActivity extends ActionBarActivity {
                                     values.put(IroadDatabase.KEY_LAST_UPDATED, dataElement.getLastUpdated());
                                     values.put(IroadDatabase.KEY_HREF, dataElement.getHref());
                                     try {
+                                        Log.d(TAG, "Data Element Inserting = " + dataElement.getName());
                                         db.insert(IroadDatabase.TABLE_DATA_ELEMENTS, null, values);
                                     }catch (Exception e){
-                                        Log.d(TAG, "error catched = " + e.getMessage());
+                                        e.printStackTrace();
                                     }
 
 
@@ -207,6 +208,7 @@ public class LoginActivity extends ActionBarActivity {
 
                                 DHIS2Modal dhis2Modal = new DHIS2Modal("Offence Registry",null, username,password);
                                 JSONArray jsonArray = dhis2Modal.getAllEvents();
+                                Log.d(TAG," offence registry = "+jsonArray.toString());
                                 int count=jsonArray.length();
                                 for(int i=0;i<count;i++) {
                                     JSONObject offenceRegistryObject = null;

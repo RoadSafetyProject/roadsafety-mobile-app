@@ -42,13 +42,14 @@ public class ViewPagerAccidentsDetailsAdapter extends PagerAdapter {
     private static Context context;
     private LayoutInflater inflater;
     List<String> tabnames;
+    public static AccidentVehicle [] accident;
+    public static List<List<PassengerVehicle>> passanger=new ArrayList<>();
     public ViewPagerAccidentsDetailsAdapter(Context context,  List<String> tnames) {
         this.context  = context;
         tabnames=tnames;
+        accident=new AccidentVehicle[tnames.size()];
 
     }
-    public static List<AccidentVehicle> accident=new ArrayList<AccidentVehicle>();
-    public static List<List<PassengerVehicle>> passanger=new ArrayList<>();
 
 
 
@@ -118,12 +119,15 @@ public class ViewPagerAccidentsDetailsAdapter extends PagerAdapter {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        JSONArray driver=dhis2Modal.getEvent(where);
-                        Log.d(TAG,"returned driver json = "+driver.toString());
+
                         JSONObject driverObject = null;
                         try {
+                            JSONArray driver = dhis2Modal.getEvent(where);
+                            Log.d(TAG, "returned driver json = " + driver.toString());
                             driverObject = driver.getJSONObject(0);
                         } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (Exception e){
                             e.printStackTrace();
                         }
 
@@ -187,12 +191,15 @@ public class ViewPagerAccidentsDetailsAdapter extends PagerAdapter {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        JSONArray vehiclesArray=dhis2Modal.getEvent(where);
-                        Log.d(TAG, "returned vehicle json = "+vehiclesArray.toString());
+
                         JSONObject vehicleObject = null;
                         try {
+                            JSONArray vehiclesArray=dhis2Modal.getEvent(where);
+                            Log.d(TAG, "returned vehicle json = "+vehiclesArray.toString());
                             vehicleObject = vehiclesArray.getJSONObject(0);
                         } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (NullPointerException e){
                             e.printStackTrace();
                         }
 
@@ -323,7 +330,7 @@ public class ViewPagerAccidentsDetailsAdapter extends PagerAdapter {
             }
         });
 
-        accident.add(position,accidentVehicle);
+        accident[position]=accidentVehicle;
         passanger.add(position,passengers);
 
 

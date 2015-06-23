@@ -3,6 +3,7 @@ package com.RSMSA.policeApp.Fragments;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -25,11 +26,13 @@ import android.widget.Toast;
 
 import com.RSMSA.policeApp.Dhis2.DHIS2Config;
 import com.RSMSA.policeApp.Dhis2.DHIS2Modal;
+import com.RSMSA.policeApp.JSONParser;
 import com.RSMSA.policeApp.MainOffence;
 import com.RSMSA.policeApp.OffenceReportForm;
 import com.RSMSA.policeApp.PoliceFunction;
 import com.RSMSA.policeApp.R;
 import com.RSMSA.policeApp.Utils.Functions;
+import com.RSMSA.policeApp.iRoadDB.IroadDatabase;
 import com.google.zxing.integration.android.IntentIntegrator;
 
 import org.json.JSONArray;
@@ -37,9 +40,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -60,11 +65,12 @@ public class OffenceHistoryFragment extends Fragment {
     private ImageView scanBtn,errorBtn,errorBtn2;
     private Button verifyBtn,reportBtn,paymentBtn;
     private EditText license,plateNumberEditText;
-    private String   name= "",
+    public static String   name= "",
             licenceNumber="",
             address="",
             gender="",
             dateOfBirth="",
+            vehicleOwnerName="",
             phoneNumber="",scanContent="",drivingClass,plateNumber;
 
     private String invalidLicence=null;
@@ -73,6 +79,9 @@ public class OffenceHistoryFragment extends Fragment {
     //DHIS2 parameters stored for saving events
     private String driverUid;
     private String vehicleUid;
+    private static final String startDate="0001-01-01";
+    private static final String endDate="2024-01-01";
+    private static final String orgUnit="zs9X8YYBOnK";
 
 
 
@@ -82,7 +91,6 @@ public class OffenceHistoryFragment extends Fragment {
         /**
          * get the instances of the buttons at our view
          */
-
         progressBar = (ProgressBar)contentView.findViewById(R.id.pbar_main);
 
         inputnformation=(RelativeLayout)contentView.findViewById(R.id.input_information);
@@ -307,130 +315,149 @@ public class OffenceHistoryFragment extends Fragment {
         }
         @Override
         protected JSONObject doInBackground(String... args) {
-            JSONArray relations = new JSONArray();
+            JSONObject dataObject = new JSONObject();
+
+            DHIS2Modal dhis2Modal = new DHIS2Modal("Driver",null,  MainOffence.username, MainOffence.password);
+            String columnDriverLicenseNumber = dhis2Modal.getDataElementByName("Driver License Number").getId();
+            String columnFullName = dhis2Modal.getDataElementByName("Full Name").getId();
+            String columnPostalAddress = dhis2Modal.getDataElementByName("Postal Address").getId();
+            String columnDateOfBirth = dhis2Modal.getDataElementByName("Date of Birth").getId();
+            String columnGender = dhis2Modal.getDataElementByName("Gender").getId();
+            String columnCurrentLicenseExpiryDate = dhis2Modal.getDataElementByName("Current License Expiry Date").getId();
+            String columnPhoneNumber= dhis2Modal.getDataElementByName("Phone Number").getId();
+            String columnDrivingClassName= dhis2Modal.getDataElementByName("Driving Class Name").getId();
+
+
+            String programDriverUid = dhis2Modal.getProgramByName("Driver").getId();
+
+            String driverUrl = "http://roadsafety.udsm.ac.tz/demo/api/analytics/events/query/"+programDriverUid+"/?startDate="+startDate+
+                    "&endDate="+endDate+
+                    "&dimension=ou:"+orgUnit+
+                    "&dimension="+columnFullName+
+                    "&dimension="+columnPostalAddress+
+                    "&dimension="+columnDateOfBirth+
+                    "&dimension="+columnGender+
+                    "&dimension="+columnCurrentLicenseExpiryDate+
+                    "&dimension="+columnPhoneNumber+
+                    "&dimension="+columnDrivingClassName+
+                    "&dimension="+columnDriverLicenseNumber+":EQ:"+input_license;
+
+            Log.d(TAG,"analytics driver url = "+driverUrl);
+            JSONParser jsonParser = new JSONParser();
+            JSONObject receivedDriverObject = jsonParser.dhis2HttpRequest(driverUrl,"GET",MainOffence.username,MainOffence.password,null);
+            Log.d(TAG, "received driver object = " + receivedDriverObject.toString());
             try {
-                JSONObject relation = new JSONObject();
-                relation.put("type","ONE_MANY");
-                relation.put("name","Offence Event");
-
-                JSONObject relation2 = new JSONObject();
-                relation2.put("type","MANY_MANY");
-                relation2.put("name","Driving Class");
-                relation2.put("pivot","Driver Driving Class");
-
-                relations.put(relation);
-                relations.put(relation2);
-
-            } catch (JSONException e) {
-                Log.d(TAG,"Error creating relationships = "+e.getMessage());
-            }
-
-            DHIS2Modal dhis2Modal = new DHIS2Modal("Driver",relations,  MainOffence.username, MainOffence.password);
-
-            JSONObject where = new JSONObject();
-            try {
-                where.put("value",input_license);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            JSONArray drivers = dhis2Modal.getEvent(where);
-            int count = drivers.length();
-            for(int i=0;i<count;i++){
-                JSONArray offenceEvents= null;
-                try {
-                    offenceEvents = drivers.getJSONObject(i).getJSONArray("Offence Event");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                int counter2 = offenceEvents.length();
-                for(int j=0;j<counter2;j++){
-                    String id = null;
-                    JSONObject OffenceEvent = new JSONObject();
-                    try {
-                        OffenceEvent = offenceEvents.getJSONObject(j);
-                        id = OffenceEvent.getString("id");
-                        Log.d(TAG, "Event id = "+id);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    JSONArray offenceRelations = new JSONArray();
-                    JSONObject offenceRelation = new JSONObject();
-                    try {
-                        offenceRelation.put("name", "Offence Registry");
-                        offenceRelation.put("type","ONE_MANY");
-                        offenceRelations.put(offenceRelation);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    JSONObject whereEventId = new JSONObject();
-                    try {
-                        whereEventId.put("value",id);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    DHIS2Modal dhis2ModalOffence = new DHIS2Modal("Offence",offenceRelations, MainOffence.username, MainOffence.password);
-                    JSONArray offences=dhis2ModalOffence.getEvent(whereEventId);
-                    try {
-                        OffenceEvent.put("offences",offences);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            JSONObject vehicleRelation1 = new JSONObject();
-            JSONObject vehicleRelation2 = new JSONObject();
-            JSONArray vehicleRelations = new JSONArray();
-            try {
-                vehicleRelation1.put("type","ONE_MANY");
-                vehicleRelation1.put("name","Vehicle Inspection");
-                vehicleRelation2.put("type","MANY_MANY");
-                vehicleRelation2.put("name","Insurance Company");
-                vehicleRelation2.put("pivot","Vehicle Insurance History");
-                vehicleRelations.put(vehicleRelation1);
-                vehicleRelations.put(vehicleRelation2);
-
-            } catch (JSONException e) {
-                Log.d(TAG,"Error creating relationships = "+e.getMessage());
-            }
-
-            DHIS2Modal dhis2ModalVehicle = new DHIS2Modal("Vehicle",vehicleRelations, MainOffence.username, MainOffence.password);
-
-            JSONObject whereVehicle = new JSONObject();
-            try {
-                whereVehicle.put("value",input_plate_number);
+                dataObject.put("driver", Functions.generateJson(receivedDriverObject.getJSONArray("headers"), receivedDriverObject.getJSONArray("rows")));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            JSONArray vehicles= dhis2ModalVehicle.getEvent(whereVehicle);
 
 
-            JSONObject json = new JSONObject();
+
+
+
+
+            String columnVehiclePlateNumber = dhis2Modal.getDataElementByName("Vehicle Plate Number").getId();
+            String programOffenceEventUid = dhis2Modal.getProgramByName("Offence Event").getId();
+            String columnOffenceDate = dhis2Modal.getDataElementByName("Offence Date").getId();
+            String columnOffencePlace = dhis2Modal.getDataElementByName("Offence Place").getId();
+            String columnOffenceRegistryList = dhis2Modal.getDataElementByName("Offence Registry List").getId();
+            String columnProgram_Driver = dhis2Modal.getDataElementByName("Program_Driver").getId();
+
             try {
-                json.put("Driver",drivers);
-                json.put("Vehicle",vehicles);
+                driverUid =dataObject.getJSONArray("driver").getJSONObject(dataObject.getJSONArray("driver").length()-1).getString("Event");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            final String offenceEventUrl = "http://roadsafety.udsm.ac.tz/demo/api/analytics/events/query/"+programOffenceEventUid+"/?startDate="+startDate+
+                    "&endDate="+endDate+
+                    "&dimension=ou:"+orgUnit+
+                    "&dimension="+columnOffenceDate+
+                    "&dimension="+columnOffencePlace+
+                    "&dimension="+columnOffenceRegistryList+
+                    "&dimension="+columnVehiclePlateNumber+
+                    "&dimension="+columnProgram_Driver+":EQ:"+driverUid;
+
+            Log.d(TAG,"analytics offence url = "+offenceEventUrl);
+
+            JSONParser jsonParser2 = new JSONParser();
+
+            JSONObject offenceEventObject = jsonParser2.dhis2HttpRequest(offenceEventUrl,"GET",MainOffence.username,MainOffence.password,null);
+
+
+            try {
+                dataObject.put("Offences",Functions.generateJson(offenceEventObject.getJSONArray("headers"), offenceEventObject.getJSONArray("rows")));
+                Log.d(TAG,"received offence object = "+offenceEventObject.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            Log.d(TAG,"Returned DHIS2 JSON = "+json.toString());
-            return json;
+
+
+
+            String programVehicleUid = dhis2Modal.getProgramByName("Vehicle").getId();
+            String columnVehicleOwnerName = dhis2Modal.getDataElementByName("Vehicle Owner Name").getId();
+            String columnMake = dhis2Modal.getDataElementByName("Make").getId();
+            String columnColor = dhis2Modal.getDataElementByName("Color").getId();
+            String columnCurrentInsuranceComapanyName = dhis2Modal.getDataElementByName("Current Insurance Comapany Name").getId();
+            String columnCurrentInsuranceExpiryDate = dhis2Modal.getDataElementByName("Current Insurance Expiry Date").getId();
+            String columnLastInspectonResult = dhis2Modal.getDataElementByName("Last Inspecton Result").getId();
+            String receivedPlateNumber= "";
+            try {
+                receivedPlateNumber = URLEncoder.encode(input_plate_number, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
+
+            Log.d(TAG,"Program driver uid = "+programDriverUid);
+            Log.d(TAG,"Program vehicle uid = "+programVehicleUid);
+
+            final String vehicleUrl = "http://roadsafety.udsm.ac.tz/demo/api/analytics/events/query/"+programVehicleUid+"/?startDate="+startDate+
+                    "&endDate="+endDate+
+                    "&dimension=ou:"+orgUnit+
+                    "&dimension="+columnVehicleOwnerName+
+                    "&dimension="+columnMake+
+                    "&dimension="+columnColor+
+                    "&dimension="+columnCurrentInsuranceComapanyName+
+                    "&dimension="+columnCurrentInsuranceExpiryDate+
+                    "&dimension="+columnLastInspectonResult+
+                    "&dimension="+columnVehiclePlateNumber+":EQ:"+receivedPlateNumber;
+
+            Log.d(TAG,"analytics vehicle url = "+vehicleUrl);
+
+            JSONParser jsonParser1 = new JSONParser();
+            JSONObject receivedVehicleObject = jsonParser1.dhis2HttpRequest(vehicleUrl,"GET",MainOffence.username,MainOffence.password,null);
+            Log.d(TAG, "received vehicle object = " + receivedVehicleObject.toString());
+
+            try {
+                dataObject.put("vehicle", Functions.generateJson(receivedVehicleObject.getJSONArray("headers"), receivedVehicleObject.getJSONArray("rows")));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+
+
+
+            return dataObject;
+
         }
 
         @Override
         protected void onPostExecute(JSONObject json) {
             JSONObject driverObject = new JSONObject();
             JSONObject vehiclesObject = new JSONObject();
+            JSONArray offenceArray = new JSONArray();
             try {
                 Log.d(TAG,"Returned DHIS2 JSON = "+json.toString());
-                driverObject = json.getJSONArray("Driver").getJSONObject(0);
-                vehiclesObject = json.getJSONArray("Vehicle").getJSONObject(0);
-                driverUid = driverObject.getString("id");
-                vehicleUid = vehiclesObject.getString("id");
+                driverObject = json.getJSONArray("driver").getJSONObject(json.getJSONArray("driver").length()-1);
+                Log.d(TAG,"vehivle index = "+(json.getJSONArray("vehicle").length()-1));
+                vehiclesObject = json.getJSONArray("vehicle").getJSONObject(json.getJSONArray("vehicle").length()-1);
+                offenceArray = json.getJSONArray("Offences");
+                vehicleUid = vehiclesObject.getString("Event");
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (NullPointerException e){
@@ -443,23 +470,16 @@ public class OffenceHistoryFragment extends Fragment {
             if(true){
                 inputnformation.setVisibility(View.GONE);
                 verificationResults.setVisibility(View.VISIBLE);
-                JSONArray offences = new JSONArray();
-                JSONObject driverPersonInfo = new JSONObject();
-                JSONObject driverDrivingClass = new JSONObject();
                 try {
-                    driverPersonInfo = driverObject.getJSONObject("Program_Person");
                     contentView.findViewById(R.id.drivers_information_layout).setVisibility(View.VISIBLE);
-                    name=driverPersonInfo.getString("First Name")+" "+driverPersonInfo.getString("Middle Name")+" "+driverPersonInfo.getString("Last Name");
+                    name=driverObject.getString("Full Name");
                     licenceNumber = driverObject.getString("Driver License Number");
-
-                    //TODO uncomment this to add diving classes
-                    //driverDrivingClass = driverObject.getJSONArray("Driver Driving Class").getJSONObject(0);
-                    //drivingClass = driverDrivingClass.getString("Driving Class Name");
-                    address = driverPersonInfo.getString("Postal Address");
-                    gender = driverPersonInfo.getString("Gender");
-                    dateOfBirth = driverPersonInfo.getString("Date of Birth");
-                    phoneNumber = driverPersonInfo.getString("Phone Number");
-                    String driverLicenceExpiryDate=driverObject.getString("Current License Expiry Date").substring(0,10);
+                    drivingClass = driverObject.getString("Driving Class Name");
+                    address = driverObject.getString("Postal Address");
+                    gender = driverObject.getString("Gender");
+                    dateOfBirth = driverObject.getString("Date of Birth");
+                    phoneNumber = driverObject.getString("Phone Number");
+                    String driverLicenceExpiryDate=driverObject.getString("Current License Expiry Date");
                     SimpleDateFormat simpleFormatter = new SimpleDateFormat("yyyy-mm-dd");
                     Date date = simpleFormatter.parse(driverLicenceExpiryDate);
                     long receivedDate=date.getTime();
@@ -472,7 +492,11 @@ public class OffenceHistoryFragment extends Fragment {
                         licenceExpiryDate.setTextColor(Color.RED);
                         errorBtn.setVisibility(View.VISIBLE);
                         //TODO query the valid id of invalid license offence
-                        invalidLicence=4+"";
+                        IroadDatabase db = new IroadDatabase(getActivity().getApplicationContext());
+                        Cursor cursor= db.query("SELECT  * FROM " + IroadDatabase.TABLE_OFFENCE_REGISTRY + " WHERE " + IroadDatabase.KEY_NATURE + " = 'Driving without a valid driving license'");
+                        cursor.moveToFirst();
+                        Log.d(TAG,"Nature = "+cursor.getString(cursor.getColumnIndex(IroadDatabase.KEY_NATURE)));
+                        invalidLicence=cursor.getString(cursor.getColumnIndex(IroadDatabase.KEY_ID));
                     }else{
                         licenceExpiryDate.setTextColor(Color.WHITE);
                         errorBtn.setVisibility(View.GONE);
@@ -492,23 +516,18 @@ public class OffenceHistoryFragment extends Fragment {
                 phoneNumberTextView.setText(phoneNumber);
                 drivingClassTextVeiw.setText(drivingClass);
 
-                try{
-                    offences=driverObject.getJSONArray("Offence Event");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                for(int i=0; i<offences.length(); i++){
+
+                for(int i=0; i<offenceArray.length(); i++){
                     LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     RelativeLayout historyItem = (RelativeLayout)inflater.inflate(R.layout.offence_history_item,null);
-                    JSONObject jsonObjet=new JSONObject();
-                    String plateNumber="",place="",date="";
-                    JSONArray offenceEvents = new JSONArray();
+                    JSONObject jsonOffenceRow=new JSONObject();
+                    String plateNumber="",place="",date="", offenceEvents = "";
                     try {
-                        jsonObjet=offences.getJSONObject(i);
-                        plateNumber=jsonObjet.getJSONObject("Program_Vehicle").getString("Vehicle Plate Number");
-                        date  = jsonObjet.getString("Offence Date");
-                        offenceEvents = jsonObjet.getJSONArray("offences");
-                        place = jsonObjet.getString("Offence Place");
+                        jsonOffenceRow=offenceArray.getJSONObject(i);
+                        plateNumber=jsonOffenceRow.getString("Vehicle Plate Number");
+                        date  = jsonOffenceRow.getString("Event date");
+                        offenceEvents = jsonOffenceRow.getString("Offence Registry List");
+                        place = jsonOffenceRow.getString("Offence Place");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -516,22 +535,8 @@ public class OffenceHistoryFragment extends Fragment {
                     TextView offenceTextView=(TextView)historyItem.findViewById(R.id.offense);
                     TextView placeTextView=(TextView)historyItem.findViewById(R.id.place);
                     TextView dateTextView=(TextView)historyItem.findViewById(R.id.date);
-                    String events="";
-                    int counter=offenceEvents.length();
-                    for(int y=0;y<counter;y++){
-                        try {
-                            JSONObject eventObject = offenceEvents.getJSONObject(y).getJSONObject("Program_Offence_Registry");
-                            if(y!=counter-1)
-                                events+=eventObject.getString("Nature")+" | ";
-                            else
-                                events+=eventObject.getString("Nature");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
                     plateNumberTextView.setText(plateNumber);
-                    offenceTextView.setText(events);
+                    offenceTextView.setText(offenceEvents);
                     placeTextView.setText(place);
                     dateTextView.setText(date);
                     offenceList.addView(historyItem);
@@ -540,50 +545,13 @@ public class OffenceHistoryFragment extends Fragment {
 
                 try {
                     contentView.findViewById(R.id.vehicle_information_layout).setVisibility(View.VISIBLE);
-                    Log.d(TAG, "vehicles object = " + vehiclesObject.toString());
-
+                    vehicleOwnerName = vehiclesObject.getString("Vehicle Owner Name");
                     ownersNameTexView.setText(vehiclesObject.getString("Vehicle Owner Name"));
                     vehiclesMakeTextView.setText(vehiclesObject.getString("Make"));
                     vehclesColorTextView.setText(vehiclesObject.getString("Color"));
-                    //TODO fix insuarance
-//                    JSONObject insuaranceObject = vehiclesObject.getJSONArray("Vehicle Insurance History").getJSONObject(0);
-//                    JSONObject insuarance=vehiclesObject.getJSONObject("insurance");
-//                    JSONObject inspection=vehiclesObject.getJSONObject("inspection");
-//
-//                    JSONObject company=insuarance.getJSONObject("company");
-//
-//                    vehicleInsuarance.setText(company.getString("company_name"));
-//
-//                    int pass=Integer.parseInt(inspection.getString("pass"));
-//
-//                    int fail=Integer.parseInt(inspection.getString("fail"));
-//                    String percent=inspection.getString("parcent");
-//
-//                    vehiclesInspection.setText(pass+"/"+(pass+fail)+" | PASS = ("+percent+"%)");
-//
-//                    final String insuaranceExpiryDate=insuarance.getString("end_date").substring(0,10);
-//                    SimpleDateFormat simpleFormatter = new SimpleDateFormat("yyyy-mm-dd");
-//                    Date date = simpleFormatter.parse(insuaranceExpiryDate);
-//                    long receivedDate=date.getTime();
-//
-//                    insuarenceExpiryDate.setText(insuaranceExpiryDate);
-//                    Calendar calendar = Calendar.getInstance();
-//
-//                    long currentTime=calendar.getTimeInMillis();
-//
-//                    Log.d(TAG,"DATE.. = "+date.toString());
-//                    Log.d(TAG,"received time.. = "+receivedDate);
-//                    Log.d(TAG,"current time.. = "+currentTime);
-//                    if(currentTime>receivedDate){
-//                        insuarenceExpiryDate.setTextColor(Color.RED);
-//                        errorBtn2.setVisibility(View.VISIBLE);
-//                        expiredInsuarance =5+"";
-//                    }else{
-//                        insuarenceExpiryDate.setTextColor(Color.WHITE);
-//                        errorBtn2.setVisibility(View.GONE);
-//                    }
-
-
+                    vehicleInsuarance.setText(vehiclesObject.getString("Current Insurance Comapany Name"));
+                    vehiclesInspection.setText(vehiclesObject.getString("Last Inspecton Result"));
+                    insuarenceExpiryDate.setText(vehiclesObject.getString("Current Insurance Expiry Date"));
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -603,4 +571,5 @@ public class OffenceHistoryFragment extends Fragment {
 
         }
     }
+
 }

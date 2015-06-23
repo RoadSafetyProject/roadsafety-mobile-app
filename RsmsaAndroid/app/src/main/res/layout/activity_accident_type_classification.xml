@@ -65,12 +65,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/atc_title"
-                    android:text="Accident Type classification"
+                    android:text="Accident"
                     android:layout_marginTop="8dp"
                     android:layout_marginLeft="8dp"
                     android:textColor="@color/deep_orange_a400"
                     android:textStyle="bold"
-                    android:visibility="gone"
                     android:textSize="16sp"/>
 
                 <View
@@ -80,54 +79,43 @@
                     android:layout_below="@id/atc_title"
                     android:layout_marginTop="8dp"
                     android:layout_marginLeft="8dp"
-                    android:visibility="gone"
                     android:layout_marginRight="8dp"
                     android:background="@color/deep_orange_a100"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/accident_type_heading"
+                    android:id="@+id/supervisor_check"
                     android:layout_marginLeft="8dp"
-                    android:visibility="gone"
+                    android:layout_marginRight="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_below="@id/atc_strip"
-                    android:text="Accident Type"/>
-
-                <Spinner
-                    android:id="@+id/atc_spinner"
-                    android:layout_width="60dp"
-                    android:layout_height="35dp"
-                    android:minWidth="100dp"
-                    android:visibility="gone"
-                    android:layout_toRightOf="@id/accident_type_heading"
+                    android:text="Supervisor Check"/>
+                <CheckBox
+                    android:layout_marginTop="12dp"
                     android:layout_below="@id/atc_strip"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_alignRight="@+id/atc_title"/>
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:background="@drawable/button"
-                    android:text="Select"
-                    android:visibility="gone"
-                    android:layout_marginTop="8dp"
-                    android:id="@+id/accident_type_select_button"
-                    android:layout_below="@id/atc_strip"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="8dp"/>
-
-                <TextView
-                    android:visibility="gone"
+                    android:layout_toRightOf="@id/supervisor_check"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/selected_atc"
-                    android:layout_below="@id/accident_type_select_button"
-                    android:layout_marginRight="8dp"
-                    android:layout_alignParentRight="true"
-                    android:text="Something Selected"
-                    android:layout_marginTop="8dp"/>
+                    android:id="@+id/supervisor_checkbox"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ocs_check"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_below="@id/supervisor_check"
+                    android:text="OCS Check"/>
+                <CheckBox
+                    android:layout_marginTop="12dp"
+                    android:layout_below="@id/supervisor_check"
+                    android:layout_marginLeft="36dp"
+                    android:layout_toRightOf="@id/ocs_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ocs_checkbox"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -137,7 +125,7 @@
                     android:textStyle="bold"
                     android:textColor="@color/deep_orange_a400"
                     android:layout_marginTop="16dp"
-                    android:layout_below="@id/selected_atc"
+                    android:layout_below="@id/ocs_check"
                     android:text="Junction Type"/>
 
                 <View
@@ -391,7 +379,7 @@
                     android:layout_marginLeft="8dp"
                     android:textStyle="bold"
                     android:textColor="@color/deep_orange_a400"
-                    android:text="Violations"/>
+                    android:text="Causes"/>
 
                 <View
                     android:layout_width="match_parent"
@@ -415,35 +403,35 @@
 
 
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/defects_title"
-                    android:layout_below="@id/violations_layouts"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginLeft="8dp"
-                    android:textStyle="bold"
-                    android:textColor="@color/deep_orange_a400"
-                    android:text="Defects"/>
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:id="@+id/defects_title"-->
+                    <!--android:layout_below="@id/violations_layouts"-->
+                    <!--android:layout_marginTop="16dp"-->
+                    <!--android:layout_marginLeft="8dp"-->
+                    <!--android:textStyle="bold"-->
+                    <!--android:textColor="@color/deep_orange_a400"-->
+                    <!--android:text="Defects"/>-->
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_below="@id/defects_title"
-                    android:id="@+id/defects_strip"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@color/deep_orange_a100"/>
+                <!--<View-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="1dp"-->
+                    <!--android:layout_below="@id/defects_title"-->
+                    <!--android:id="@+id/defects_strip"-->
+                    <!--android:layout_marginLeft="8dp"-->
+                    <!--android:layout_marginRight="8dp"-->
+                    <!--android:layout_marginTop="8dp"-->
+                    <!--android:background="@color/deep_orange_a100"/>-->
 
-                <LinearLayout
-                    android:id="@+id/defects_layouts"
-                    android:layout_width="match_parent"
-                    android:layout_below="@id/defects_strip"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                <!--<LinearLayout-->
+                    <!--android:id="@+id/defects_layouts"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_below="@id/defects_strip"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="vertical">-->
 
-                </LinearLayout>
+                <!--</LinearLayout>-->
 
 
 
@@ -580,6 +568,7 @@
                     android:layout_marginLeft="8dp"
                     android:layout_marginTop="8dp"
                     android:text="Kelvin Mbwilo"
+                    android:visibility="gone"
                     android:textColor="@color/card_grid_text"/>
 
                 <com.RSMSA.policeApp.CustomViews.TouchFeedbackEnabledRelativeLayout

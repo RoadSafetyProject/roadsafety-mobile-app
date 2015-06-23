@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.RSMSA.policeApp.Dhis2.DHIS2Config;
 import com.RSMSA.policeApp.Dhis2.DHIS2Modal;
+import com.RSMSA.policeApp.Fragments.OffenceHistoryFragment;
 import com.RSMSA.policeApp.JSONParser;
 import com.RSMSA.policeApp.MainOffence;
 import com.RSMSA.policeApp.Models.Offence;
@@ -50,7 +51,6 @@ public class PaymentConfirmationDialogue extends DialogFragment {
     private String storedCountry;
     private int count=0,index;
     private Offence offence;
-    private JSONArray events;
     private boolean sentSucessfully=false;
 
     public int getIndex() {
@@ -77,9 +77,6 @@ public class PaymentConfirmationDialogue extends DialogFragment {
         this.cost = cost;
     }
 
-    public void setEvents(JSONArray events) {
-        this.events = events;
-    }
 
     public PaymentConfirmationDialogue() {
     }
@@ -354,6 +351,80 @@ public class PaymentConfirmationDialogue extends DialogFragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+
+
+
+
+
+            JSONObject nameDataElement = new JSONObject();
+            String nameUid = modal.getDataElementByName("Full Name").getId();
+            try {
+                nameDataElement.put("dataElement",nameUid);
+                nameDataElement.put("value", OffenceHistoryFragment.name);
+                dataValues.put(nameDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONObject DriverLicenseNumberDataElement = new JSONObject();
+            String DriverLicenseNumberDataElementUid = modal.getDataElementByName("Driver License Number").getId();
+            try {
+                DriverLicenseNumberDataElement.put("dataElement",DriverLicenseNumberDataElementUid);
+                DriverLicenseNumberDataElement.put("value",offence.getDriver_license_number());
+                dataValues.put(DriverLicenseNumberDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+            JSONObject GenderDataElement = new JSONObject();
+            String GenderDataElementUid = modal.getDataElementByName("Gender").getId();
+            try {
+                GenderDataElement.put("dataElement",GenderDataElementUid);
+                GenderDataElement.put("value",OffenceHistoryFragment.gender);
+                dataValues.put(GenderDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONObject VehiclePlateNumberDataElement = new JSONObject();
+            String VehiclePlateNumberDataElementUid = modal.getDataElementByName("Vehicle Plate Number").getId();
+            try {
+                VehiclePlateNumberDataElement.put("dataElement",VehiclePlateNumberDataElementUid);
+                VehiclePlateNumberDataElement.put("value",offence.getVehicle_plate_number());
+                dataValues.put(VehiclePlateNumberDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            JSONObject OffenceRegistryListDataElement = new JSONObject();
+            String OffenceRegistryListDataElementUid = modal.getDataElementByName("Offence Registry List").getId();
+            try {
+                OffenceRegistryListDataElement.put("dataElement",OffenceRegistryListDataElementUid);
+                OffenceRegistryListDataElement.put("value",offence.getOffence_registry_list());
+                dataValues.put(OffenceRegistryListDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+
+            JSONObject VehicleOwnerNameDataElement = new JSONObject();
+            String VehicleOwnerNameDataElementUid = modal.getDataElementByName("Vehicle Owner Name").getId();
+            try {
+                VehicleOwnerNameDataElement.put("dataElement",VehicleOwnerNameDataElementUid);
+                VehicleOwnerNameDataElement.put("value",OffenceHistoryFragment.vehicleOwnerName);
+                dataValues.put(VehicleOwnerNameDataElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            
 
             try {
                 event.put("dataValues",dataValues);

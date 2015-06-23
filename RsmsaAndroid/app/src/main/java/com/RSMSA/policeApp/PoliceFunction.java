@@ -145,15 +145,7 @@ public class      PoliceFunction {
 
         return json;
     }
-    /**
-     * Function to logout user
-     * Resets the temporary data stored in SQLite Database
-     * */
-    public boolean logoutUser(Context context){
-        DatabaseHandlerOffence db = new DatabaseHandlerOffence(context);
-        db.resetTables();
-        return true;
-    }
+
 
     public JSONObject paymentVerification(String url){
         String mURL = "http://"+ipAddress+url;

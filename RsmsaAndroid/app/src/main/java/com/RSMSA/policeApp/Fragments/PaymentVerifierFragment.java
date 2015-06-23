@@ -26,11 +26,13 @@ import android.widget.Toast;
 
 import com.RSMSA.policeApp.Dhis2.DHIS2Config;
 import com.RSMSA.policeApp.Dhis2.DHIS2Modal;
+import com.RSMSA.policeApp.JSONParser;
 import com.RSMSA.policeApp.MainOffence;
 import com.RSMSA.policeApp.Models.Offence;
 import com.RSMSA.policeApp.Dialogues.PaymentConfirmationDialogue;
 import com.RSMSA.policeApp.PoliceFunction;
 import com.RSMSA.policeApp.R;
+import com.RSMSA.policeApp.Utils.Functions;
 import com.google.zxing.integration.android.IntentIntegrator;
 
 import org.json.JSONArray;
@@ -38,9 +40,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -68,6 +72,16 @@ public class PaymentVerifierFragment extends Fragment {
             dateOfBirth="",
             phoneNumber="",scanContent="",make="",type="",vehicle_owner="",mColor="",plateNumber="";
     private boolean driversPaymentVerification=true;
+
+
+    //DHIS2 parameters stored for saving events
+    private String driverUid;
+    private String vehicleUid;
+    private static final String startDate="0001-01-01";
+    private static final String endDate="2024-01-01";
+    private static final String orgUnit="zs9X8YYBOnK";
+
+    private String receivedNumber="";
 
 
     @Override
@@ -156,8 +170,6 @@ public class PaymentVerifierFragment extends Fragment {
 
 
 
-
-        String receivedNumber="";
         try {
             receivedNumber = getArguments().getString("licenceNumber");
         }catch (Exception e){}
@@ -308,7 +320,7 @@ public class PaymentVerifierFragment extends Fragment {
     /**
      *To process the data from the offense form
      */
-    private class ProcessVerification extends AsyncTask <String, String, JSONArray> {
+    private class ProcessVerification extends AsyncTask <String, String, JSONObject> {
         String input_license;
         @Override
         protected void onPreExecute() {
@@ -319,205 +331,213 @@ public class PaymentVerifierFragment extends Fragment {
             input_license = licenseEdittext.getText().toString();
         }
         @Override
-        protected JSONArray doInBackground(String... args) {
-            PoliceFunction PFunction = new PoliceFunction();
-            JSONObject json=new JSONObject();
-            String url;
+        protected JSONObject doInBackground(String... args) {
+            JSONObject dataObject = new JSONObject();
+            DHIS2Modal dhis2Modal = new DHIS2Modal("Driver",null,  MainOffence.username, MainOffence.password);
             if(driversPaymentVerification) {
-                JSONArray relations = new JSONArray();
-                try {
-                    JSONObject relation = new JSONObject();
-                    relation.put("type","ONE_MANY");
-                    relation.put("name","Offence Event");
-                    relations.put(relation);
-                } catch (JSONException e) {
-                    Log.d(TAG,"Error creating relationships = "+e.getMessage());
-                }
+                String columnDriverLicenseNumber = dhis2Modal.getDataElementByName("Driver License Number").getId();
+                String columnFullName = dhis2Modal.getDataElementByName("Full Name").getId();
+                String columnPostalAddress = dhis2Modal.getDataElementByName("Postal Address").getId();
+                String columnDateOfBirth = dhis2Modal.getDataElementByName("Date of Birth").getId();
+                String columnGender = dhis2Modal.getDataElementByName("Gender").getId();
+                String columnCurrentLicenseExpiryDate = dhis2Modal.getDataElementByName("Current License Expiry Date").getId();
+                String columnPhoneNumber= dhis2Modal.getDataElementByName("Phone Number").getId();
+                String columnDrivingClassName= dhis2Modal.getDataElementByName("Driving Class Name").getId();
 
-                DHIS2Modal dhis2Modal = new DHIS2Modal("Driver",relations,  MainOffence.username, MainOffence.password);
+                String programDriverUid = dhis2Modal.getProgramByName("Driver").getId();
 
-                JSONObject where = new JSONObject();
+                String driverUrl = "http://roadsafety.udsm.ac.tz/demo/api/analytics/events/query/"+programDriverUid+"/?startDate="+startDate+
+                        "&endDate="+endDate+
+                        "&dimension=ou:"+orgUnit+
+                        "&dimension="+columnFullName+
+                        "&dimension="+columnPostalAddress+
+                        "&dimension="+columnDateOfBirth+
+                        "&dimension="+columnGender+
+                        "&dimension="+columnCurrentLicenseExpiryDate+
+                        "&dimension="+columnPhoneNumber+
+                        "&dimension="+columnDrivingClassName+
+                        "&dimension="+columnDriverLicenseNumber+":EQ:"+input_license;
+
+                Log.d(TAG,"analytics driver url = "+driverUrl);
+                JSONParser jsonParser = new JSONParser();
+                JSONObject receivedDriverObject = jsonParser.dhis2HttpRequest(driverUrl,"GET",MainOffence.username,MainOffence.password,null);
+                Log.d(TAG, "received driver object = " + receivedDriverObject.toString());
                 try {
-                    where.put("value",input_license);
+                    dataObject.put("driver", Functions.generateJson(receivedDriverObject.getJSONArray("headers"), receivedDriverObject.getJSONArray("rows")));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                JSONArray drivers = dhis2Modal.getEvent(where);
-                int count = drivers.length();
-                for(int i=0;i<count;i++){
-                    JSONArray offenceEvents= null;
-                    try {
-                        offenceEvents = drivers.getJSONObject(i).getJSONArray("Offence Event");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    int counter2 = offenceEvents.length();
-                    JSONArray list = new JSONArray();
-                    for(int j=0;j<counter2;j++){
-                        String id = null;
-                        JSONObject OffenceEvent = new JSONObject();
-                        try {
-                            OffenceEvent = offenceEvents.getJSONObject(j);
-                            id = OffenceEvent.getString("id");
-                            Log.d(TAG, "Offence Event id = "+id);
-                            if(OffenceEvent.getBoolean("Offence Paid")){
-                                Log.d(TAG," offence paid = "+OffenceEvent.getBoolean("Offence Paid"));
-                                Log.d(TAG," offence index = "+j);
-                                list.put(j);
-
-                                Log.d(TAG, "continue");
-                                continue;
-                            };
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
 
 
-                        JSONArray offenceRelations = new JSONArray();
-                        JSONObject offenceRelation = new JSONObject();
-                        try {
-                            offenceRelation.put("name", "Offence Registry");
-                            offenceRelation.put("type","ONE_MANY");
-                            offenceRelations.put(offenceRelation);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                String columnVehiclePlateNumber = dhis2Modal.getDataElementByName("Vehicle Plate Number").getId();
+                String programOffenceEventUid = dhis2Modal.getProgramByName("Offence Event").getId();
+                String columnOffenceDate = dhis2Modal.getDataElementByName("Offence Date").getId();
+                String columnOffencePlace = dhis2Modal.getDataElementByName("Offence Place").getId();
+                String columnOffencePaid = dhis2Modal.getDataElementByName("Offence Paid").getId();
+                String columnOffenceRegistryList = dhis2Modal.getDataElementByName("Offence Registry List").getId();
+                String columnProgram_Driver = dhis2Modal.getDataElementByName("Program_Driver").getId();
+                String columnProgram_Police = dhis2Modal.getDataElementByName("Program_Police").getId();
+                String columnProgram_Vehicle = dhis2Modal.getDataElementByName("Program_Vehicle").getId();
+                String columnOffenceAdmissionStatus = dhis2Modal.getDataElementByName("Offence Admission Status").getId();
+                String columnOffenceOffenceFacts = dhis2Modal.getDataElementByName("Offence Facts").getId();
+                String columnOffenceReceiptAmount = dhis2Modal.getDataElementByName("Offence Reciept Amount").getId();
+                String columnVehicleOwnerName = dhis2Modal.getDataElementByName("Vehicle Owner Name").getId();
 
-                        JSONObject whereEventId = new JSONObject();
-                        try {
-                            whereEventId.put("value",id);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                try {
+                    driverUid =dataObject.getJSONArray("driver").getJSONObject(dataObject.getJSONArray("driver").length()-1).getString("Event");
+                    Log.d(TAG,"Driver UID = "+driverUid);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
-                        DHIS2Modal dhis2ModalOffence = new DHIS2Modal("Offence",offenceRelations, MainOffence.username, MainOffence.password);
-                        JSONArray offences=dhis2ModalOffence.getEvent(whereEventId);
-                        try {
-                            OffenceEvent.put("offences",offences);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                final String offenceEventUrl = "http://roadsafety.udsm.ac.tz/demo/api/analytics/events/query/"+programOffenceEventUid+"/?startDate="+startDate+
+                        "&endDate="+endDate+
+                        "&dimension=ou:"+orgUnit+
+                        "&dimension="+columnOffenceDate+
+                        "&dimension="+columnOffencePlace+
+                        "&dimension="+columnOffenceRegistryList+
+                        "&dimension="+columnVehiclePlateNumber+
+                        "&dimension="+columnProgram_Police+
+                        "&dimension="+columnProgram_Vehicle+
+                        "&dimension="+columnOffenceAdmissionStatus+
+                        "&dimension="+columnOffenceOffenceFacts+
+                        "&dimension="+columnOffenceReceiptAmount+
 
-                    int counter= list.length();
-                    for (int p=0;p<counter;p++){
-                        try {
-                            Log.d(TAG,"removing an offence event");
-                            //TODO implement this for api 18 and less
-                            offenceEvents.remove(list.getInt(p));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                        "&dimension="+columnFullName+
+                        "&dimension="+columnGender+
+                        "&dimension="+columnDriverLicenseNumber+
+                        "&dimension="+columnVehicleOwnerName+
+
+                        "&dimension="+columnOffencePaid+":EQ:false"+
+                        "&dimension="+columnProgram_Driver+":EQ:"+driverUid;
+
+                Log.d(TAG,"analytics offence url = "+offenceEventUrl);
+
+                JSONParser jsonParser2 = new JSONParser();
+
+                JSONObject offenceEventObject = jsonParser2.dhis2HttpRequest(offenceEventUrl,"GET",MainOffence.username,MainOffence.password,null);
+
+
+                try {
+                    dataObject.put("Offences",Functions.generateJson(offenceEventObject.getJSONArray("headers"), offenceEventObject.getJSONArray("rows")));
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
 
 
 
 
-                Log.d(TAG,"Returned DHIS2 JSON = "+drivers.toString());
-                return drivers;
+                Log.d(TAG,"Data object = "+dataObject.toString());
+
 
             }
             else {
-
-                JSONObject vehicleRelation1 = new JSONObject();
-                JSONArray vehicleRelations = new JSONArray();
+                String programVehicleUid = dhis2Modal.getProgramByName("Vehicle").getId();
+                String columnVehicleOwnerName = dhis2Modal.getDataElementByName("Vehicle Owner Name").getId();
+                String columnMake = dhis2Modal.getDataElementByName("Make").getId();
+                String columnColor = dhis2Modal.getDataElementByName("Color").getId();
+                String columnCurrentInsuranceComapanyName = dhis2Modal.getDataElementByName("Current Insurance Comapany Name").getId();
+                String columnCurrentInsuranceExpiryDate = dhis2Modal.getDataElementByName("Current Insurance Expiry Date").getId();
+                String columnLastInspectonResult = dhis2Modal.getDataElementByName("Last Inspecton Result").getId();
+                String columnVehiclePlateNumber = dhis2Modal.getDataElementByName("Vehicle Plate Number").getId();
+                String receivedPlateNumber= "";
                 try {
-                    vehicleRelation1.put("type","ONE_MANY");
-                    vehicleRelation1.put("name","Offence Event");
-                    vehicleRelations.put(vehicleRelation1);
-
-                } catch (JSONException e) {
-                    Log.d(TAG,"Error creating relationships = "+e.getMessage());
+                    receivedPlateNumber = URLEncoder.encode(licenceNumber, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
                 }
 
-                DHIS2Modal dhis2ModalVehicle = new DHIS2Modal("Vehicle",vehicleRelations, MainOffence.username, MainOffence.password);
+                final String vehicleUrl = "http://roadsafety.udsm.ac.tz/demo/api/analytics/events/query/"+programVehicleUid+"/?startDate="+startDate+
+                        "&endDate="+endDate+
+                        "&dimension=ou:"+orgUnit+
+                        "&dimension="+columnVehicleOwnerName+
+                        "&dimension="+columnMake+
+                        "&dimension="+columnColor+
+                        "&dimension="+columnCurrentInsuranceComapanyName+
+                        "&dimension="+columnCurrentInsuranceExpiryDate+
+                        "&dimension="+columnLastInspectonResult+
+                        "&dimension="+columnVehiclePlateNumber+":EQ:"+receivedPlateNumber;
 
-                JSONObject whereVehicle = new JSONObject();
+                Log.d(TAG,"analytics vehicle url = "+vehicleUrl);
+
+                JSONParser jsonParser1 = new JSONParser();
+                JSONObject receivedVehicleObject = jsonParser1.dhis2HttpRequest(vehicleUrl,"GET",MainOffence.username,MainOffence.password,null);
+                Log.d(TAG, "received vehicle object = " + receivedVehicleObject.toString());
+
                 try {
-                    whereVehicle.put("value",licenceNumber);
+                    dataObject.put("vehicle", Functions.generateJson(receivedVehicleObject.getJSONArray("headers"), receivedVehicleObject.getJSONArray("rows")));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
 
-                JSONArray vehicles= dhis2ModalVehicle.getEvent(whereVehicle);
-                int count = vehicles.length();
-                for(int i=0;i<count;i++){
-                    JSONArray offenceEvents= null;
-                    try {
-                        offenceEvents = vehicles.getJSONObject(i).getJSONArray("Offence Event");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    int counter2 = offenceEvents.length();
-                    JSONArray list = new JSONArray();
-                    for(int j=0;j<counter2;j++){
-                        String id = null;
-                        JSONObject OffenceEvent = new JSONObject();
-                        try {
-                            OffenceEvent = offenceEvents.getJSONObject(j);
-                            id = OffenceEvent.getString("id");
-                            if(OffenceEvent.getBoolean("Offence Paid")){
-                                list.put(j);
-                                continue;
-                            };
-                            Log.d(TAG, "Event id = "+id);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-
-                        Log.d(TAG,"Before offence relations");
-                        JSONArray offenceRelations = new JSONArray();
-                        JSONObject offenceRelation = new JSONObject();
-                        try {
-                            offenceRelation.put("name", "Offence Registry");
-                            offenceRelation.put("type","ONE_MANY");
-                            offenceRelations.put(offenceRelation);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        JSONObject whereEventId = new JSONObject();
-                        try {
-                            whereEventId.put("value",id);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-
-
-                        DHIS2Modal dhis2ModalOffence = new DHIS2Modal("Offence",offenceRelations, MainOffence.username, MainOffence.password);
-                        JSONArray offences=dhis2ModalOffence.getEvent(whereEventId);
-                        Log.d(TAG,"offence registries = "+offences.toString());
-                        try {
-                            OffenceEvent.put("offences",offences);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    int counter= list.length();
-                    for (int p=0;p<counter;p++){
-                        try {
-
-                            Log.d(TAG,"removing an offence event");
-                            //TODO implement this for api 18 and less
-                            offenceEvents.remove(list.getInt(p));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                try {
+                    vehicleUid =dataObject.getJSONArray("vehicle").getJSONObject(dataObject.getJSONArray("vehicle").length()-1).getString("Event");
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
 
-                Log.d(TAG,"Returned DHIS2 JSON = "+vehicles.toString());
-                return vehicles;
+                String programOffenceEventUid = dhis2Modal.getProgramByName("Offence Event").getId();
+                String columnOffenceDate = dhis2Modal.getDataElementByName("Offence Date").getId();
+                String columnOffencePlace = dhis2Modal.getDataElementByName("Offence Place").getId();
+                String columnOffencePaid = dhis2Modal.getDataElementByName("Offence Paid").getId();
+                String columnOffenceRegistryList = dhis2Modal.getDataElementByName("Offence Registry List").getId();
+                String columnProgram_Driver = dhis2Modal.getDataElementByName("Program_Driver").getId();
+                String columnProgram_Police = dhis2Modal.getDataElementByName("Program_Police").getId();
+                String columnProgram_Vehicle = dhis2Modal.getDataElementByName("Program_Vehicle").getId();
+                String columnOffenceAdmissionStatus = dhis2Modal.getDataElementByName("Offence Admission Status").getId();
+                String columnOffenceOffenceFacts = dhis2Modal.getDataElementByName("Offence Facts").getId();
+                String columnOffenceReceiptAmount = dhis2Modal.getDataElementByName("Offence Reciept Amount").getId();
+                String columnGender = dhis2Modal.getDataElementByName("Gender").getId();
+                String columnFullName = dhis2Modal.getDataElementByName("Full Name").getId();
+                String columnDriverLicenseNumber = dhis2Modal.getDataElementByName("Driver License Number").getId();
+
+
+
+
+                final String offenceEventUrl = "http://roadsafety.udsm.ac.tz/demo/api/analytics/events/query/"+programOffenceEventUid+"/?startDate="+startDate+
+                        "&endDate="+endDate+
+                        "&dimension=ou:"+orgUnit+
+                        "&dimension="+columnOffenceDate+
+                        "&dimension="+columnOffencePlace+
+                        "&dimension="+columnOffenceRegistryList+
+                        "&dimension="+columnVehiclePlateNumber+
+                        "&dimension="+columnProgram_Police+
+                        "&dimension="+columnOffenceAdmissionStatus+
+                        "&dimension="+columnOffenceOffenceFacts+
+                        "&dimension="+columnOffenceReceiptAmount+
+
+
+                        "&dimension="+columnFullName+
+                        "&dimension="+columnGender+
+                        "&dimension="+columnDriverLicenseNumber+
+                        "&dimension="+columnVehicleOwnerName+
+
+
+                        "&dimension="+columnOffencePaid+":EQ:false"+
+                        "&dimension="+columnProgram_Driver+
+                        "&dimension="+columnProgram_Vehicle+":EQ:"+vehicleUid;
+
+                Log.d(TAG,"analytics offence url = "+offenceEventUrl);
+
+                JSONParser jsonParser2 = new JSONParser();
+
+                JSONObject offenceEventObject = jsonParser2.dhis2HttpRequest(offenceEventUrl,"GET",MainOffence.username,MainOffence.password,null);
+
+
+                try {
+                    dataObject.put("Offences",Functions.generateJson(offenceEventObject.getJSONArray("headers"), offenceEventObject.getJSONArray("rows")));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                Log.d(TAG,"Data object = "+dataObject.toString());
             }
+            return dataObject;
         }
 
         @Override
-        protected void onPostExecute(JSONArray json) {
+        protected void onPostExecute(JSONObject json) {
             /**
              * starting with history
              */
@@ -534,18 +554,16 @@ public class PaymentVerifierFragment extends Fragment {
                     driversDetails.setVisibility(View.VISIBLE);
                     vehiclesDetails.setVisibility(View.GONE);
                     JSONArray offences = new JSONArray();
-                    JSONObject object = new JSONObject();
                     JSONObject driverObject = new JSONObject();
                     try {
-                        object = json.getJSONObject(0);
-                        driverObject = object.getJSONObject("Program_Person");
-                        name = driverObject.getString("First Name") + " " + driverObject.getString("Middle Name")+ " " + driverObject.getString("Last Name");
-                        licenceNumber = object.getString("Driver License Number");
+                        driverObject = json.getJSONArray("driver").getJSONObject(json.getJSONArray("driver").length()-1);
+                        name = driverObject.getString("Full Name");
+                        licenceNumber = driverObject.getString("Driver License Number");
                         address = driverObject.getString("Postal Address");
                         gender = driverObject.getString("Gender");
                         dateOfBirth = driverObject.getString("Date of Birth");
                         phoneNumber = driverObject.getString("Phone Number");
-                        offences = object.getJSONArray("Offence Event");
+                        offences = json.getJSONArray("Offences");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     } catch (Exception e){}
@@ -565,26 +583,21 @@ public class PaymentVerifierFragment extends Fragment {
                                 rank_no="",facts="",driver_license_number="",place="",offence_date=""
                                 ,offenceId="",program_vehicle="",program_police="",program_driver="",latitude="",longitude="";
                         boolean offencePaid = false,admit = false;
-                        JSONArray offenceEvents = new JSONArray();
                         try {
                             jsonObjet = offences.getJSONObject(i);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+
                         try {
-                            offenceEvents = jsonObjet.getJSONArray("offences");
-                        }catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        try {
-                            offenceId = jsonObjet.getString("id");
+                            offenceId = jsonObjet.getString("Event");
                         }catch (JSONException e) {
                             e.printStackTrace();
                         }
 
                         driver_license_number = licenceNumber;
                         try {
-                            vehicle_plate_number = jsonObjet.getJSONObject("Program_Vehicle").getString("Vehicle Plate Number");
+                            vehicle_plate_number = jsonObjet.getString("Vehicle Plate Number");
                         }catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -594,17 +607,17 @@ public class PaymentVerifierFragment extends Fragment {
                             e.printStackTrace();
                         }
                         try {
-                            program_driver = jsonObjet.getJSONObject("Program_Driver").getString("id");
+                            program_driver = jsonObjet.getString("Program_Driver");
                         }catch (JSONException e) {
                             e.printStackTrace();
                         }
                         try {
-                            program_police = jsonObjet.getJSONObject("Program_Police").getString("id");
+                            program_police = jsonObjet.getString("Program_Police");
                         }catch (JSONException e) {
                             e.printStackTrace();
                         }
                         try {
-                            program_vehicle = jsonObjet.getJSONObject("Program_Vehicle").getString("id");
+                            program_vehicle = jsonObjet.getString("Program_Vehicle");
                         }catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -633,11 +646,6 @@ public class PaymentVerifierFragment extends Fragment {
                         }catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        try {
-                            admit = jsonObjet.getBoolean("Offence Admission Status");
-                        }catch (JSONException e) {
-                            e.printStackTrace();
-                        }
                         try{
                             facts=jsonObjet.getString("Offence Facts");
                         } catch (JSONException e) {
@@ -659,26 +667,41 @@ public class PaymentVerifierFragment extends Fragment {
                         offence.setProgram_Driver(program_driver);
                         offence.setProgram_Police(program_police);
                         offence.setProgram_Vehicle(program_vehicle);
+                        try {
+                            offence.setGender(jsonObjet.getString("Gender"));
+                            offence.setVehicle_owner_name(jsonObjet.getString("Vehicle Owner Name"));
+                            offence.setOffence_registry_list(jsonObjet.getString("Offence Registry List"));
+                            offence.setFull_Name(jsonObjet.getString("Full Name"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
 
+
+                        try {
+                            Log.d(TAG,"Gender = "+jsonObjet.getString("Gender"));
+                            Log.d(TAG,"Vehicle Owner Name = "+jsonObjet.getString("Vehicle Owner Name"));
+                            Log.d(TAG,"Offence Registry List = "+jsonObjet.getString("Offence Registry List"));
+                            Log.d(TAG,"Full Name = "+jsonObjet.getString("Full Name"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
 
 
 
                         TextView plateNumberTextView = (TextView) historyItem.findViewById(R.id.plate_number);
                         TextView offenceTextView = (TextView) historyItem.findViewById(R.id.offense);
                         TextView dateTextView = (TextView) historyItem.findViewById(R.id.date);
-                        String events = "";
-                        int cost=0;
-
-
-                        for (int y = 0; y < offenceEvents.length(); y++) {
-                            try {
-                                JSONObject eventObject = offenceEvents.getJSONObject(y).getJSONObject("Program_Offence_Registry");
-                                events += eventObject.getString("Nature") + " | ";
-                                cost+=Integer.parseInt(eventObject.getString("Amount"));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
+                        String events = null;
+                        try {
+                            events = jsonObjet.getString("Offence Registry List");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        int cost= 0;
+                        try {
+                            cost = jsonObjet.getInt("Offence Reciept Amount");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
 
 
@@ -687,7 +710,6 @@ public class PaymentVerifierFragment extends Fragment {
                         TextView costTextView = (TextView) historyItem.findViewById(R.id.cost_driver);
                         costTextView.setText("Tsh "+cost);
                         dateTextView.setText(offence_date);
-                        final JSONArray eventArray=offenceEvents;
                         final SwitchCompat pay=(SwitchCompat)historyItem.findViewById(R.id.pay);
                         final int passedCost=cost;
                         final int index=i;
@@ -696,9 +718,8 @@ public class PaymentVerifierFragment extends Fragment {
                             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                                 if (isChecked) {
                                     PaymentConfirmationDialogue paymentConfirmationDialogue = new PaymentConfirmationDialogue();
-                                    paymentConfirmationDialogue.show(getFragmentManager(), "tester");
+                                    paymentConfirmationDialogue.show(getFragmentManager(), "paymentVerifier");
                                     paymentConfirmationDialogue.setOffence(offence);
-                                    paymentConfirmationDialogue.setEvents(eventArray);
                                     paymentConfirmationDialogue.setCost(passedCost);
                                     paymentConfirmationDialogue.setName(name);
                                     paymentConfirmationDialogue.setIndex(index);
@@ -717,8 +738,8 @@ public class PaymentVerifierFragment extends Fragment {
                     JSONObject vehicleObject = new JSONObject();
                     String vehicle_plate_number="";
                     try {
-                        vehicleObject = json.getJSONObject(0);
-                        offences = vehicleObject.getJSONArray("Offence Event");
+                        vehicleObject = json.getJSONArray("vehicle").getJSONObject(json.getJSONArray("vehicle").length()-1);
+                        offences = json.getJSONArray("Offences");
                         vehicle_plate_number=vehicleObject.getString("Vehicle Plate Number");
                         plateNumberTextView.setText(vehicle_plate_number);
                         makeTextView.setText(vehicleObject.getString("Make"));
@@ -740,27 +761,22 @@ public class PaymentVerifierFragment extends Fragment {
                         TextView totalCostTextView = (TextView) historyItem.findViewById(R.id.cost);
                         TextView dateTextView = (TextView) historyItem.findViewById(R.id.date);
                         JSONObject jsonObjet = new JSONObject();
-                        String driversName = "", offenceName = "",
+                        String  offenceName = "",
                                 rank_no="",facts="",driver_license_number="",place="",offence_date=""
                                 ,offenceId="",program_vehicle="",program_police="",program_driver="",latitude="",longitude="";
                         boolean admit=false;
-                        JSONArray offenceEvents = new JSONArray();
                         try {
                             jsonObjet = offences.getJSONObject(i);
-                            offenceEvents = jsonObjet.getJSONArray("offences");
-                            driver_license_number=jsonObjet.getJSONObject("Program_Driver").getString("Driver License Number");
+                            driver_license_number=jsonObjet.getString("Driver License Number");
                             offence_date=jsonObjet.getString("Offence Date");
                             place=jsonObjet.getString("Offence Place");
-                            program_driver=jsonObjet.getJSONObject("Program_Driver").getString("id");
-                            program_police=jsonObjet.getJSONObject("Program_Police").getString("id");
-                            program_vehicle=jsonObjet.getJSONObject("Program_Vehicle").getString("id");
+                            program_driver=jsonObjet.getString("Program_Driver");
+                            program_police=jsonObjet.getString("Program_Police");
+                            program_vehicle=jsonObjet.getString("Program_Vehicle");
                             latitude=jsonObjet.getString("Latitude");
                             longitude=jsonObjet.getString("Longitude");
-                            name=jsonObjet.getJSONObject("Program_Driver").getJSONObject("Program_Person").getString("First Name")
-                                    + " " +jsonObjet.getJSONObject("Program_Driver").getJSONObject("Program_Person").getString("Middle Name")
-                                    + " " +jsonObjet.getJSONObject("Program_Driver").getJSONObject("Program_Person").getString("Last Name");
-                            offenceId=jsonObjet.getString("id");
-                            driversNameTextView.setText(driversName);
+                            name=jsonObjet.getString("Full Name");
+                            driversNameTextView.setText(name);
                             dateTextView.setText(offence_date);
                             admit = jsonObjet.getBoolean("Offence Admission Status");
                             facts=jsonObjet.getString("Offence Facts");
@@ -782,23 +798,31 @@ public class PaymentVerifierFragment extends Fragment {
                         offence.setProgram_Driver(program_driver);
                         offence.setProgram_Police(program_police);
                         offence.setProgram_Vehicle(program_vehicle);
+                        try {
+                            offence.setGender(jsonObjet.getString("Gender"));
+                            offence.setVehicle_owner_name(jsonObjet.getString("Vehicle Owner Name"));
+                            offence.setOffence_registry_list(jsonObjet.getString("Offence Registry List"));
+                            offence.setFull_Name(jsonObjet.getString("Full Name"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
 
-                        String events = "";
-                        int cost=0;
-                        for (int y = 0; y < offenceEvents.length(); y++) {
-                            try {
-                                JSONObject ob = offenceEvents.getJSONObject(y).getJSONObject("Program_Offence_Registry");
-                                events += ob.getString("Description") + " | ";
-                                cost+=Integer.parseInt(ob.getString("Amount"));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                        String events = null;
+                        try {
+                            events = jsonObjet.getString("Offence Registry List");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        int cost= 0;
+                        try {
+                            cost = jsonObjet.getInt("Offence Reciept Amount");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
 
                         offenceTextView.setText(events);
                         totalCostTextView.setText("Tsh "+cost);
 
-                        final JSONArray eventArray=offenceEvents;
                         final SwitchCompat pay=(SwitchCompat)historyItem.findViewById(R.id.pay);
                         final int passedCost=cost;
                         final int index=i;
@@ -809,7 +833,6 @@ public class PaymentVerifierFragment extends Fragment {
                                     PaymentConfirmationDialogue paymentConfirmationDialogue = new PaymentConfirmationDialogue();
                                     paymentConfirmationDialogue.show(getFragmentManager(), "tester");
                                     paymentConfirmationDialogue.setOffence(offence);
-                                    paymentConfirmationDialogue.setEvents(eventArray);
                                     paymentConfirmationDialogue.setCost(passedCost);
                                     paymentConfirmationDialogue.setName(name);
                                     paymentConfirmationDialogue.setIndex(index);

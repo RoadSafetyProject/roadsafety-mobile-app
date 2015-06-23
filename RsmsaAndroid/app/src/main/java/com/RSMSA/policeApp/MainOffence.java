@@ -123,7 +123,6 @@ public class MainOffence extends CameraActivity implements PaymentConfirmationDi
         mFeedbackDialog.setDebug(true);
         mFeedbackDialog.setSettings(feedbackSettings);
 
-        final DatabaseHandlerOffence db1 = new DatabaseHandlerOffence(getApplicationContext());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             setTranslucentStatus(true);

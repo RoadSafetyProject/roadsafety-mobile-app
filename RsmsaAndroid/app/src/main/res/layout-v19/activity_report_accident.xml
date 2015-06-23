@@ -313,6 +313,7 @@
                     android:layout_marginLeft="8dp"
                     android:text="Area"
                     android:textSize="16sp"
+                    android:visibility="gone"
                     android:layout_marginTop="16dp"/>
 
                 <View
@@ -323,6 +324,7 @@
                     android:layout_below="@id/area_title"
                     android:layout_marginTop="8dp"
                     android:layout_marginLeft="8dp"
+                    android:visibility="gone"
                     android:layout_marginRight="8dp"/>
 
                 <TextView
@@ -330,6 +332,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/name_title"
                     android:text="Area Name "
+                    android:visibility="gone"
                     android:layout_below="@id/area_strip"
                     android:layout_marginTop="16dp"
                     android:layout_marginLeft="8dp"/>
@@ -338,6 +341,7 @@
                     android:layout_width="180dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/name"
+                    android:visibility="gone"
                     android:layout_below="@id/area_strip"
                     android:layout_marginLeft="96dp"
                     android:layout_marginTop="8dp"
@@ -349,6 +353,7 @@
                     android:id="@+id/district_title"
                     android:layout_below="@id/name"
                     android:layout_marginLeft="8dp"
+                    android:visibility="gone"
                     android:text="District"
                     android:layout_marginTop="8dp"/>
 
@@ -356,6 +361,7 @@
                     android:layout_width="180dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/district"
+                    android:visibility="gone"
                     android:layout_below="@id/name"
                     android:textSize="14sp"
                     android:layout_marginLeft="96dp"/>
@@ -365,6 +371,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/city_or_region"
                     android:layout_marginLeft="8dp"
+                    android:visibility="gone"
                     android:layout_marginTop="8dp"
                     android:layout_below="@id/district"
                     android:text="city/Region"/>
@@ -373,6 +380,7 @@
                     android:layout_width="180dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/city"
+                    android:visibility="gone"
                     android:layout_below="@id/district"
                     android:layout_marginLeft="96dp"
                     android:textSize="14sp"/>
