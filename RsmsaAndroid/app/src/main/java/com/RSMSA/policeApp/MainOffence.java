@@ -91,7 +91,7 @@ public class MainOffence extends CameraActivity implements PaymentConfirmationDi
     static final int LOGIN_REQUEST = 300;
     public static String username;
     public static String password;
-    public static String orgUnit;
+    public static String orgUnit,userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -206,6 +206,7 @@ public class MainOffence extends CameraActivity implements PaymentConfirmationDi
             username = userName;
             password = passWord;
             orgUnit = sharedpreferences.getString("orgUnit","");
+            userId = sharedpreferences.getString("userId","");
 
             Cursor cursor=db.query("SELECT * FROM " + IroadDatabase.TABLE_PROGRAMS);
             int counter=cursor.getCount();
@@ -282,6 +283,7 @@ public class MainOffence extends CameraActivity implements PaymentConfirmationDi
                 password=data.getStringExtra("password");
                 username=data.getStringExtra("username");
                 orgUnit=data.getStringExtra("orgUnit");
+                userId=data.getStringExtra("userId");
                 Fragment newFragment = new OffenceHistoryFragment();
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.activityMain_content_frame, newFragment);

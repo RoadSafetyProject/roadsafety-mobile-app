@@ -231,51 +231,60 @@ public class AccidentReportFormActivity extends ActionBarActivity{
         buttonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(numberOfVihaclesInvolved.getText().toString().equals("")||numberOfWitnesses.getText().toString().equals("")){
+                try {
+                    if (numberOfVihaclesInvolved.getText().toString().equals("") || numberOfWitnesses.getText().toString().equals("")) {
+                        Toast.makeText(getApplicationContext(),
+                                "Please fill the number of vehicles involved and witnesses", Toast.LENGTH_LONG).show();
+                    }
+                    int p = Integer.parseInt(numberOfVihaclesInvolved.getText().toString());
+                    int q = Integer.parseInt(numberOfWitnesses.getText().toString());
+                    List<String> tabnamesVehiches = new ArrayList<String>();
+                    for (int i = 0; i < p; i++) {
+                        tabnamesVehiches.add("Vehicle " + (i + 1));
+                    }
+                    List<String> tabnamesWitnesses = new ArrayList<String>();
+                    for (int i = 0; i < q; i++) {
+                        tabnamesWitnesses.add("Witness " + (i + 1));
+                    }
+                    accidentRegistration.setVisibility(View.GONE);
+                    mViewPager.setVisibility(View.VISIBLE);
+                    mViewPagerWitness.setVisibility(View.GONE);
+                    drawerTitle.setVisibility(View.GONE);
+                    mTabs.setVisibility(View.VISIBLE);
+                    ViewPagerAccidentsDetailsAdapter pager_adapter = new ViewPagerAccidentsDetailsAdapter(AccidentReportFormActivity.this, tabnamesVehiches);
+                    mViewPager.setAdapter(pager_adapter);
+                    mViewPager.setOffscreenPageLimit(10);
+                    mTabs.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
+
+                    Resources res = getResources();
+                    mTabs.setSelectedIndicatorColors(res.getColor(R.color.yellow_200));
+                    mTabs.setDistributeEvenly(false);
+                    mTabs.setViewPager(mViewPager);
+
+                    ViewPagerWitnessesAdapter witnessPagerAdapter = new ViewPagerWitnessesAdapter(AccidentReportFormActivity.this, tabnamesWitnesses);
+                    mViewPagerWitness.setAdapter(witnessPagerAdapter);
+                    mViewPagerWitness.setOffscreenPageLimit(10);
+
+                    try {
+                        File imageFile = new File(imagePath);
+                        accident.setImage_filename(imageFile.getName());
+                    } catch (Exception e) {
+                    }
+
+                    try {
+                        File videoFile = new File(videoPath);
+                        accident.setVideo_filename(videoFile.getName());
+                    } catch (Exception e) {
+                    }
+                }catch (NumberFormatException e){
+                    e.printStackTrace();
                     Toast.makeText(getApplicationContext(),
-                            "Please fill the number of vehicles involved and witnesses", Toast.LENGTH_LONG).show();
+                            "Please enter a valid number of Vehicles and Witnesses invloved", Toast.LENGTH_LONG).show();
                 }
-                accidentRegistration.setVisibility(View.GONE);
-                mViewPager.setVisibility(View.VISIBLE);
-                mViewPagerWitness.setVisibility(View.GONE);
-                drawerTitle.setVisibility(View.GONE);
-                mTabs.setVisibility(View.VISIBLE);
-                int p=Integer.parseInt(numberOfVihaclesInvolved.getText().toString());
-                int q=Integer.parseInt(numberOfWitnesses.getText().toString());
-                List<String> tabnamesVehiches= new ArrayList<String>();
-                for(int i=0;i<p;i++){
-                    tabnamesVehiches.add("Vehicle " + (i + 1));
-                }
-                List<String> tabnamesWitnesses= new ArrayList<String>();
-                for(int i=0;i<q;i++){
-                    tabnamesWitnesses.add("Witness "+(i+1));
-                }
-                ViewPagerAccidentsDetailsAdapter pager_adapter = new ViewPagerAccidentsDetailsAdapter(AccidentReportFormActivity.this,tabnamesVehiches);
-                mViewPager.setAdapter(pager_adapter);
-                mViewPager.setOffscreenPageLimit(10);
-                mTabs.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
-
-                Resources res = getResources();
-                mTabs.setSelectedIndicatorColors(res.getColor(R.color.yellow_200));
-                mTabs.setDistributeEvenly(false);
-                mTabs.setViewPager(mViewPager);
-
-                ViewPagerWitnessesAdapter witnessPagerAdapter = new ViewPagerWitnessesAdapter(AccidentReportFormActivity.this,tabnamesWitnesses);
-                mViewPagerWitness.setAdapter(witnessPagerAdapter);
-                mViewPagerWitness.setOffscreenPageLimit(10);
-
-                try {
-                    File imageFile = new File(imagePath);
-                    accident.setImage_filename(imageFile.getName());
-                }catch (Exception e){}
-
-                try {
-                    File videoFile = new File(videoPath);
-                    accident.setVideo_filename(videoFile.getName());
-                }catch (Exception e){}
 
 
             }
+
         });
         Button datePicker=(Button)findViewById(R.id.date_picker);
         Button timePicker=(Button)findViewById(R.id.time_picker);

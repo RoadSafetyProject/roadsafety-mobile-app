@@ -551,8 +551,7 @@ public class OffenceReportForm extends ActionBarActivity{
             String programPoliceUid = modal.getDataElementByName("Program_Police").getId();
             try {
                 programPoliceDataElement.put("dataElement",programPoliceUid);
-                //TODO use the logged in police
-                programPoliceDataElement.put("value","UOE7AQyxerK");
+                programPoliceDataElement.put("value",MainOffence.userId);
 
                 dataValues.put(programPoliceDataElement);
             } catch (JSONException e) {

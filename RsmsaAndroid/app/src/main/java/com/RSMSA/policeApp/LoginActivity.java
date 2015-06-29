@@ -42,7 +42,7 @@ public class LoginActivity extends ActionBarActivity {
     private IroadDatabase db;
     private boolean loginStatus=false;
     private SharedPreferences sharedpreferences;
-    private String username, password, orgUnit;
+    private String username, password, orgUnit,userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,13 +98,17 @@ public class LoginActivity extends ActionBarActivity {
                         if (!id.equals("")) {
                             try {
                                 JSONObject orgJson = object.getJSONArray("organisationUnits").getJSONObject(0);
+                                JSONObject userCredentials = object.getJSONObject("userCredentials");
+
                                 SharedPreferences.Editor editor = sharedpreferences.edit();
                                 editor.putString("username", usernameEditText.getText().toString());
                                 editor.putString("password", passwordEditText.getText().toString());
                                 editor.putString("orgUnit", orgJson.getString("id"));
+                                editor.putString("userId", userCredentials.getString("id"));
                                 editor.commit();
 
                                 orgUnit = orgJson.getString("id");
+                                userId = userCredentials.getString("id");
 
                                 Log.d(TAG,"org unit id = "+orgUnit);
 
@@ -276,6 +280,7 @@ public class LoginActivity extends ActionBarActivity {
             returnIntent.putExtra("username",username);
             returnIntent.putExtra("password",password);
             returnIntent.putExtra("orgUnit",orgUnit);
+            returnIntent.putExtra("userId",userId);
             setResult(RESULT_OK,returnIntent);
         }else{
             Intent returnIntent = new Intent();

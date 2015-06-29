@@ -52,9 +52,6 @@ public class ViewPagerAccidentsDetailsAdapter extends PagerAdapter {
     }
 
 
-
-
-
     //get count of the number of pages
     @Override
     public int getCount() {

@@ -1,177 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_margin="16dp"
+        android:background="@drawable/card_bg"
+        android:layout_height="match_parent">
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/name"
-        android:text="Name :"
-        android:layout_below="@id/passenger_top_title"
-        android:layout_marginTop="36dp"
-        android:layout_marginLeft="8dp"/>
-
-    <EditText
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/name_edit"
-        android:layout_marginTop="26dp"
-        android:textSize="12sp"
-        android:layout_below="@id/passenger_top_title"
-        android:layout_marginLeft="116dp"/>
-
-
-    <RadioGroup
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/gender"
-        android:layout_below="@id/name_edit"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal"
-        android:layout_centerHorizontal="true">
-
-        <RadioButton
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Male"
-            android:textSize="16sp"
-            android:checked="true"
-            android:id="@+id/male"/>
+            android:id="@+id/name"
+            android:text="Name "
+            android:layout_below="@id/passenger_top_title"
+            android:layout_marginTop="36dp"
+            android:layout_marginLeft="16dp"/>
 
-        <RadioButton
+        <EditText
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/name_edit"
+            android:layout_marginTop="26dp"
+            android:textSize="12sp"
+            android:layout_below="@id/passenger_top_title"
+            android:layout_marginLeft="116dp"/>
+
+
+        <RadioGroup
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Female"
-            android:textSize="16sp"
-            android:id="@+id/female"/>
+            android:id="@+id/gender"
+            android:layout_below="@id/name_edit"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true">
 
-    </RadioGroup>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Male"
+                android:textSize="16sp"
+                android:checked="true"
+                android:id="@+id/male"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/dob"
-        android:text="Date Of Birth : "
-        android:layout_below="@id/gender"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Female"
+                android:textSize="16sp"
+                android:id="@+id/female"/>
 
-    <EditText
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/dob_one"
-        android:minWidth="100dp"
-        android:layout_below="@id/gender"
-        android:layout_marginTop="4dp"
-        android:editable="false"
-        android:layout_marginLeft="116dp"
-        android:textSize="12sp"/>
+        </RadioGroup>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/dob"
+            android:text="Date Of Birth  "
+            android:layout_below="@id/gender"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"/>
 
-    <Button
-        android:layout_width="50dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="8dp"
-        android:id="@+id/date_picker"
-        android:layout_below="@id/gender"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="8dp"
-        android:text="Pick"
-        android:textSize="14sp"
-        android:background="@drawable/button"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/physical_address"
-        android:text="Physical Address : "
-        android:layout_below="@id/dob_one"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"/>
-
-    <EditText
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/physical_address_one"
-        android:layout_below="@id/dob_one"
-        android:layout_marginLeft="116dp"
-        android:textSize="12sp"
-        android:layout_marginTop="4dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Adress : "
-        android:id="@+id/address_box"
-        android:layout_below="@id/physical_address_one"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"/>
-
-    <EditText
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/address_box_one"
-        android:layout_below="@id/physical_address_one"
-        android:textSize="12sp"
-        android:layout_marginTop="4dp"
-        android:layout_marginLeft="116dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/national_id"
-        android:text="National Id : "
-        android:layout_below="@id/address_box_one"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"/>
-
-    <EditText
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:layout_marginTop="4dp"
-        android:layout_below="@id/address_box_one"
-        android:id="@+id/national_id_one"
-        android:layout_marginLeft="116dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/phone_no"
-        android:text="Phone No : "
-        android:layout_below="@id/national_id_one"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"/>
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:minWidth="150dp"
-        android:layout_marginTop="4dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/phone_no_one"
-        android:layout_below="@id/national_id_one"
-        android:textSize="12sp"
-        android:layout_marginLeft="116dp"/>
-
-    <Button
-        android:layout_width="80dp"
-        android:layout_height="36dp"
-        android:id="@+id/next"
-        android:layout_marginTop="16dp"
-        android:text="NEXT"
-        android:visibility="gone"
-        android:textColor="@android:color/white"
-        android:layout_below="@id/phone_no_one"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/button2"
-        android:textSize="16sp"/>
+        <EditText
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/dob_one"
+            android:minWidth="100dp"
+            android:layout_below="@id/gender"
+            android:layout_marginTop="4dp"
+            android:editable="false"
+            android:layout_marginLeft="116dp"
+            android:textSize="12sp"/>
 
 
+        <Button
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="16dp"
+            android:id="@+id/date_picker"
+            android:layout_below="@id/gender"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:text="Pick"
+            android:textSize="14sp"
+            android:background="@drawable/button"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/physical_address"
+            android:text="Physical Address  "
+            android:layout_below="@id/dob_one"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"/>
+
+        <EditText
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/physical_address_one"
+            android:layout_below="@id/dob_one"
+            android:layout_marginLeft="116dp"
+            android:textSize="12sp"
+            android:layout_marginTop="4dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Adress  "
+            android:id="@+id/address_box"
+            android:layout_below="@id/physical_address_one"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"/>
+
+        <EditText
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/address_box_one"
+            android:layout_below="@id/physical_address_one"
+            android:textSize="12sp"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="116dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/national_id"
+            android:text="National Id  "
+            android:layout_below="@id/address_box_one"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"/>
+
+        <EditText
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:layout_marginTop="4dp"
+            android:layout_below="@id/address_box_one"
+            android:id="@+id/national_id_one"
+            android:layout_marginLeft="116dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/phone_no"
+            android:text="Phone No  "
+            android:layout_below="@id/national_id_one"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:minWidth="150dp"
+            android:layout_marginTop="4dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/phone_no_one"
+            android:inputType="phone"
+            android:layout_below="@id/national_id_one"
+            android:textSize="12sp"
+            android:layout_marginLeft="116dp"/>
+
+        <Button
+            android:layout_width="80dp"
+            android:layout_height="36dp"
+            android:id="@+id/next"
+            android:layout_marginTop="16dp"
+            android:text="NEXT"
+            android:visibility="gone"
+            android:textColor="@android:color/white"
+            android:layout_below="@id/phone_no_one"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/button2"
+            android:textSize="16sp"/>
+
+
+    </RelativeLayout>
 </RelativeLayout>
 

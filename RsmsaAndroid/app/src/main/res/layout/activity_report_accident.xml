@@ -74,6 +74,8 @@
                         android:layout_centerVertical="true"
                         android:id="@+id/reg_title"
                         android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/deep_orange_a400"
                         android:text="Accident Reg Ref . "/>
 
                     <EditText
@@ -110,14 +112,14 @@
                         android:text="Accident Severity (Number)"
                         android:layout_marginTop="8dp"
                         android:textStyle="bold"
-                        android:textColor="@color/blue_500"
+                        android:textColor="@color/deep_orange_a400"
                         android:layout_marginLeft="8dp"/>
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:id="@+id/accident_severity_strip"
-                        android:background="@color/light_blue_a100"
+                        android:background="@color/deep_orange_a100"
                         android:layout_below="@id/accident_severity_title"
                         android:layout_marginTop="8dp"
                         android:layout_marginLeft="8dp"
@@ -223,7 +225,7 @@
                     android:id="@+id/time_and_location"
                     android:text="Time And Location"
                     android:textStyle="bold"
-                    android:textColor="@color/blue_500"
+                    android:textColor="@color/deep_orange_a400"
                     android:layout_marginLeft="8dp"
                     android:textSize="14sp"
                     android:layout_marginTop="8dp"/>
@@ -232,7 +234,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:id="@+id/time_and_location_strip"
-                    android:background="@color/light_blue_a100"
+                    android:background="@color/deep_orange_a100"
                     android:layout_below="@id/time_and_location"
                     android:layout_marginTop="8dp"
                     android:layout_marginLeft="8dp"
@@ -307,7 +309,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/area_title"
                     android:layout_below="@id/time"
-                    android:textColor="@color/blue_500"
+                    android:textColor="@color/deep_orange_a400"
                     android:textStyle="bold"
                     android:visibility="gone"
                     android:layout_marginLeft="8dp"
@@ -320,7 +322,7 @@
                     android:layout_height="1dp"
                     android:visibility="gone"
                     android:id="@+id/area_strip"
-                    android:background="@color/light_blue_a100"
+                    android:background="@color/deep_orange_a100"
                     android:layout_below="@id/area_title"
                     android:layout_marginTop="8dp"
                     android:layout_marginLeft="8dp"
@@ -393,13 +395,13 @@
                     android:layout_marginTop="16dp"
                     android:textStyle="bold"
                     android:text="Road"
-                    android:textColor="@color/blue_500"/>
+                    android:textColor="@color/deep_orange_a400"/>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:id="@+id/road_strip"
-                    android:background="@color/light_blue_a100"
+                    android:background="@color/deep_orange_a100"
                     android:layout_below="@id/road_header"
                     android:layout_marginTop="8dp"
                     android:layout_marginLeft="8dp"
@@ -538,7 +540,7 @@
                     android:text="Accident Type classification"
                     android:layout_marginTop="8dp"
                     android:layout_marginLeft="16dp"
-                    android:textColor="@color/blue_500"
+                    android:textColor="@color/deep_orange_a400"
                     android:textStyle="bold"
                     android:textSize="16sp"/>
 

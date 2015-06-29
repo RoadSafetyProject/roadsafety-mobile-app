@@ -470,8 +470,7 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
                         String programPoliceUid = accidentModal.getDataElementByName("Program_Police").getId();
                         try {
                             programPoliceDataElement.put("dataElement",programPoliceUid);
-                            //TODO implement login mechanism and store data in the datatbase
-                            programPoliceDataElement.put("value","UOE7AQyxerK");
+                            programPoliceDataElement.put("value",MainOffence.userId);
                             values.put(programPoliceDataElement);
                         } catch (JSONException e) {
                             e.printStackTrace();
