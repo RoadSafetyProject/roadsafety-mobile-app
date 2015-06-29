@@ -98,17 +98,16 @@ public class LoginActivity extends ActionBarActivity {
                         if (!id.equals("")) {
                             try {
                                 JSONObject orgJson = object.getJSONArray("organisationUnits").getJSONObject(0);
-                                JSONObject userCredentials = object.getJSONObject("userCredentials");
 
                                 SharedPreferences.Editor editor = sharedpreferences.edit();
                                 editor.putString("username", usernameEditText.getText().toString());
                                 editor.putString("password", passwordEditText.getText().toString());
                                 editor.putString("orgUnit", orgJson.getString("id"));
-                                editor.putString("userId", userCredentials.getString("id"));
+                                editor.putString("userId", object.getString("id"));
                                 editor.commit();
 
                                 orgUnit = orgJson.getString("id");
-                                userId = userCredentials.getString("id");
+                                userId = object.getString("id");
 
                                 Log.d(TAG,"org unit id = "+orgUnit);
 

@@ -207,7 +207,7 @@ public class MainOffence extends CameraActivity implements PaymentConfirmationDi
             password = passWord;
             orgUnit = sharedpreferences.getString("orgUnit","");
             userId = sharedpreferences.getString("userId","");
-
+            Log.d(TAG,"police_uid = "+userId);
             Cursor cursor=db.query("SELECT * FROM " + IroadDatabase.TABLE_PROGRAMS);
             int counter=cursor.getCount();
             for(int i=0;i<counter;i++){
@@ -284,6 +284,8 @@ public class MainOffence extends CameraActivity implements PaymentConfirmationDi
                 username=data.getStringExtra("username");
                 orgUnit=data.getStringExtra("orgUnit");
                 userId=data.getStringExtra("userId");
+
+                Log.d(TAG,"police_uid = "+userId);
                 Fragment newFragment = new OffenceHistoryFragment();
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.activityMain_content_frame, newFragment);
