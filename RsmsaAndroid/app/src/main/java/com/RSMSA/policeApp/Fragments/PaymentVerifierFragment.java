@@ -346,7 +346,7 @@ public class PaymentVerifierFragment extends Fragment {
 
                 String programDriverUid = dhis2Modal.getProgramByName("Driver").getId();
 
-                String driverUrl = "http://roadsafety.udsm.ac.tz/demo/api/analytics/events/query/"+programDriverUid+"/?startDate="+startDate+
+                String driverUrl = DHIS2Config.BASE_URL+"api/analytics/events/query/"+programDriverUid+"/?startDate="+startDate+
                         "&endDate="+endDate+
                         "&dimension=ou:"+orgUnit+
                         "&dimension="+columnFullName+
@@ -390,7 +390,7 @@ public class PaymentVerifierFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-                final String offenceEventUrl = "http://roadsafety.udsm.ac.tz/demo/api/analytics/events/query/"+programOffenceEventUid+"/?startDate="+startDate+
+                final String offenceEventUrl = DHIS2Config.BASE_URL+"api/analytics/events/query/"+programOffenceEventUid+"/?startDate="+startDate+
                         "&endDate="+endDate+
                         "&dimension=ou:"+orgUnit+
                         "&dimension="+columnOffenceDate+
@@ -402,12 +402,10 @@ public class PaymentVerifierFragment extends Fragment {
                         "&dimension="+columnOffenceAdmissionStatus+
                         "&dimension="+columnOffenceOffenceFacts+
                         "&dimension="+columnOffenceReceiptAmount+
-
                         "&dimension="+columnFullName+
                         "&dimension="+columnGender+
                         "&dimension="+columnDriverLicenseNumber+
                         "&dimension="+columnVehicleOwnerName+
-
                         "&dimension="+columnOffencePaid+":EQ:false"+
                         "&dimension="+columnProgram_Driver+":EQ:"+driverUid;
 
@@ -417,18 +415,13 @@ public class PaymentVerifierFragment extends Fragment {
 
                 JSONObject offenceEventObject = jsonParser2.dhis2HttpRequest(offenceEventUrl,"GET",MainOffence.username,MainOffence.password,null);
 
-
                 try {
                     dataObject.put("Offences",Functions.generateJson(offenceEventObject.getJSONArray("headers"), offenceEventObject.getJSONArray("rows")));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-
-
-
                 Log.d(TAG,"Data object = "+dataObject.toString());
-
 
             }
             else {
@@ -447,7 +440,7 @@ public class PaymentVerifierFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-                final String vehicleUrl = "http://roadsafety.udsm.ac.tz/demo/api/analytics/events/query/"+programVehicleUid+"/?startDate="+startDate+
+                final String vehicleUrl = DHIS2Config.BASE_URL+"api/analytics/events/query/"+programVehicleUid+"/?startDate="+startDate+
                         "&endDate="+endDate+
                         "&dimension=ou:"+orgUnit+
                         "&dimension="+columnVehicleOwnerName+
@@ -492,10 +485,7 @@ public class PaymentVerifierFragment extends Fragment {
                 String columnFullName = dhis2Modal.getDataElementByName("Full Name").getId();
                 String columnDriverLicenseNumber = dhis2Modal.getDataElementByName("Driver License Number").getId();
 
-
-
-
-                final String offenceEventUrl = "http://roadsafety.udsm.ac.tz/demo/api/analytics/events/query/"+programOffenceEventUid+"/?startDate="+startDate+
+                final String offenceEventUrl = DHIS2Config.BASE_URL+"api/analytics/events/query/"+programOffenceEventUid+"/?startDate="+startDate+
                         "&endDate="+endDate+
                         "&dimension=ou:"+orgUnit+
                         "&dimension="+columnOffenceDate+
@@ -506,25 +496,17 @@ public class PaymentVerifierFragment extends Fragment {
                         "&dimension="+columnOffenceAdmissionStatus+
                         "&dimension="+columnOffenceOffenceFacts+
                         "&dimension="+columnOffenceReceiptAmount+
-
-
                         "&dimension="+columnFullName+
                         "&dimension="+columnGender+
                         "&dimension="+columnDriverLicenseNumber+
                         "&dimension="+columnVehicleOwnerName+
-
-
                         "&dimension="+columnOffencePaid+":EQ:false"+
                         "&dimension="+columnProgram_Driver+
                         "&dimension="+columnProgram_Vehicle+":EQ:"+vehicleUid;
 
                 Log.d(TAG,"analytics offence url = "+offenceEventUrl);
-
                 JSONParser jsonParser2 = new JSONParser();
-
                 JSONObject offenceEventObject = jsonParser2.dhis2HttpRequest(offenceEventUrl,"GET",MainOffence.username,MainOffence.password,null);
-
-
                 try {
                     dataObject.put("Offences",Functions.generateJson(offenceEventObject.getJSONArray("headers"), offenceEventObject.getJSONArray("rows")));
                 } catch (JSONException e) {
@@ -686,8 +668,6 @@ public class PaymentVerifierFragment extends Fragment {
                             e.printStackTrace();
                         }
 
-
-
                         TextView plateNumberTextView = (TextView) historyItem.findViewById(R.id.plate_number);
                         TextView offenceTextView = (TextView) historyItem.findViewById(R.id.offense);
                         TextView dateTextView = (TextView) historyItem.findViewById(R.id.date);
@@ -699,7 +679,7 @@ public class PaymentVerifierFragment extends Fragment {
                         }
                         int cost= 0;
                         try {
-                            cost = jsonObjet.getInt("Offence Reciept Amount");
+                            cost = jsonObjet.getInt("Offence Receipt Amount");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -749,9 +729,8 @@ public class PaymentVerifierFragment extends Fragment {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+
                     Log.d(TAG,"Offences size"+offences.length());
-
-
 
                     for (int i = 0; i < offences.length(); i++) {
                         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -761,8 +740,7 @@ public class PaymentVerifierFragment extends Fragment {
                         TextView totalCostTextView = (TextView) historyItem.findViewById(R.id.cost);
                         TextView dateTextView = (TextView) historyItem.findViewById(R.id.date);
                         JSONObject jsonObjet = new JSONObject();
-                        String  offenceName = "",
-                                rank_no="",facts="",driver_license_number="",place="",offence_date=""
+                        String  facts="",driver_license_number="",place="",offence_date=""
                                 ,offenceId="",program_vehicle="",program_police="",program_driver="",latitude="",longitude="";
                         boolean admit=false;
                         try {
@@ -780,7 +758,6 @@ public class PaymentVerifierFragment extends Fragment {
                             dateTextView.setText(offence_date);
                             admit = jsonObjet.getBoolean("Offence Admission Status");
                             facts=jsonObjet.getString("Offence Facts");
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -815,7 +792,7 @@ public class PaymentVerifierFragment extends Fragment {
                         }
                         int cost= 0;
                         try {
-                            cost = jsonObjet.getInt("Offence Reciept Amount");
+                            cost = jsonObjet.getInt("Offence Receipt Amount");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -840,16 +817,10 @@ public class PaymentVerifierFragment extends Fragment {
                                 }
                             }
                         });
-
-
                         vehiclesOffenceList.addView(historyItem);
                     }
                 }
-
-
             }
-
-
         }
     }
 }

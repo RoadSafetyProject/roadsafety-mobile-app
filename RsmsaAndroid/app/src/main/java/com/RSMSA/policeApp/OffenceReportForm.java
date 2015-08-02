@@ -456,10 +456,8 @@ public class OffenceReportForm extends ActionBarActivity{
                         return true;
                     }
                 } catch (MalformedURLException e1) {
-                    // TODO Auto-generated catch block
                     e1.printStackTrace();
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -483,6 +481,10 @@ public class OffenceReportForm extends ActionBarActivity{
             else{
                 submitText.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
+
+                Toast.makeText(getApplicationContext(), "Error in Network Connection",
+                        Toast.LENGTH_LONG).show();
+
                 //TODO should store the data in sql lite temporary until there will be network
             }
         }
@@ -514,8 +516,6 @@ public class OffenceReportForm extends ActionBarActivity{
         }
         @Override
         protected Boolean doInBackground(String... args) {
-            PoliceFunction PFunction = new PoliceFunction();
-
 
 
 
@@ -941,7 +941,6 @@ public class OffenceReportForm extends ActionBarActivity{
 
             }
             if (resultCode == RESULT_CANCELED) {
-                //TODO Write your code on no result return
             }
         }
     }
@@ -1052,7 +1051,7 @@ public class OffenceReportForm extends ActionBarActivity{
     }
 
     /**
-     * Performe a location update either by force or due to location or distance change
+     * Perform a location update either by force or due to location or distance change
      * @param l
      * @param force
      */

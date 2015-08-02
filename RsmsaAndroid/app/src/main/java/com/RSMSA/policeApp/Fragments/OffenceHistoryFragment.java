@@ -65,7 +65,7 @@ public class OffenceHistoryFragment extends Fragment {
     private ImageView scanBtn,errorBtn,errorBtn2;
     private Button verifyBtn,reportBtn,paymentBtn;
     private EditText license,plateNumberEditText;
-    public static String   name= "",
+    public static String name= "",
             licenceNumber="",
             address="",
             gender="",
@@ -79,11 +79,9 @@ public class OffenceHistoryFragment extends Fragment {
     //DHIS2 parameters stored for saving events
     private String driverUid;
     private String vehicleUid;
-    private static final String startDate="0001-01-01";
+    private static final String startDate="2014-01-01";
     private static final String endDate="2024-01-01";
     private static final String orgUnit="zs9X8YYBOnK";
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -92,7 +90,6 @@ public class OffenceHistoryFragment extends Fragment {
          * get the instances of the buttons at our view
          */
         progressBar = (ProgressBar)contentView.findViewById(R.id.pbar_main);
-
         inputnformation=(RelativeLayout)contentView.findViewById(R.id.input_information);
         verificationResults=(ScrollView)contentView.findViewById(R.id.verification_results);
         offenceList = (LinearLayout)contentView.findViewById(R.id.history_list);
@@ -330,7 +327,7 @@ public class OffenceHistoryFragment extends Fragment {
 
             String programDriverUid = dhis2Modal.getProgramByName("Driver").getId();
 
-            String driverUrl = "http://roadsafety.udsm.ac.tz/demo/api/analytics/events/query/"+programDriverUid+"/?startDate="+startDate+
+            String driverUrl = DHIS2Config.BASE_URL+"api/analytics/events/query/"+programDriverUid+"/?startDate="+startDate+
                     "&endDate="+endDate+
                     "&dimension=ou:"+orgUnit+
                     "&dimension="+columnFullName+
@@ -370,7 +367,7 @@ public class OffenceHistoryFragment extends Fragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            final String offenceEventUrl = "http://roadsafety.udsm.ac.tz/demo/api/analytics/events/query/"+programOffenceEventUid+"/?startDate="+startDate+
+            final String offenceEventUrl =  DHIS2Config.BASE_URL+"/api/analytics/events/query/"+programOffenceEventUid+"/?startDate="+startDate+
                     "&endDate="+endDate+
                     "&dimension=ou:"+orgUnit+
                     "&dimension="+columnOffenceDate+
@@ -414,7 +411,7 @@ public class OffenceHistoryFragment extends Fragment {
             Log.d(TAG,"Program driver uid = "+programDriverUid);
             Log.d(TAG,"Program vehicle uid = "+programVehicleUid);
 
-            final String vehicleUrl = "http://roadsafety.udsm.ac.tz/demo/api/analytics/events/query/"+programVehicleUid+"/?startDate="+startDate+
+            final String vehicleUrl = DHIS2Config.BASE_URL+"api/analytics/events/query/"+programVehicleUid+"/?startDate="+startDate+
                     "&endDate="+endDate+
                     "&dimension=ou:"+orgUnit+
                     "&dimension="+columnVehicleOwnerName+
@@ -436,10 +433,6 @@ public class OffenceHistoryFragment extends Fragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-
-
-
 
 
             return dataObject;
@@ -480,7 +473,7 @@ public class OffenceHistoryFragment extends Fragment {
                     dateOfBirth = driverObject.getString("Date of Birth");
                     phoneNumber = driverObject.getString("Phone Number");
                     String driverLicenceExpiryDate=driverObject.getString("Current License Expiry Date");
-                    SimpleDateFormat simpleFormatter = new SimpleDateFormat("yyyy-mm-dd");
+                    SimpleDateFormat simpleFormatter = new SimpleDateFormat("yyyy-MM-dd");
                     Date date = simpleFormatter.parse(driverLicenceExpiryDate);
                     long receivedDate=date.getTime();
 
@@ -550,8 +543,27 @@ public class OffenceHistoryFragment extends Fragment {
                     vehiclesMakeTextView.setText(vehiclesObject.getString("Make"));
                     vehclesColorTextView.setText(vehiclesObject.getString("Color"));
                     vehicleInsuarance.setText(vehiclesObject.getString("Current Insurance Comapany Name"));
-                    vehiclesInspection.setText(vehiclesObject.getString("Last Inspecton Result"));
+
+
+                    String insuaranceLicenceExpiryDate=vehiclesObject.getString("Current Insurance Expiry Date");
+                    SimpleDateFormat simpleFormatter = new SimpleDateFormat("yyyy-MM-dd");
+                    Date date = simpleFormatter.parse(insuaranceLicenceExpiryDate);
+                    long receivedDate=date.getTime();
+
+                    Log.d(TAG,"received date = "+receivedDate);
                     insuarenceExpiryDate.setText(vehiclesObject.getString("Current Insurance Expiry Date"));
+                    Calendar calendar = Calendar.getInstance();
+                    Log.d(TAG,"current date = "+calendar.getTimeInMillis());
+                    if(calendar.getTimeInMillis()>receivedDate){
+                        insuarenceExpiryDate.setTextColor(Color.RED);
+                        errorBtn2.setVisibility(View.VISIBLE);
+                    }else{
+                        licenceExpiryDate.setTextColor(Color.WHITE);
+                        errorBtn2.setVisibility(View.GONE);
+                    }
+
+
+                    vehiclesInspection.setText(vehiclesObject.getString("Last Inspecton Result"));
 
                 } catch (JSONException e) {
                     e.printStackTrace();

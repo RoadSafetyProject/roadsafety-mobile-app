@@ -291,7 +291,6 @@ public class MainOffence extends CameraActivity implements PaymentConfirmationDi
                 transaction.replace(R.id.activityMain_content_frame, newFragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
-
             }
             if (resultCode == RESULT_CANCELED) {
                 //Write your code if there's no result

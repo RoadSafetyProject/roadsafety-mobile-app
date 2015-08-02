@@ -1214,7 +1214,7 @@ public class AccidentTypeclassificationActivity extends ActionBarActivity {
                         finishButton.setVisibility(View.VISIBLE);
                         progressBarDetermininate.setVisibility(View.GONE);
                         Toast.makeText(getApplicationContext(),
-                                "Files uploaded successfully", Toast.LENGTH_LONG).show();
+                                "Accident Reported successfully", Toast.LENGTH_LONG).show();
 
                         Log.d(TAG,"video file url = "+urlVideo);
                         Log.d(TAG,"image file url = "+urlImage);
